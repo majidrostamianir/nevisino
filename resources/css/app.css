@@ -1,0 +1,76 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+@theme {
+    --color-pars-100: #F5F8FEFF;
+    --color-pars-200: #E7F4FB;
+    --color-pars-300: #E9EDF7FF;
+    --color-pars-400: #D7E8F5;
+    --color-pars-500: #318DC1;
+    --color-pars-600: #2f86b6;
+    --color-pars-700: #55768BFF;
+    --color-pars-800: #4e6a7e;
+
+}
+
+@layer base {
+    @font-face {
+        font-family: "Tanha";
+        src: url(/public/fonts/Tanha.eot?34e9f1bfc12b8f52c69d4aad787328c5);
+        src: url(/public/fonts/Tanha.ttf?ae2fce92786e29029e6c2522ab2b8ba0);
+        src: url(/public/fonts/Tanha.woff?a23bfc3c74183168d2800a79bc81e43d);
+        src: url(/public/fonts/Tanha.woff2?e1b6d359c122f3e87fded033d3f3545b);
+        font-display: swap;
+    }
+
+    input, select {
+        border-style: none;
+        outline: none;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        background-color: #ffffff;
+    }
+
+    input:focus, select:focus {
+        --tw-ring-color: none !important;
+        box-shadow: none;
+    }
+
+    body {
+        direction: rtl !important;
+        font-family: Tanha, serif;
+        scrollbar-width: none;
+        background-color: rgb(233 237 247);
+        color: rgb(85, 118, 139) !important;
+    }
+
+    ::-webkit-scrollbar {
+        width: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f5f8fe
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #4a5f7361;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(57, 74, 90, .38)
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
