@@ -15,6 +15,7 @@ class Register extends Component
             'mobile' => [
                 'required',
                 'string',
+                'digits:11',
                 function ($attribute, $value, $fail) {
                     if (!preg_match('/^09\d{9}$/', $value)) {
                         $fail('شماره موبایل وارد شده معتبر نیست.');

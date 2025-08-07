@@ -14,3 +14,9 @@ Route::group(['middleware' => ['throttle:60', 'guest']], function () {
 
 });
 
+
+Route::group(['middleware' => ['throttle:60', 'auth']], function () {
+    Route::get('/dashboard', \App\Livewire\Dashboard\Index::class)->name('dashboard');
+//    Route::get('/payment/callback', \App\Sun\Home\PaymentCallback::class);
+});
+

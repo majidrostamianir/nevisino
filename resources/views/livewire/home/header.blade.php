@@ -10,7 +10,7 @@
 
             @if(Auth::check())
                 <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
-                   href="{{ route('home.dashboard') }}" wire:navigate>
+                   href="{{ route('dashboard') }}" wire:navigate>
                     <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
                     <span class="text-sm py-2.5">پیش‌خوان</span>
                 </a>
@@ -56,7 +56,7 @@
         <div>
             @if(Auth::check())
                 <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
-                   href="{{ route('home.dashboard') }}" wire:navigate>
+                   href="{{ route('dashboard') }}" wire:navigate>
                     <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
                     <span class="text-sm py-2.5">پیش‌خوان</span>
                 </a>
