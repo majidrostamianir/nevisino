@@ -1,7 +1,7 @@
 <div class="h-[86vh]">
     <div >
         <div class="h-[25vh]  w-full bg-pars-100 rounded-2xl shadow-md p-4 sm:ml-2">
-{{--            <livewire:admin.url.category :categories="$categories" />--}}
+            <livewire:admin.url.category :categories="$categories" />
         </div>
     </div>
     <div class="sm:flex justify-between mt-2">

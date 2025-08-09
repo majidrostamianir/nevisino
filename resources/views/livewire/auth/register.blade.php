@@ -6,6 +6,7 @@
                 <div class="w-full mt-2">لطفا شماره موبایل خود را وارد کنید:</div>
             </div>
             <input type="number"
+                   wire:keydown.enter="submit()"
                    dir="auto"
                    placeholder="{{ english_to_persian_num('09123456789') }} "
                    class="mt-8 w-full rounded-2xl placeholder:text-gray-300 placeholder:text-center text-center"

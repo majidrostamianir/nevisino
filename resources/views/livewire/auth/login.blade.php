@@ -4,6 +4,7 @@
             <strong>کاربر گرامی؛</strong>
             <div class="w-full mt-2">رمز عبور حساب <strong>{{ $mobile }}</strong> را وارد کنید:</div>
             <input type="password"
+                   wire:keydown.enter="submit()"
                    dir="auto"
                    placeholder="رمز عبور"
                    class="mt-6 w-full rounded-2xl placeholder:text-gray-300 placeholder:text-center text-center"
