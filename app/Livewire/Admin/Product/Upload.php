@@ -18,9 +18,15 @@ class Upload extends Component
     public $uploadProgress = 101;
     public int $imageVersion = 1;
     public string $folder;
+    public int $count;
 
 
     protected $listeners = ['imageUpdated' => 'refreshImage'];
+
+    public function mount()
+    {
+        $this->pictureCount();
+    }
 
     public function refreshImage()
     {
@@ -31,7 +37,13 @@ class Upload extends Component
     {
         $this->upload();
         $this->dispatch('imageUpdated');
+    }
 
+    public function pictureCount()
+    {
+        $folder = 'products/' . $this->product->id . '/large';
+        $files = Storage::disk('public')->files($folder);
+        $this->count = count($files);
     }
 
     public function upload(): void
@@ -41,24 +53,20 @@ class Upload extends Component
             'picture.*' => 'required|image|max:10240',
         ]);
         $manager = new ImageManager(new Driver());
-
+        $folder = 'products/' . $this->product->id;
+        $sizes = ['large' => 1050, 'small' => 350,];
+        $sortedPictures = collect($this->picture)->sortBy(function ($file) {
+                return $file->getClientOriginalName();
+            }, SORT_NATURAL | SORT_FLAG_CASE)->values()->all();
+        if (Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->deleteDirectory($folder);
+        }
 //        $watermark = $manager->read(public_path('images/watermark.png'));
 //        $picture->place($watermark);
 
-        $sizes = [
-            'large' => 1050,
-            'small' => 350,
-        ];
-        $sortedPictures = collect($this->picture)
-            ->sortBy(function ($file) {
-                return $file->getClientOriginalName();
-            }, SORT_NATURAL | SORT_FLAG_CASE)
-            ->values()
-            ->all();
 
         foreach ($sortedPictures as $key => $image) {
             $picture = $manager->read($image);
-            $folder = 'products/' . $this->product->id;
             $index = $key + 1;
 
             foreach ($sizes as $name => $height) {
@@ -69,12 +77,9 @@ class Upload extends Component
                 $picture->scale(height: $height)->toWebp()
                     ->save(Storage::disk('public')->path("$path/{$index}.webp"));
             }
-
         }
-
-
         $this->dispatch('imageUpdated');
-
+        $this->pictureCount();
     }
 
     public function render()

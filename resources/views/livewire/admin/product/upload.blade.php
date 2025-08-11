@@ -1,7 +1,7 @@
 <div>
     <div class="w-full m-2">
         <div
-            class="relative w-full h-64 border-2 p-2 border-pars-500 border-dashed rounded-lg  bg-pars-100 hover:bg-pars-200 transition-all">
+            class="relative w-full  border-2 p-2 border-pars-500 border-dashed rounded-lg  bg-pars-100 hover:bg-pars-200 transition-all">
             <label for="dropzone-picture"
                    class="flex flex-col items-center justify-center w-full cursor-pointer ">
                 <div class="flex flex-col items-center justify-center ">
@@ -18,25 +18,16 @@
                 @error('picture')
                 <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                 @enderror
-                @if(Storage::disk('public')->exists('products/' . $product->id . '/large/1.webp'))
-                    <img width="150" class="rounded-xl"
-                         src="{{ asset('storage/products/' . $product->id . '/large/1.webp') }}?v={{ $imageVersion }}"
-                    />
+                <div class="mt-3 grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    @for ($i = 1; $i <= $count; $i++)
+                        @if(Storage::disk('public')->exists('products/' . $product->id . '/small/' . $i . '.webp'))
+                            <img class="rounded-xl w-full object-cover"
+                                 src="{{ asset('storage/products/' . $product->id . '/small/' . $i . '.webp') }}?v={{ $imageVersion }}" />
+                        @endif
+                    @endfor
+                </div>
 
-                @else
-                    <svg width="80" height="80" class="mt-4" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M100 20
-           a80 80 0 1 1 0 160
-           a80 80 0 1 1 0-160"
-                              fill="none"
-                              stroke="#FFA500"
-                              stroke-width="12"
-                              stroke-linecap="round"/>
-                        <rect x="95" y="50" width="10" height="60" fill="#FFA500" rx="3"/>
-                        <rect x="95" y="125" width="10" height="15" fill="#FFA500" rx="3"/>
-                    </svg>
-                @endif
-                <input id="dropzone-picture" type="file" class="opacity-0 w-full h-full absolute top-0 left-0" multiple
+                <input id="dropzone-picture" type="file" class="cursor-pointer opacity-0 w-full h-full absolute top-0 left-0" multiple
                        wire:model="picture"/>
             </label>
             <div
