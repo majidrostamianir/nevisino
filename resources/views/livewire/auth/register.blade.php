@@ -7,6 +7,7 @@
             </div>
             <input type="number"
                    wire:keydown.enter="submit()"
+                   autofocus
                    dir="auto"
                    placeholder="{{ english_to_persian_num('09123456789') }} "
                    class="mt-8 w-full rounded-2xl placeholder:text-gray-300 placeholder:text-center text-center"

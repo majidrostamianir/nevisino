@@ -14,9 +14,9 @@ class Upload extends Component
     use WithFileUploads;
 
     public Product $product;
-    public $picture;
+    public array $picture = [];
     public $uploadProgress = 101;
-    public int $imageVersion =1;
+    public int $imageVersion = 1;
     public string $folder;
 
 
@@ -26,7 +26,8 @@ class Upload extends Component
     {
         $this->imageVersion = now()->timestamp;
     }
-    public function updatedMockup(): void
+
+    public function updatedPicture(): void
     {
         $this->upload();
         $this->dispatch('imageUpdated');
@@ -36,39 +37,42 @@ class Upload extends Component
     public function upload(): void
     {
         $this->validate([
-            'picture' => 'required|image|max:10240',
+            'picture' => 'required|array',
+            'picture.*' => 'required|image|max:10240',
         ]);
-
         $manager = new ImageManager(new Driver());
 
-        $mock_front = $manager->read($this->mockup)->scale(1200);
-        $mock_watermark = $manager->read(\Storage::disk('private')->path('free/watermark.png'));
-        $mock_front->place($mock_watermark);
-        $mock_front->scale(height: 1050)->toWebp()->save(Storage::disk('private')->path('free/largeFront.webp'));
-        $mock_front->scale(height: 525)->toWebp()->save(Storage::disk('private')->path('free/averageFront.webp'));
-        $mock_front->scale(height: 350)->toWebp()->save(Storage::disk('private')->path('free/smallFront.webp'));
+//        $watermark = $manager->read(public_path('images/watermark.png'));
+//        $picture->place($watermark);
 
-        $localLargePathFront = '/free/largeFront.webp';
-        $localAveragePathFront = '/free/averageFront.webp';
-        $localSmallPathFront = '/free/smallFront.webp';
-        $serverLargePathFront = 'Pictures/'. $this->folder .'/Large/Front/' . $this->product->id . '.webp';
-        $serverAveragePathFront = 'Pictures/'. $this->folder .'/Average/Front/' . $this->product->id . '.webp';
-        $serverSmallPathFront = 'Pictures/'. $this->folder .'/Small/Front/' . $this->product->id . '.webp';
-        $largeContentFront = Storage::disk('private')->get($localLargePathFront);
-        $averageContentFront = Storage::disk('private')->get($localAveragePathFront);
-        $smallContentFront = Storage::disk('private')->get($localSmallPathFront);
+        $sizes = [
+            'large' => 1050,
+            'small' => 350,
+        ];
+        $sortedPictures = collect($this->picture)
+            ->sortBy(function ($file) {
+                return $file->getClientOriginalName();
+            }, SORT_NATURAL | SORT_FLAG_CASE)
+            ->values()
+            ->all();
 
-        Storage::disk('ftp')->put($serverLargePathFront, $largeContentFront);
-        Storage::disk('ftp')->put($serverAveragePathFront, $averageContentFront);
-        Storage::disk('ftp')->put($serverSmallPathFront, $smallContentFront);
+        foreach ($sortedPictures as $key => $image) {
+            $picture = $manager->read($image);
+            $folder = 'products/' . $this->product->id;
+            $index = $key + 1;
 
-        $this->product->update([
-            'url' => 'https://dl.sungraphic.ir/' . $serverSmallPathFront,
-            'width' => $mock_front->width()]);
+            foreach ($sizes as $name => $height) {
+                $path = "$folder/$name";
 
-        if (Storage::disk('ftp')->exists('mainFiles/'. $this->folder .'/' . $this->product->id . '.zip')){
-            $this->product->update(['status' => true]);
+                Storage::disk('public')->makeDirectory($path);
+
+                $picture->scale(height: $height)->toWebp()
+                    ->save(Storage::disk('public')->path("$path/{$index}.webp"));
+            }
+
         }
+
+
         $this->dispatch('imageUpdated');
 
     }

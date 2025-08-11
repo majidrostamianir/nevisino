@@ -1,6 +1,7 @@
 <div>
     <div class="w-full m-2">
-        <div class="relative w-full h-64 border-2 p-2 border-pars-500 border-dashed rounded-lg  bg-pars-100 hover:bg-pars-200 transition-all">
+        <div
+            class="relative w-full h-64 border-2 p-2 border-pars-500 border-dashed rounded-lg  bg-pars-100 hover:bg-pars-200 transition-all">
             <label for="dropzone-picture"
                    class="flex flex-col items-center justify-center w-full cursor-pointer ">
                 <div class="flex flex-col items-center justify-center ">
@@ -10,19 +11,19 @@
                               stroke-width="2"
                               d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                     </svg>
-                    <p class="mb-2 text-sm text-gray-500">برای آپلود <span class="font-semibold text-pars-500">تصاویر</span> کلیک کنید</p>
+                    <p class="mb-2 text-sm text-gray-500">برای آپلود <span
+                            class="font-semibold text-pars-500">تصاویر</span> کلیک کنید</p>
                     <p class="text-xs text-gray-500">حداکثر حجم تصویر 10 مگابایت</p>
                 </div>
                 @error('picture')
                 <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                 @enderror
-{{--                @if(Storage::disk('ftp')->exists('Pictures/' . $this->folder . '/Large/Front/' . $product->id . '.webp')--}}
-{{--                    && Storage::disk('ftp')->exists('Pictures/' . $this->folder . '/Average/Front/' . $product->id . '.webp')--}}
-{{--                    && Storage::disk('ftp')->exists('Pictures/' . $this->folder . '/Small/Front/' . $product->id . '.webp'))--}}
-{{--                    <img width="150" class="rounded-xl"--}}
-{{--                         src="https://dl.sungraphic.ir/Pictures/{{ $this->folder}}/Small/Front/{{ $product->id }}.webp?v={{ $imageVersion }}"--}}
-{{--                         alt="">--}}
-{{--                @else--}}
+                @if(Storage::disk('public')->exists('products/' . $product->id . '/large/1.webp'))
+                    <img width="150" class="rounded-xl"
+                         src="{{ asset('storage/products/' . $product->id . '/large/1.webp') }}?v={{ $imageVersion }}"
+                    />
+
+                @else
                     <svg width="80" height="80" class="mt-4" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                         <path d="M100 20
            a80 80 0 1 1 0 160
@@ -34,7 +35,7 @@
                         <rect x="95" y="50" width="10" height="60" fill="#FFA500" rx="3"/>
                         <rect x="95" y="125" width="10" height="15" fill="#FFA500" rx="3"/>
                     </svg>
-{{--                @endif--}}
+                @endif
                 <input id="dropzone-picture" type="file" class="opacity-0 w-full h-full absolute top-0 left-0" multiple
                        wire:model="picture"/>
             </label>

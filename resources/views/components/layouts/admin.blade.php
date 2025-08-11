@@ -97,11 +97,9 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         setupMenu();
-        toggleDropdown();
     });
     document.addEventListener("livewire:navigated", function () {
         setupMenu();
-        toggleDropdown();
     });
 
     function setupMenu(){
@@ -127,19 +125,7 @@
     }
 
 
-    function toggleDropdown(button) {
-        const targetId = button.getAttribute("data-target");
-        const dropdown = document.getElementById(targetId);
-        const isOpen = dropdown.style.maxHeight && dropdown.style.maxHeight !== "0px";
 
-        document.querySelectorAll("ul[id^='dropdown-']").forEach(dropdown => {
-            dropdown.style.maxHeight = "0px";
-        });
-
-        if (!isOpen) {
-            dropdown.style.maxHeight = dropdown.scrollHeight + "px";
-        }
-    }
 </script>
 </body>
 </html>
