@@ -31,14 +31,7 @@
         </div>
     </div>
     <div class="flex w-full sm:w-1/3 justify-center  justify-items-center ">
-        <a referrerpolicy="origin" target="_blank"
-           href="https://trustseal.enamad.ir/?id=223592&amp;Code=sAmVRrideLHzdkUSIz08"><img referrerpolicy="origin"
-                                                                                            width="90" height="90"
-                                                                                            src="/images/enamad.png"
-                                                                                            alt=""
-                                                                                            style="cursor:pointer"
-                                                                                            id="sAmVRrideLHzdkUSIz08"></a>
-        <div class="mx-1"></div>
+        <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot' alt='' style='cursor:pointer' code='sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'></a>   <div class="mx-1"></div>
         <img referrerpolicy="origin" width="100px" id="rgvjjzpefukznbqewlaonbqe" style="cursor:pointer"
              onclick="window.open(&quot;https://logo.samandehi.ir/Verify.aspx?id=376242&amp;p=xlaojyoegvkauiwkaodsuiwk&quot;, &quot;Popup&quot;,&quot;toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30&quot;)"
              alt="logo-samandehi" src="https://logo.samandehi.ir/logo.aspx?id=376242&amp;p=qftiyndtwlbqodrfshwlodrf">

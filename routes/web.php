@@ -23,5 +23,6 @@ Route::group(['middleware' => ['throttle:60', 'auth']], function () {
 
 Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60', 'auth']], function () {
     Route::get('/admin/url', \App\Livewire\Admin\Url\Index::class)->name('admin.url.index');
+    Route::get('/admin/product', \App\Livewire\Admin\Product\Index::class)->name('admin.product.index');
     Route::get('/admin/product/save/{product?}', \App\Livewire\Admin\Product\Save::class)->name('admin.product.save');
 });
