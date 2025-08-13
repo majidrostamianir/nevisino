@@ -5,6 +5,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', \App\Livewire\Home\Index::class)->name('home');
 
 
+Route::group(['middleware' => ['throttle:60']], function () {
+    Route::get('/category/{dashed}' , \App\Livewire\Home\CategoryPage::class)->name('category-page');
+    Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
+});
 Route::group(['middleware' => ['throttle:60', 'guest']], function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
@@ -17,6 +21,8 @@ Route::group(['middleware' => ['throttle:60', 'guest']], function () {
 
 Route::group(['middleware' => ['throttle:60', 'auth']], function () {
     Route::get('/dashboard', \App\Livewire\Dashboard\Index::class)->name('dashboard');
+
+
 //    Route::get('/payment/callback', \App\Sun\Home\PaymentCallback::class);
 });
 

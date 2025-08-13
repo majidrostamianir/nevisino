@@ -12,10 +12,8 @@
                             aria-expanded="false">
                         <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pencil and sharpener icon">
                             <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                                <!-- مداد -->
                                 <path d="M8 20l8-8 3 3-8 8-3 1z"/>
                                 <path d="M16 12l2-2 3 3-2 2z"/>
-                                <!-- تراش پایین -->
                                 <rect x="20" y="18" width="6" height="6" rx="1" ry="1"/>
                                 <line x1="23" y1="18" x2="23" y2="24"/>
                                 <circle cx="23" cy="21" r="1"/>
@@ -33,7 +31,7 @@
                         class="overflow-hidden transition-all duration-300 max-h-0 pr-8">
                         @foreach(\App\Models\Category::query()->where('parent_id',1)->get() as $value )
                             <li>
-                                <a {{--href="{{ route('category-page', ['dashed' => $value->dashed_title] ) }}"--}} wire:navigate
+                                <a href="{{ route('category-page', ['dashed' => $value->dashed_title] ) }}" wire:navigate
                                    class="flex items-center w-full p-2  transition duration-75 rounded-lg pl-11 group hover:bg-pars-400 hover:text-pars-500  text-xs text-nowrap">{{ $value->title }}</a>
                             </li>
                         @endforeach
