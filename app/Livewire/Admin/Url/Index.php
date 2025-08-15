@@ -2,29 +2,20 @@
 
 namespace App\Livewire\Admin\Url;
 
-use App\Models\Category;
 use App\Models\Url;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class Index extends Component
 {
-    public Collection $categories ;
+    public Collection $menus ;
     public Collection $urls ;
     public Url $url ;
 
 
-    protected $listeners = ['added' => 'added'];
-
-    public function added(): void
-    {
-        $this->categories = Category::all();
-        $this->urls = Url::all();
-    }
-
     public function mount(): void
     {
-        $this->categories = Category::all();
+        $this->menus = \App\Models\Menu::query()->whereNotNull('parent_id')->get();
         $this->urls = Url::all();
     }
 

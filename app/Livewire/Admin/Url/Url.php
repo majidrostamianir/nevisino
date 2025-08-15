@@ -10,9 +10,9 @@ use Livewire\Component;
 class Url extends Component
 {
     #[Reactive]
-    public Collection $urls, $categories;
+    public Collection $urls, $menus;
     public string $title = '';
-    public int $categoryId = 0;
+    public int $menuId = 0;
     public \App\Models\Url $url;
 
     public function mount(): void
@@ -26,7 +26,7 @@ class Url extends Component
     {
         return [
             'title' => 'required|string|min:3|' . Rule::unique('urls', 'title')->ignore($this->url),
-            'categoryId' => 'required|integer|exists:categories,id',
+            'menuId' => 'required|integer|exists:menus,id',
         ];
     }
 
@@ -38,11 +38,11 @@ class Url extends Component
         $this->validate();
         $this->url->title = $this->title;
         $this->url->dashed_title = $dashedTitle;
-        $this->url->category_id = $this->categoryId;
+        $this->url->menu_id = $this->menuId;
         $this->url->save();
         $this->url = new \App\Models\Url();
         $this->title = '';
-        $this->categoryId = 0;
+        $this->menuId = 0;
         $this->dispatch('added');
     }
 
@@ -50,7 +50,7 @@ class Url extends Component
     {
         $this->url = \App\Models\Url::query()->find($id);
         $this->title = $this->url->title;
-        $this->categoryId = $this->url->category_id;
+        $this->menuId = $this->url->menu_id;
         $this->dispatch('url-updated', $id);
 
     }

@@ -10,13 +10,13 @@
     @enderror
     <div class="flex p-4 justify-between">
         <div class="w-full flex flex-col ml-1">
-            <select class="border-orange-400 bg-white border px-8 rounded-2xl"  wire:model.live="categoryId">
+            <select class="border-orange-400 bg-white border px-8 rounded-2xl"  wire:model.live="menuId">
                 <option value="0">انتخاب کنید</option>
-                @foreach($categories as $value)
+                @foreach($menus as $value)
                     <option value="{{ $value->id }}" wire:key="{{ $value->id }}">{{ $value->title }}</option>
                 @endforeach
             </select>
-            @error('categoryId')
+            @error('menuId')
             <span class="text-xs text-red-500">{{ $message }}</span>
             @enderror
         </div>
