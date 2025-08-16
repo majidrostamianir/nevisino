@@ -3,7 +3,7 @@
         <div>
             <select class="rounded-2xl m-2" wire:model.live="categoryId">
                 <option value="{{ null }}">دسته بندی</option>
-                @foreach(\App\Models\Category::all() as $value)
+                @foreach(\App\Models\Category::query()->whereNotNull('parent_id')->get() as $value)
                     <option value="{{ $value->id }}">{{ $value->title }}</option>
                 @endforeach
             </select>

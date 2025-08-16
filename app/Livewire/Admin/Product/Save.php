@@ -11,7 +11,7 @@ use Livewire\Component;
 class Save extends Component
 {
     public Product $product;
-    public int $categoryId, $length, $width, $height, $price, $weight ,$inventory;
+    public int $categoryId =0 , $length, $width, $height, $price, $weight ,$inventory;
     public string $title = '', $query;
 
     public array $urls = [];
@@ -64,7 +64,22 @@ class Save extends Component
             $this->urls = [];
         }
     }
+    public function updatedCategoryId(): void
+    {
+        $this->setUrls();
+    }
+    public function setUrls(): void
+    {
+        if ($this->categoryId) {
 
+            $this->urls = array_diff(
+                Url::where('category_id', $this->categoryId)
+                    ->pluck('title', 'id')
+                    ->toArray(),
+                $this->selectedUrls
+            );
+        }
+    }
     public function clearTemporaryFiles(): void
     {
         $path = storage_path('app/private/livewire-tmp');

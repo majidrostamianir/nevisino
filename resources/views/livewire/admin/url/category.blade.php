@@ -15,7 +15,7 @@
         <div class="flex flex-col w-full ml-2">
             <select class="w-full rounded-2xl pr-4" placeholder="" wire:model="parent_id">
                 <option value="{{ null }}">سرگروه</option>
-                @foreach($menus as $parent)
+                @foreach($categories as $parent)
                     <option value="{{ $parent->id }}">{{$parent->title}}</option>
                 @endforeach
             </select>
@@ -29,10 +29,13 @@
     </div>
 
     <ul class="mt-6">
-        @foreach($menus as $parent)
+        @foreach($categories as $parent)
             <li class="p-1 rounded-md m-1 w-fit bg-pars-500 text-white cursor-pointer"
-                wire:click.prevent="changeParent({{ $parent->id }})">
+                wire:key="cat-{{ $category->id }}"
+                wire:click.prevent="changeCategory({{ $parent->id }})">
                 {{ $parent->title }}
+                <br>
+                {{$parent->order}}
             </li>
 
             @if($parent->children->count())
@@ -40,8 +43,10 @@
                     @foreach($parent->children as $child)
                         <li class="bg-pars-400 text-pars-600 p-1 rounded-md m-1 cursor-pointer"
                             wire:key="{{ $child->id }}"
-                            wire:click.prevent="changeChild({{ $child->id }})">
+                            wire:click.prevent="changeCategory({{ $child->id }})">
                             {{ $child->title }}
+                            <br>
+                            {{$child->order}}
                         </li>
                     @endforeach
                 </ul>

@@ -4,7 +4,7 @@
            aria-label="Sidebar">
         <div class="h-full px-3 py-4 overflow-y-auto bg-pars-100">
             <ul class="space-y-2 font-medium overflow-x-hidden ">
-               @foreach(\App\Models\Menu::query()->whereNull('parent_id')->get() as $key=> $value)
+               @foreach(\App\Models\Category::query()->whereNull('parent_id')->get() as $key=> $value)
                     <li>
                         <button type="button"
                                 data-target="dropdown-{{ $key }}"
@@ -25,7 +25,7 @@
                         </button>
                         <ul id="dropdown-{{ $key }}"
                             class="overflow-hidden transition-all duration-300 max-h-0 pr-8">
-                            @foreach(\App\Models\Menu::query()->where('parent_id',$value->id)->get() as $value )
+                            @foreach(\App\Models\Category::query()->where('parent_id',$value->id)->get() as $value )
                                 <li>
                                     <a href="{{ route('category-page', ['dashed' => $value->dashed_title] ) }}"
                                        wire:navigate

@@ -2,80 +2,79 @@
 
 namespace Database\Seeders;
 
-use App\Models\Menu;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
 
-class MenuSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $mainMenu = Menu::create([
+        $mainCategory = Category::create([
             'title' => 'نوشت افزار',
             'dashed_title'  => 'نوشت-افزار',
             'order' => 1
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'مداد',
             'dashed_title'  => 'مداد',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'خودکار و روان نویس',
             'dashed_title'  => 'خودکار-روان-نویس',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 2
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'پاک کن',
             'dashed_title'  => 'پاک-کن',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 3
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'تراش',
             'dashed_title'  => 'تراش',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 4
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'اتود و مغزی اتود',
             'dashed_title'  => 'اتود-مغزی',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 5
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'لاک غلط گیر',
             'dashed_title'  => 'لاک-غلط-گیر',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 6
         ]);
 
-        $mainMenu = Menu::create([
+        $mainCategory = Category::create([
             'title' => 'لوازم نقاشی',
             'dashed_title'  => 'لوازم-نقاشی',
             'order' => 2
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'مداد رنگی',
             'dashed_title'  => 'مداد-رنگی',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'پاستل و مداد شمعی',
             'dashed_title'  => 'پاستل-مداد-شمعی',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 2
         ]);
-        Menu::create([
+        Category::create([
             'title' => 'گواش و آبرنگ',
             'dashed_title'  => 'گواش-آبرنگ',
-            'parent_id' => $mainMenu->id,
+            'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
     }

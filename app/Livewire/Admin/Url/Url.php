@@ -10,10 +10,10 @@ use Livewire\Component;
 class Url extends Component
 {
     #[Reactive]
-    public Collection $urls, $menus;
-    public string $title = '';
-    public int $menuId = 0;
+    public  Collection $categories;
     public \App\Models\Url $url;
+    public string $title = '';
+    public int $categoryId = 0;
 
     public function mount(): void
     {
@@ -21,15 +21,13 @@ class Url extends Component
         $this->title = '';
     }
 
-
     protected function rules(): array
     {
         return [
             'title' => 'required|string|min:3|' . Rule::unique('urls', 'title')->ignore($this->url),
-            'menuId' => 'required|integer|exists:menus,id',
+            'categoryId' => 'required|integer|exists:categories,id',
         ];
     }
-
 
     public function save(): void
     {
@@ -38,25 +36,25 @@ class Url extends Component
         $this->validate();
         $this->url->title = $this->title;
         $this->url->dashed_title = $dashedTitle;
-        $this->url->menu_id = $this->menuId;
+        $this->url->category_id = $this->categoryId;
         $this->url->save();
         $this->url = new \App\Models\Url();
         $this->title = '';
-        $this->menuId = 0;
-        $this->dispatch('added');
+        $this->categoryId = 0;
     }
 
     public function setUrl($id): void
     {
         $this->url = \App\Models\Url::query()->find($id);
         $this->title = $this->url->title;
-        $this->menuId = $this->url->menu_id;
+        $this->categoryId = $this->url->category_id;
         $this->dispatch('url-updated', $id);
 
     }
 
     public function render()
     {
-        return view('livewire.admin.url.url')->layout('components.layouts.admin');
+        $urls = \App\Models\Url::all();
+        return view('livewire.admin.url.url',compact('urls'))->layout('components.layouts.admin');
     }
 }
