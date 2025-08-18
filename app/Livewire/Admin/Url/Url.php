@@ -54,7 +54,7 @@ class Url extends Component
 
     public function render()
     {
-        $urls = \App\Models\Url::all();
+        $urls = \App\Models\Url::query()->orderBy('in_menu', 'desc')->get();
         return view('livewire.admin.url.url',compact('urls'))->layout('components.layouts.admin');
     }
 }

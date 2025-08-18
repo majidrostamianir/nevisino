@@ -1,26 +1,23 @@
 <div>
-    <div class="grid grid-cols-3 gap-2 h-[150px] max-w-[500px] mx-auto">
-        <!-- عکس سمت چپ -->
-        <img src="{{ asset('/images/banner/b1.jpg') }}"
-             alt="banner1"
-             class="w-full h-full object-cover rounded-lg col-span-1 row-span-2" />
-
-        <!-- 4 عکس سمت راست -->
-        <div class="grid grid-cols-2 grid-rows-2 gap-2 col-span-2">
-            <img src="{{ asset('/images/banner/b2.jpg') }}"
-                 alt="banner2"
-                 class="w-full h-full object-cover rounded-lg" />
-            <img src="{{ asset('/images/banner/b3.jpg') }}"
-                 alt="banner3"
-                 class="w-full h-full object-cover rounded-lg" />
-            <img src="{{ asset('/images/banner/b4.jpg') }}"
-                 alt="banner4"
-                 class="w-full h-full object-cover rounded-lg" />
-            <img src="{{ asset('/images/banner/3.jpg') }}"
-                 alt="banner5"
-                 class="w-full h-full object-cover rounded-lg" />
+    {{--<div class="grid grid-cols-6 grid-rows-4 gap-4">
+        <div class="col-span-2 row-span-2">
+            <img src="images/banner/b3.jpg" class="rounded-md shadow w-full h-[35vh]" alt="">
         </div>
-    </div>
+        <div class="col-span-2 row-span-2 col-start-1 row-start-3">
+            <img src="images/banner/b3.jpg" class="rounded-md shadow w-full h-[35vh]" alt="">
+        </div>
+        <div class="col-span-2 row-span-2 col-start-3 row-start-1">
+            <img src="images/banner/b3.jpg" class="rounded-md shadow w-full h-[35vh]" alt="">
+        </div>
+        <div class="col-span-2 row-span-2 col-start-3 row-start-3">
+            <img src="images/banner/b3.jpg" class="rounded-md shadow w-full h-[35vh]" alt="">
+        </div>
+        <div class="col-span-2 row-span-4 col-start-5 row-start-1">
+            <img src="images/banner/b3.jpg" class="rounded-md shadow w-fit h-full" alt="">
+        </div>
+    </div>--}}
 
-
+    @foreach(\App\Models\Product::all() as $product)
+        <livewire:home.product-card :product="$product" />
+    @endforeach
 </div>

@@ -22,6 +22,10 @@ class ProductPage extends Component
 //        }
     }
 
+    public function addToCart()
+    {
+
+    }
 
 //    public function makePayment()
 //    {
@@ -41,7 +45,6 @@ class ProductPage extends Component
 //        return redirect()->away($payment->pay()->getAction());
 //
 //    }
-
 
 
     public function render(): \Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View

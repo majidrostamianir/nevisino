@@ -23,7 +23,7 @@
     </div>
     <ul class="flex flex-wrap mt-6 overflow-y-scroll h-[20vh]">
         @foreach($urls as $value)
-            <li class="bg-pars-400 text-pars-500 p-1 rounded-md m-1 cursor-pointer h-fit" wire:key="{{ $value->id }}"
+            <li class="@if($value->in_menu) text-pars-900 @else text-pars-500 @endif  bg-pars-400 p-1 rounded-md m-1 cursor-pointer h-fit" wire:key="{{ $value->id }}"
                 wire:click.prevent="setUrl({{ $value->id }})">{{ $value->title }}</li>
         @endforeach
     </ul>
