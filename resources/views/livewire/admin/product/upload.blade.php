@@ -1,7 +1,10 @@
 <div>
-    <div class="w-full m-2">
+    <div class="w-fit m-2">
         <div
             class="relative w-full  border-2 p-2 border-pars-500 border-dashed rounded-lg  bg-pars-100 hover:bg-pars-200 transition-all">
+            @if($variant)
+                <h2 class="font-bold bg-pars-800 text-white rounded-2xl p-3">{{ $variant->name  }}</h2>
+            @endif
             <label for="dropzone-picture"
                    class="flex flex-col items-center justify-center w-full cursor-pointer ">
                 <div class="flex flex-col items-center justify-center ">
@@ -19,15 +22,26 @@
                 <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                 @enderror
                 <div class="mt-3 grid grid-cols-1 sm:grid-cols-4 gap-4">
-                    @for ($i = 1; $i <= $count; $i++)
-                        @if(Storage::disk('public')->exists('products/' . $product->id . '/small/' . $i . '.webp'))
+
+                    @if($variant)
+                        @foreach ($variantImages as $img)
+                            @if($variant->id == $img)
+                                <img class="rounded-xl w-full object-cover"
+                                     src="{{ asset('storage/products/' . $product->id . '/large/' . $img . '.webp') }}?v={{ $imageVersion }}"/>
+                            @endif
+                        @endforeach
+                    @else
+                        @foreach ($regularImages as $img)
                             <img class="rounded-xl w-full object-cover"
-                                 src="{{ asset('storage/products/' . $product->id . '/small/' . $i . '.webp') }}?v={{ $imageVersion }}" />
-                        @endif
-                    @endfor
+                                 src="{{ asset('storage/products/' . $product->id . '/large/' . $img . '.webp') }}?v={{ $imageVersion }}"/>
+                        @endforeach
+
+                    @endif
                 </div>
 
-                <input id="dropzone-picture" type="file" class="cursor-pointer opacity-0 w-full h-full absolute top-0 left-0" multiple
+
+                <input id="dropzone-picture" type="file"
+                       class="cursor-pointer opacity-0 w-full h-full absolute top-0 left-0" multiple
                        wire:model="picture"/>
             </label>
             <div

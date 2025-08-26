@@ -12,6 +12,10 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+
+
+
+
         $mainCategory = Category::create([
             'title' => 'نوشت افزار',
             'dashed_title' => 'نوشت-افزار',
@@ -136,6 +140,17 @@ class CategorySeeder extends Seeder
             'dashed_title' => 'دفتر-یادداشت',
             'parent_id' => $mainCategory->id,
             'order' => 3
+        ]);
+        $mainCategory = Category::create([
+            'title' => 'هدیه و فانتزی',
+            'dashed_title' => 'هدیه-فانتزی',
+            'order' => 5
+        ]);
+        Category::create([
+            'title' => 'دستمال مرطوب',
+            'dashed_title' => 'دستمال-مرطوب',
+            'parent_id' => $mainCategory->id,
+            'order' => 1
         ]);
     }
 }

@@ -2,7 +2,7 @@
     <div class="flex justify-around items-center mt-16">
         <div class="w-full">
             <strong>کاربر گرامی؛</strong>
-            <div class="w-full mt-2">رمز عبور حساب <strong>{{ $mobile }}</strong> را وارد کنید:</div>
+            <div class="w-full mt-2">رمز عبور حساب <strong>{{ english_to_persian_num($mobile) }}</strong> را وارد کنید:</div>
             <input type="password"
                    wire:keydown.enter="submit()"
                    autofocus

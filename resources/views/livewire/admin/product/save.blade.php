@@ -1,7 +1,7 @@
 <div>
-    <div class="sm:flex justify-between">
-        <div>
-            <select class="rounded-2xl m-2" wire:model.live="categoryId">
+    <div class="sm:flex sm:flex-wrap justify-between">
+        <div class="sm:w-3/12 p-1">
+            <select class="w-full rounded-2xl p-2" wire:model.live="categoryId">
                 <option value="{{ null }}">دسته بندی</option>
                 @foreach(\App\Models\Category::query()->whereNotNull('parent_id')->get() as $value)
                     <option value="{{ $value->id }}">{{ $value->title }}</option>
@@ -11,56 +11,69 @@
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="text" class="w-full rounded-2xl bg-white " placeholder="عنوان"
+        <div class="sm:w-3/12 p-1 ">
+            <select class="w-full rounded-2xl pr-2"
+                    wire:model.live="variant">
+                <option value="{{ null }}">بدون ویژگی</option>
+                <option value="color">رنگ</option>
+                <option value="size">اندازه</option>
+                <option value="design">طرح</option>
+                <option value="gender">جنسیت</option>
+            </select>
+            @error('variant')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="sm:w-6/12 p-1 ">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="عنوان"
                    wire:model="title">
             @error('title')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="number" class="w-full rounded-2xl bg-white " placeholder="طول"
+        <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="طول"
                    wire:model="length">
             @error('length')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="number" class="w-full rounded-2xl bg-white " placeholder="عرض"
+        <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="عرض"
                    wire:model="width">
             @error('width')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="number" class="w-full rounded-2xl bg-white " placeholder="ارتفاع"
+        <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="ارتفاع"
                    wire:model="height">
             @error('height')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="number" class="w-full rounded-2xl bg-white " placeholder="وزن"
+        <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="وزن"
                    wire:model="weight">
             @error('weight')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="number" class="w-full rounded-2xl bg-white " placeholder="قیمت"
+        <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت"
                    wire:model="price">
             @error('price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="w-full m-2">
-            <input type="number" class="w-full rounded-2xl bg-white " placeholder="موجودی"
-                   wire:model="inventory">
-            @error('inventory')
+        <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="موجودی"
+                   wire:model="stock">
+            @error('stock')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="relative w-full m-2">
+        <div class="relative sm:w-6/12 p-1 ">
             <div class="w-full relative rounded-2xl bg-white">
                 <div class="px-2 flex flex-wrap items-center gap-1">
                     @foreach ($selectedUrls as $key => $value)
@@ -93,14 +106,57 @@
             @enderror
         </div>
     </div>
+
+    @if($variant)
+        <div class="w-full   rounded-2xl p-2">
+            <h3 class="font-bold text-gray-700 mb-2">ویژگی ها</h3>
+            @foreach($variants as $i => $variant)
+                <div class="flex gap-2 items-center mb-2">
+                    <span>{{ $i+1 }} .</span>
+                    <input type="text" class="rounded-2xl w-1/3 pr-2"
+                           placeholder="نام ویژگی (مثلاً قرمز،  بتمن)"
+                           wire:model="variants.{{ $i }}.name">
+                    @error('variants.' . $i  .'.name')
+                    <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+                    @enderror
+                    <input type="number" class="rounded-2xl w-1/4 pr-2"
+                           placeholder="قیمت (اختیاری)"
+                           wire:model="variants.{{ $i }}.price">
+                    @error('variants.' . $i  .'.price')
+                    <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+                    @enderror
+                    <input type="number" class="rounded-2xl w-1/4 pr-2"
+                           placeholder="موجودی"
+                           wire:model="variants.{{ $i }}.stock">
+                    @error('variants.' . $i  .'.stock')
+                    <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+                    @enderror
+                    <button type="button" class="text-red-500 font-bold px-2" wire:click="removeVariant({{ $i }})">x
+                    </button>
+                </div>
+            @endforeach
+
+            <button type="button"
+                    class="bg-pars-500 hover:bg-pars-600 cursor-pointer text-white text-sm px-3 py-1 rounded-2xl"
+                    wire:click="addVariant">+ افزودن ویژگی
+            </button>
+        </div>
+    @endif
+
     <div class="w-full text-center my-2">
         <button
             class="w-1/2 rounded-2xl  p-1.5 cursor-pointer bg-pars-500 hover:bg-pars-600 text-white transition-all "
             wire:click="save()">ذخیره و آپلود عکس ها
         </button>
     </div>
+
     @if($product->id)
-        <livewire:admin.product.upload :product="$product" />
+       <div class="sm:flex sm:flex-wrap">
+           @foreach($product->variants as $value)
+               <livewire:admin.product.upload :product="$product" :variant="$value"/>
+           @endforeach
+           <livewire:admin.product.upload :product="$product"/>
+       </div>
     @endif
 
 </div>

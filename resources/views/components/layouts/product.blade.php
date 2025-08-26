@@ -6,11 +6,6 @@
     <meta name="robots" content="noindex, follow">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
 
-    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
-    />
 
     <title>{{ $title ?? 'سان گرافیک' }}</title>
 
@@ -28,11 +23,13 @@
     {{ $slot }}
 </div>
 
-<livewire:home.footer />
+{{--<livewire:home.footer />--}}
 
 @livewireScripts
 
 
+
+@stack('scripts')
 
 </body>
 </html>

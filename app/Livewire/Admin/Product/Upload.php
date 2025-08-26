@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Product;
 
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -21,11 +22,45 @@ class Upload extends Component
     public int $count;
 
 
+    public $regularImages = [];
+    public $variantImages = [];
+    public ProductVariant|null $variant = null;
+
+
+
+    protected function loadImages()
+    {
+        $files = Storage::disk('public')->files('products/' . $this->product->id . '/large');
+
+        $regular = [];
+        $variant = [];
+
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) !== 'webp') continue;
+
+            $name = pathinfo($file, PATHINFO_FILENAME);
+
+            if (is_numeric($name)) {
+                if ((int)$name < 1000) {
+                    $regular[] = $name;
+                } else {
+                    $variant[] = $name;
+                }
+            }
+        }
+
+        sort($regular);
+        sort($variant);
+
+        $this->regularImages = $regular;
+        $this->variantImages = $variant;
+    }
     protected $listeners = ['imageUpdated' => 'refreshImage'];
 
     public function mount()
     {
         $this->pictureCount();
+        $this->loadImages();
     }
 
     public function refreshImage()
@@ -54,21 +89,23 @@ class Upload extends Component
         ]);
         $manager = new ImageManager(new Driver());
         $folder = 'products/' . $this->product->id;
-        $sizes = ['large' => 1050, 'small' => 350,];
+        $sizes = ['large' => 1400, 'small' => 525,];
         $sortedPictures = collect($this->picture)->sortBy(function ($file) {
-                return $file->getClientOriginalName();
-            }, SORT_NATURAL | SORT_FLAG_CASE)->values()->all();
-        if (Storage::disk('public')->exists($folder)) {
-            Storage::disk('public')->deleteDirectory($folder);
-        }
+            return $file->getClientOriginalName();
+        }, SORT_NATURAL | SORT_FLAG_CASE)->values()->all();
+
 //        $watermark = $manager->read(public_path('images/watermark.png'));
 //        $picture->place($watermark);
 
 
         foreach ($sortedPictures as $key => $image) {
             $picture = $manager->read($image);
-            $index = $key + 1;
 
+            if ($this->variant) {
+                $index = $this->variant->id;
+            } else {
+                $index = $key + 1;
+            }
             foreach ($sizes as $name => $height) {
                 $path = "$folder/$name";
 

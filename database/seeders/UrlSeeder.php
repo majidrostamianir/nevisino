@@ -12,6 +12,38 @@ class UrlSeeder extends Seeder
      */
     public function run(): void
     {
+        Url::query()->create([
+            'title' => 'نوشت افزار',
+            'dashed_title' => 'نوشت-افزار',
+            'category_id' => 1,
+            'in_menu' => true,
+        ]);
+        Url::query()->create([
+            'title' => 'لوازم نقاشی و رنگ آمیزی',
+            'dashed_title' => 'لوازم-نقاشی-رنگ آمیزی',
+            'category_id' => 9,
+            'in_menu' => true,
+        ]);
+        Url::query()->create([
+            'title' => 'لوازم اداری',
+            'dashed_title' => 'لوازم-اداری',
+            'category_id' => 14,
+            'in_menu' => true,
+        ]);
+        Url::query()->create([
+            'title' => 'دفتر و دفترچه',
+            'dashed_title' => 'دفتر-دفترچه',
+            'category_id' => 18,
+            'in_menu' => true,
+        ]);
+        Url::query()->create([
+            'title' => 'هدیه و فانتزی',
+            'dashed_title' => 'هدیه-فانتزی',
+            'category_id' => 22,
+            'in_menu' => true,
+        ]);
+
+
         Url::create([
             'title' => 'مداد',
             'dashed_title' => 'مداد',
@@ -118,6 +150,12 @@ class UrlSeeder extends Seeder
             'title' => 'دفتر یادداشت',
             'dashed_title' => 'دفتر-یادداشت',
             'category_id' => 21,
+            'in_menu' => true,
+        ]);
+        Url::create([
+            'title' => 'دستمال مرطوب',
+            'dashed_title' => 'دستمال-مرطوب',
+            'category_id' => 23,
             'in_menu' => true,
         ]);
 

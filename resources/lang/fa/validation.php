@@ -12,6 +12,7 @@ return array(
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
+    'prohibited_unless' => 'فیلد :attribute نباید مقدار داشته باشد مگر اینکه فیلد :other برابر :value باشد.',
 
     "accepted"         => ":attribute باید پذیرفته شده باشد.",
     "active_url"       => "آدرس :attribute معتبر نیست",
