@@ -148,6 +148,7 @@ return array(
         "otp" => "کد تایید",
         "weight"=>"وزن",
         "length"=>"طول",
+        "selectedVariant"=>"انتخاب ویژگی",
 
     ),
 );

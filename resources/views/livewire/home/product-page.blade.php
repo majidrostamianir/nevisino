@@ -30,8 +30,8 @@
             <h1 class="hidden sm:block font-bold text-xl mb-6">{{ english_to_persian_num($product->title) }}</h1>
             <h4 class="bg-pars-200 shadow rounded mb-3 p-1">
                 @php
-                    $category = \App\Models\Category::query()->find($product->category_id); // رابطه‌ی Product->category باید تعریف شده باشه
-                    $parent = \App\Models\Category::query()->find($category->parent_id);   // رابطه‌ی Category->parent باید تعریف شده باشه
+                    $category = \App\Models\Category::query()->find($product->category_id);
+                    $parent = \App\Models\Category::query()->find($category->parent_id);
                 @endphp
 
                 <a href="{{ route('home') }}">نویسینو</a>
@@ -79,23 +79,25 @@
                     <select
                         class="w-fit rounded-2xl border border-pars-500 py-0 px-4 focus:outline-none focus:ring-2 focus:ring-pars-500 focus:border-pars-500 cursor-pointer"
                         wire:model.live="selectedVariant">
-                        <option value="">به انتخاب نویسینو</option>
+                        <option value="">انتخاب کنید</option>
                         @foreach($product->variants as $value)
                             <option value="{{ $value->id }}">{{ $value->name }}</option>
                         @endforeach
                     </select>
+                    @error('selectedVariant')
+                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                    @enderror
                 </h4>
             @endif
             <div class="flex items-center gap-2">
-
                 <div class="flex">
                     <div wire:click.prevent="increase()"
                          class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 rounded-r-2xl cursor-pointer select-none">
                         +
                     </div>
-
                     <input type="text"
-                           oninput="this.value = this.value.replace(/[^0-9۰-۹]/g, ''); this.value = this.value.replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);"
+                           wire:model.live="count"
+                           oninput="this.value = this.value.replace(/[^0-9۰-۹]/g, ''); this.value = this.value.replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); "
                            class="w-14 h-10 text-center border-t border-b border-pars-300 border-l-0 border-r-0 focus:outline-none"
                            value="{{ strtr($count, ['0' =>'۰' ,'1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) }}">
 
@@ -103,7 +105,6 @@
                          class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 rounded-l-2xl cursor-pointer select-none">
                         -
                     </div>
-
                 </div>
                 <button wire:click="addToCart()" wire:navigate wire:loading.attr="disabled"
                         class="flex items-center cursor-pointer justify-center bg-pars-500 text-white px-4 h-10 rounded shadow hover:bg-pars-600 transition-all">

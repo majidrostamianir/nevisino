@@ -15,7 +15,7 @@ class Save extends Component
     public int|null $categoryId = null;
     public int $length, $width, $height, $price, $weight, $stock;
     public string $title = '', $query ='';
-    public string|null $variant = null;
+    public string|null $variant = null ,$code = null;
 
     public array $urls = [];
     public array $selectedUrls = [];
@@ -74,6 +74,7 @@ class Save extends Component
         if ($product) {
             $this->product = $product;
             $this->title = $product->title;
+            $this->code = $product->code;
             $this->variant = $product->variant;
             $this->selectedUrls = $product->urls->pluck('title', 'id')->toArray();
             $this->categoryId = $product->category_id;
@@ -160,7 +161,7 @@ class Save extends Component
             'variants' => ['nullable', 'array', 'required_with:variant', 'prohibited_if:variant,null|required_with:variant|array'],
             'variants.*.name' => ['required_with:variant', 'string', 'min:2', 'max:255'],
             'variants.*.price' => ['nullable', 'int',],
-            'variants.*.stock' => ['required_with:variant', 'int'],
+            'variants.*.stock' => ['required_with:variant', 'int' , 'min:0'],
             'selectedUrls' => 'required|array|min:1',
             'categoryId' => 'required',
             'length' => 'required|integer|min:0',
@@ -174,7 +175,7 @@ class Save extends Component
 
     public function save()
     {
-//        dd($this->variants);
+
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
         $dashed_title = trim(preg_replace('/\s+/', '-', $this->title));
         $this->validate();

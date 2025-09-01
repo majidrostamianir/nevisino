@@ -24,10 +24,17 @@
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-6/12 p-1 ">
+        <div class="sm:w-3/12 p-1 ">
             <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="عنوان"
                    wire:model="title">
             @error('title')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="sm:w-3/12 p-1 ">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="کد کالا"
+                   wire:model="code">
+            @error('code')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
