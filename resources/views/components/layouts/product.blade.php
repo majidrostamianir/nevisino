@@ -23,7 +23,10 @@
     {{ $slot }}
 </div>
 
-<livewire:home.footer />
+<livewire:home.toast />
+
+
+{{--<livewire:home.footer />--}}
 
 @livewireScripts
 

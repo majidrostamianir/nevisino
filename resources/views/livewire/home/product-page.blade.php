@@ -2,19 +2,14 @@
     <div class="sm:flex flex-row-reverse w-full p-4  sm:p-8 rounded-2xl mx-auto mt-10 bg-pars-100 shadow">
         <div class="w-full sm:w-7/12 sm:mr-2">
             <h1 class="sm:hidden font-bold text-xl mb-6">{{ english_to_persian_num($product->title) }}</h1>
-            <div class="overflow-hidden h-[60vh]  relative flex justify-center items-center"
-                 onmousemove="zoom(event)"
-                 onmouseleave="resetZoom()">
-                <img
-                    id="zoomImg"
-                    src="{{ $src }}"
-                    class="h-[60vh] object-contain transition-transform duration-200 mx-auto">
+            <div class="overflow-hidden h-[60vh] relative flex justify-center items-center" id="zoomContainer-{{ $product->id }}">
+                <img id="zoomImg-{{ $product->id }}" src="{{ $src }}" class="h-[60vh] object-contain transition-transform duration-200 mx-auto">
             </div>
 
             <div class="flex justify-center mt-2">
                 @foreach($images as $image)
                     <div>
-                        <img wire:click.prevent="setImage('{{ $image }}')"
+                        <img wire:click.prevent="setImage('{{ $image }}')" wo
                              class="w-16 h-16 mx-1 cursor-pointer rounded hover:scale-105"
                              src="{{ asset('storage/products/' . $product->id. '/small/' . $image . '.webp') }}">
                         @if(\App\Models\ProductVariant::query()->find($image))
@@ -104,12 +99,9 @@
                         </path>
                     </svg>
                 </button>
-
             </div>
-
         </div>
     </div>
-
 
     {{-- <div class="w-full sm:w-11/12  p-4 rounded-2xl mx-auto mt-10 bg-pars-100 shadow min-h-24 mb-6">
          <small>طرح های مشابه</small>
@@ -124,21 +116,47 @@
      </div>--}}
 
     <script>
-        const img = document.getElementById('zoomImg');
+        document.addEventListener('livewire:navigated', () => {
+            initZoom('{{ $product->id }}');
+        });
 
-        function zoom(e) {
-            const {left, top, width, height} = e.currentTarget.getBoundingClientRect();
-            const x = ((e.clientX - left) / width) * 100;
-            const y = ((e.clientY - top) / height) * 100;
+        document.addEventListener('livewire:init', () => {
+            initZoom('{{ $product->id }}');
+        });
 
-            img.style.transformOrigin = `${x}% ${y}%`;
-            img.style.transform = "scale(2)"; // میزان زوم
+        function initZoom(productId) {
+            const container = document.getElementById('zoomContainer-' + productId);
+            const img = document.getElementById('zoomImg-' + productId);
+
+            if (!container || !img) return;
+
+            // حذف event listenerهای قبلی (اگر وجود دارن)
+            container.removeEventListener('mousemove', container._zoomHandler);
+            container.removeEventListener('mouseleave', container._resetHandler);
+
+            function zoom(e) {
+                const {left, top, width, height} = container.getBoundingClientRect();
+                const x = ((e.clientX - left) / width) * 100;
+                const y = ((e.clientY - top) / height) * 100;
+
+                img.style.transformOrigin = `${x}% ${y}%`;
+                img.style.transform = "scale(2)";
+            }
+
+            function resetZoom() {
+                img.style.transformOrigin = "center center";
+                img.style.transform = "scale(1)";
+            }
+
+            // ذخیره reference به توابع برای حذف بعدی
+            container._zoomHandler = zoom;
+            container._resetHandler = resetZoom;
+
+            container.addEventListener('mousemove', zoom);
+            container.addEventListener('mouseleave', resetZoom);
         }
 
-        function resetZoom() {
-            img.style.transformOrigin = "center center";
-            img.style.transform = "scale(1)";
-        }
+        // مقداردهی اولیه
+        initZoom('{{ $product->id }}');
     </script>
-
 </div>
