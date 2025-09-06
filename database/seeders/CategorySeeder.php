@@ -117,6 +117,12 @@ class CategorySeeder extends Seeder
             'parent_id' => $mainCategory->id,
             'order' => 3
         ]);
+        Category::create([
+            'title' => 'قیچی',
+            'dashed_title' => 'قیچی',
+            'parent_id' => $mainCategory->id,
+            'order' => 4
+        ]);
 
         $mainCategory = Category::create([
             'title' => 'دفتر و دفترچه',
@@ -142,15 +148,21 @@ class CategorySeeder extends Seeder
             'order' => 3
         ]);
         $mainCategory = Category::create([
-            'title' => 'هدیه و فانتزی',
-            'dashed_title' => 'هدیه-فانتزی',
+            'title' => 'هدیه و سرگرمی',
+            'dashed_title' => 'هدیه-سرگرمی',
             'order' => 5
+        ]);
+        Category::create([
+            'title' => 'خمیر بازی',
+            'dashed_title' => 'خمیر-بازی',
+            'parent_id' => $mainCategory->id,
+            'order' => 1
         ]);
         Category::create([
             'title' => 'دستمال مرطوب',
             'dashed_title' => 'دستمال-مرطوب',
             'parent_id' => $mainCategory->id,
-            'order' => 1
+            'order' => 2
         ]);
     }
 }

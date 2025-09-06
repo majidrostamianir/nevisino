@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
 
 
-    <title>{{ $title ?? 'سان گرافیک' }}</title>
+    <title>{{ $title ?? 'نویسینو' }}</title>
 
     @vite('resources/css/app.css')
     @livewireStyles
@@ -23,7 +23,7 @@
     {{ $slot }}
 </div>
 
-{{--<livewire:home.footer />--}}
+<livewire:home.footer />
 
 @livewireScripts
 

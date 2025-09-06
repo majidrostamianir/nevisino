@@ -1,14 +1,22 @@
 <div>
-    <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}" class="h-96 w-80 bg-white flex flex-col items-center pt-4 rounded-sm shadow cursor-pointer">
-        <div class="w-72 h-72 overflow-hidden">
-            <img class="w-full h-full object-cover object-center"
-                 src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}" alt="">
+    <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}"
+       class="flex flex-row sm:flex-col items-center bg-white rounded shadow hover:shadow-lg cursor-pointer h-full">
+
+        <!-- عکس -->
+        <div class="w-24 sm:w-full  overflow-hidden rounded-r-sm sm:rounded-t-sm sm:rounded-b-none">
+            <img class="w-full aspect-square hover:scale-105 transition-all"
+                 src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
+                 alt="">
         </div>
-        <div class="mt-3">
-            <h5 class="font-bold text-right">{{ english_to_persian_num($product->title) }}</h5>
-        </div>
-        <div class="mt-3">
-            <h5 class="text-right">{{ english_to_persian_num(number_format($product->price)) }} تومان</h5>
+
+        <!-- متن -->
+        <div class="flex-1 px-2 sm:px-0 sm:py-4 text-right sm:text-center">
+            <h5 class="text-xs sm:text-lg font-bold">
+                {{ english_to_persian_num($product->title) }}
+            </h5>
+            <h5 class="text-xs sm:text-sm mt-2">
+                {{ english_to_persian_num(number_format($product->price)) }} تومان
+            </h5>
         </div>
     </a>
 </div>

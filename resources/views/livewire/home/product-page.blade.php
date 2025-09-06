@@ -8,7 +8,7 @@
                 <img
                     id="zoomImg"
                     src="{{ $src }}"
-                    class="h-[70vh] object-contain transition-transform duration-200 mx-auto">
+                    class="h-[60vh] object-contain transition-transform duration-200 mx-auto">
             </div>
 
             <div class="flex justify-center mt-2">
@@ -44,11 +44,10 @@
                     / <a href="{{ '/category/' . $category->dashed_title }}">{{ $category->title }}</a>
                 @endif
 
-                / {{ english_to_persian_num($product->title) }}
             </h4>
             @if($product->code)
                 <h4 class="bg-pars-200 shadow rounded mb-3 p-1"><span
-                        class="font-bold">شناسه محصول:</span> {{ english_to_persian_num($product->code) }}</h4>
+                        class="font-bold">کد محصول:</span> {{ english_to_persian_num($product->code) }}</h4>
             @endif
             <h4 class="bg-pars-200 shadow rounded mb-3 p-1"><span class="font-bold">دسته بندی: </span><a
                     href="{{ '/category/' . \App\Models\Category::query()->find($product->category_id)->dashed_title }}">{{ \App\Models\Category::query()->find($product->category_id)->title }}</a>
@@ -61,20 +60,7 @@
             @if($product->variant)
                 <h4 class="bg-pars-200 shadow rounded mb-6 p-1">
                 <span class="font-bold">
-                    @switch($product->variant)
-                        @case('color')
-                            انتخاب رنگ:
-                            @break
-                        @case('size')
-                            اندازه:
-                            @break
-                        @case('design')
-                            طرح
-                            @break
-                        @case('gender')
-                            مخصوص
-                            @break
-                    @endswitch
+                   {{$product->variant}}
                 </span>
                     <select
                         class="w-fit rounded-2xl border border-pars-500 py-0 px-4 focus:outline-none focus:ring-2 focus:ring-pars-500 focus:border-pars-500 cursor-pointer"

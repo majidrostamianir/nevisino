@@ -33,13 +33,13 @@ class UrlSeeder extends Seeder
         Url::query()->create([
             'title' => 'دفتر و دفترچه',
             'dashed_title' => 'دفتر-دفترچه',
-            'category_id' => 18,
+            'category_id' => 19,
             'in_menu' => true,
         ]);
         Url::query()->create([
-            'title' => 'هدیه و فانتزی',
-            'dashed_title' => 'هدیه-فانتزی',
-            'category_id' => 22,
+            'title' => 'هدیه و سرگرمی',
+            'dashed_title' => 'هدیه-سرگرمی',
+            'category_id' => 23,
             'in_menu' => true,
         ]);
 
@@ -132,30 +132,42 @@ class UrlSeeder extends Seeder
             'category_id' => 17,
             'in_menu' => true,
         ]);
+        Url::create([
+            'title' => 'قیچی',
+            'dashed_title' => 'قیچی',
+            'category_id' => 18,
+            'in_menu' => true,
+        ]);
 
 
         Url::create([
             'title' => 'دفتر مشق',
             'dashed_title' => 'دفتر-مشق',
-            'category_id' => 19,
+            'category_id' => 20,
             'in_menu' => true,
         ]);
         Url::create([
             'title' => 'دفتر نقاشی',
             'dashed_title' => 'دفتر-نقاشی',
-            'category_id' => 20,
+            'category_id' => 21,
             'in_menu' => true,
         ]);
         Url::create([
             'title' => 'دفتر یادداشت',
             'dashed_title' => 'دفتر-یادداشت',
-            'category_id' => 21,
+            'category_id' => 22,
+            'in_menu' => true,
+        ]);
+        Url::create([
+            'title' => 'خمیر بازی',
+            'dashed_title' => 'خمیر-بازی',
+            'category_id' => 24,
             'in_menu' => true,
         ]);
         Url::create([
             'title' => 'دستمال مرطوب',
             'dashed_title' => 'دستمال-مرطوب',
-            'category_id' => 23,
+            'category_id' => 25,
             'in_menu' => true,
         ]);
 

@@ -13,7 +13,7 @@ class Save extends Component
 {
     public Product $product;
     public int|null $categoryId = null;
-    public int $length, $width, $height, $price, $weight, $stock;
+    public int $size, $price, $weight, $stock;
     public string $title = '', $query ='';
     public string|null $variant = null ,$code = null;
 
@@ -78,9 +78,7 @@ class Save extends Component
             $this->variant = $product->variant;
             $this->selectedUrls = $product->urls->pluck('title', 'id')->toArray();
             $this->categoryId = $product->category_id;
-            $this->length = $product->length;
-            $this->width = $product->width;
-            $this->height = $product->height;
+            $this->size = $product->size;
             $this->price = $product->price;
             $this->weight = $product->weight;
             $this->stock = $product->stock;
@@ -164,18 +162,16 @@ class Save extends Component
             'variants.*.stock' => ['required_with:variant', 'int' , 'min:0'],
             'selectedUrls' => 'required|array|min:1',
             'categoryId' => 'required',
-            'length' => 'required|integer|min:0',
-            'width' => 'required|integer|min:0',
-            'height' => 'required|integer|min:0',
+            'size' => 'nullable|integer|min:0',
             'weight' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
             'stock' => 'required|integer|min:0',
+            'code' => 'nullable|string|min:1|max:255',
         ];
     }
 
     public function save()
     {
-
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
         $dashed_title = trim(preg_replace('/\s+/', '-', $this->title));
         $this->validate();
@@ -183,12 +179,11 @@ class Save extends Component
         $this->product->dashed_title = $dashed_title;
         $this->product->variant = $this->variant;
         $this->product->category_id = $this->categoryId;
-        $this->product->length = $this->length;
-        $this->product->width = $this->width;
-        $this->product->height = $this->height;
+        $this->product->size = "0";  ////////chenge it
         $this->product->weight = $this->weight;
         $this->product->price = $this->price;
         $this->product->stock = $this->stock;
+        $this->product->code = $this->code;
         $this->product->save();
 
         $this->product->urls()->sync(array_keys($this->selectedUrls));

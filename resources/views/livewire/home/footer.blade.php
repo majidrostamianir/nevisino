@@ -8,8 +8,7 @@
         <div class="flex">
             <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                 viewBox="0 0 418.135 418.135" xml:space="preserve">
-<g>
+                 viewBox="0 0 418.135 418.135" xml:space="preserve"><g>
     <path style="fill:#7AD06D;" d="M198.929,0.242C88.5,5.5,1.356,97.466,1.691,208.02c0.102,33.672,8.231,65.454,22.571,93.536
 		L2.245,408.429c-1.191,5.781,4.023,10.843,9.766,9.483l104.723-24.811c26.905,13.402,57.125,21.143,89.108,21.631
 		c112.869,1.724,206.982-87.897,210.5-200.724C420.113,93.065,320.295-5.538,198.929,0.242z M323.886,322.197
@@ -32,8 +31,6 @@
     </div>
     <div class="flex w-full sm:w-1/3 justify-center  justify-items-center ">
         <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot' alt='' style='cursor:pointer' code='sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'></a>   <div class="mx-1"></div>
-        <img referrerpolicy="origin" width="100px" id="rgvjjzpefukznbqewlaonbqe" style="cursor:pointer"
-             onclick="window.open(&quot;https://logo.samandehi.ir/Verify.aspx?id=376242&amp;p=xlaojyoegvkauiwkaodsuiwk&quot;, &quot;Popup&quot;,&quot;toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30&quot;)"
-             alt="logo-samandehi" src="https://logo.samandehi.ir/logo.aspx?id=376242&amp;p=qftiyndtwlbqodrfshwlodrf">
+        <img referrerpolicy='origin' id = 'rgvjjzpeoeukjxlzwlaoesgt' style = 'cursor:pointer' onclick = 'window.open("https://logo.samandehi.ir/Verify.aspx?id=378140&p=xlaojyoemcsirfthaodsobpd", "Popup","toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30")' alt = 'logo-samandehi' src = 'https://logo.samandehi.ir/logo.aspx?id=378140&p=qftiyndtaqgwnbpdshwllyma' />
     </div>
 </div>

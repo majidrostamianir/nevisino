@@ -20,9 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('price');
             $table->unsignedBigInteger('stock');
             $table->unsignedBigInteger('sold_quantity')->default(0);
-            $table->unsignedInteger('length');
-            $table->unsignedInteger('width');
-            $table->unsignedInteger('height');
+            $table->string('size');
             $table->unsignedInteger('weight');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');

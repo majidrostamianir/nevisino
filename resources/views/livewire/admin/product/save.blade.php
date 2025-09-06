@@ -12,14 +12,8 @@
             @enderror
         </div>
         <div class="sm:w-3/12 p-1 ">
-            <select class="w-full rounded-2xl pr-2"
-                    wire:model.live="variant">
-                <option value="{{ null }}">بدون ویژگی</option>
-                <option value="color">رنگ</option>
-                <option value="size">اندازه</option>
-                <option value="design">طرح</option>
-                <option value="gender">جنسیت</option>
-            </select>
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="ویژگی"
+                   wire:model="variant">
             @error('variant')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -39,23 +33,10 @@
             @enderror
         </div>
         <div class="sm:w-3/12 p-1 ">
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="طول"
-                   wire:model="length">
-            @error('length')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-        </div>
-        <div class="sm:w-3/12 p-1 ">
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="عرض"
-                   wire:model="width">
-            @error('width')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-        </div>
-        <div class="sm:w-3/12 p-1 ">
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="ارتفاع"
-                   wire:model="height">
-            @error('height')
+           <select class="w-full rounded-2xl" wire:model="size">
+               <option value="1">اندازه پاکت پستی</option>
+           </select>
+            @error('size')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
