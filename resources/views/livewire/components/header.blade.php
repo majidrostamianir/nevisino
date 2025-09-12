@@ -8,10 +8,14 @@
                 <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
             </a>
             <div class="flex">
-                <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2 ml-2"
+                <a class="flex relative bg-pars-500 hover:bg-pars-600 text-white rounded-md items-center px-2 ml-2"
                    href="{{ route('cart') }}" wire:navigate>
                     <img src="{{ asset('images/cart.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
                     <span class="text-sm py-2.5">سبد خرید</span>
+                    @if($cartCount > 0)
+                        <span
+                            class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
+                    @endif
                 </a>
 
                 @if(Auth::check())
@@ -43,7 +47,7 @@
             </button>
 
             <div class="w-full pl-4">
-                <livewire:home.search/>
+                <livewire:components.search/>
             </div>
 
         </div>
@@ -56,7 +60,7 @@
                 <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
             </a>
             <div class="w-full">
-                <livewire:home.search/>
+                <livewire:components.search/>
             </div>
         </div>
 

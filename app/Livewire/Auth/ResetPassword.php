@@ -86,9 +86,9 @@ class ResetPassword extends Component
                 $this->user->password = Hash::make($this->password);
                 $this->user->save();
                 \Auth::login($this->user);
-                if (session('product_url')) {
-                    $url = session('product_url');
-                    session()->forget('product_url');
+                if (session('previous_url')) {
+                    $url = session('previous_url');
+                    session()->forget('previous_url');
                     return $this->redirect($url);
                 }
                 return $this->redirect('/', navigate: true);

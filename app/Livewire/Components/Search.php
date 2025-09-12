@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Home;
+namespace App\Livewire\Components;
 
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -46,6 +46,6 @@ class Search extends Component
     }
     public function render()
     {
-        return view('livewire.home.search');
+        return view('livewire.components.search');
     }
 }

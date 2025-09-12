@@ -3,13 +3,14 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class Login extends Component
 {
-    public User $user ;
+    public User $user;
     #[Validate('required|string|min:4|max:12')]
     public string $password = '';
     public string $mobile;
@@ -36,17 +37,44 @@ class Login extends Component
         ]);
 
         if (Hash::check($this->password, $this->user->password)) {
-            \Auth::login($this->user);
+            Auth::login($this->user);
+
+            $this->transferCartFromSession($this->user);
+
             session()->forget('mobile');
-            if (session('product_url')) {
-                $url = session('product_url');
-                session()->forget('product_url');
+            if (session('previous_url')) {
+                $url = session('previous_url');
+                session()->forget('previous_url');
                 return $this->redirect($url);
             }
             return $this->redirect('/', navigate: true);
         } else {
             $this->addError('password', 'رمز عبور اشتباه است.');
             return null;
+        }
+    }
+
+    protected function transferCartFromSession($user)
+    {
+        $sessionCart = session()->get('cart', []);
+
+        if (!empty($sessionCart)) {
+            $previousCart = $user->cart()->first();
+            if ($previousCart) {
+                $previousCart->items()->delete();
+                $previousCart->delete();
+            }
+            $cart = $user->cart()->create();
+
+            foreach ($sessionCart as  $item) {
+                $cart->items()->create([
+                    'product_id' => $item['id'],
+                    'variant_id' => $item['variant'] ?? null,
+                    'quantity' =>(int) persian_to_english_num($item['quantity']),
+                ]);
+            }
+            session()->forget('cart');
+            session()->save();
         }
     }
 

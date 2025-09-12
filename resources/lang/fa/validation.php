@@ -149,6 +149,12 @@ return array(
         "weight"=>"وزن",
         "length"=>"طول",
         "selectedVariant"=>"انتخاب ویژگی",
+        "zipcode"=>"کد پستی",
+        "province_id"=>"استان",
+        "city_id"=>"شهر",
+        "recipient_mobile"=>"شماره موبایل",
+        "recipient_name"=>"نام",
+        "postal_address"=>"آدرس",
 
     ),
 );

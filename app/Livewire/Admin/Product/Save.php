@@ -12,10 +12,10 @@ use Livewire\Component;
 class Save extends Component
 {
     public Product $product;
-    public int|null $categoryId = null;
-    public int $size, $price, $weight, $stock;
-    public string $title = '', $query ='';
-    public string|null $variant = null ,$code = null;
+    public int|null $categoryId = null, $stock = null;
+    public int $size, $price, $weight;
+    public string $title = '', $query = '';
+    public string|null $variant = null, $code = null;
 
     public array $urls = [];
     public array $selectedUrls = [];
@@ -40,7 +40,7 @@ class Save extends Component
     public function removeVariant($index): void
     {
         unset($this->variants[$index]);
-        $this->variants = array_values($this->variants); // ری‌ایندکس بشه
+        $this->variants = array_values($this->variants);
     }
 
     public function focus()
@@ -108,8 +108,7 @@ class Save extends Component
     public function setUrls(): void
     {
         if ($this->categoryId) {
-
-           $this->updateAvailableUrls();
+            $this->updateAvailableUrls();
         }
     }
 
@@ -159,27 +158,31 @@ class Save extends Component
             'variants' => ['nullable', 'array', 'required_with:variant', 'prohibited_if:variant,null|required_with:variant|array'],
             'variants.*.name' => ['required_with:variant', 'string', 'min:2', 'max:255'],
             'variants.*.price' => ['nullable', 'int',],
-            'variants.*.stock' => ['required_with:variant', 'int' , 'min:0'],
+            'variants.*.stock' => ['required_with:variant', 'int', 'min:0'],
             'selectedUrls' => 'required|array|min:1',
             'categoryId' => 'required',
             'size' => 'nullable|integer|min:0',
             'weight' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
-            'stock' => 'required|integer|min:0',
+            'stock' => 'nullable|integer|min:0',
             'code' => 'nullable|string|min:1|max:255',
         ];
     }
 
     public function save()
     {
+        if ($this->variant === null)
+            $this->stock = null;
+
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
+        $this->variant = trim(preg_replace('/\s+/', ' ', $this->variant));
         $dashed_title = trim(preg_replace('/\s+/', '-', $this->title));
         $this->validate();
         $this->product->title = $this->title;
         $this->product->dashed_title = $dashed_title;
         $this->product->variant = $this->variant;
         $this->product->category_id = $this->categoryId;
-        $this->product->size = "0";  ////////chenge it
+        $this->product->size = "0";          ////////  change it
         $this->product->weight = $this->weight;
         $this->product->price = $this->price;
         $this->product->stock = $this->stock;

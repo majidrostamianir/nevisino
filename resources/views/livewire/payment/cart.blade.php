@@ -33,7 +33,7 @@
                                 <input type="text"
                                        disabled
                                        class="w-14 h-10 text-center border-t border-b border-pars-300 border-l-0 border-r-0 focus:outline-none"
-                                       value="{{ strtr($product['count'], ['0' =>'۰' ,'1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) }}">
+                                       value="{{ strtr($product['quantity'], ['0' =>'۰' ,'1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) }}">
                                 <div wire:click.prevent="decrease('{{ $key }}')"
                                      class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 rounded-l-2xl cursor-pointer select-none">
                                     -
@@ -41,9 +41,9 @@
                             </div>
                         </td>
                         <td class="px-4 py-2">
-                            @if($product['count'] > 1)
-                                {{  english_to_persian_num(number_format($product['count'] * $product['price'])) }}
-                                =  {{ english_to_persian_num($product['count']) }}
+                            @if($product['quantity'] > 1)
+                                {{  english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}
+                                =  {{ english_to_persian_num($product['quantity']) }}
                                 × {{ english_to_persian_num(number_format($product['price'])) }}
                             @else
                                 {{  english_to_persian_num(number_format( $product['price'])) }}
@@ -64,7 +64,7 @@
                 <p class="text-center  pt-8 w-full">سبد خرید شما خالی است</p>
             </div>
         @endif
-        <div class="w-full  sm:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2">
+        <div class="sticky top-20 h-fit w-full  sm:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2">
             <div class="w-full mb-4 sm:flex justify-between">
                 <div class="w-full">
                     <strong>جمع مبلغ سفارش:</strong>
@@ -78,7 +78,7 @@
                     <strong>حمل و نقل:</strong>
                 </div>
                 <div class="w-full text-left">
-                    <span>اخذ کرایه در هنگام تحویل کالا</span>
+                    <span>{{ english_to_persian_num(number_format($shipping)) }} تومان</span>
                 </div>
             </div>
             <div class="w-full sm:flex justify-between">
@@ -86,7 +86,7 @@
                     <strong>زمان تحویل به پست:</strong>
                 </div>
                 <div class="w-full text-left">
-                    <span>همه روزه راس ساعت ۱۲ ظهر</span>
+                    <span>همه روزه راس ساعت ۱۲ ظهر(بجز روزهای تعطیل)</span>
                 </div>
             </div>
 
@@ -96,13 +96,13 @@
                     <strong>مبلغ قابل پرداخت:</strong>
                 </div>
                 <div class="w-full text-left">
-                    <span>{{ english_to_persian_num(number_format($sum)) }} تومان</span>
+                    <span>{{ english_to_persian_num(number_format($total)) }} تومان</span>
                 </div>
             </div>
 
             <div class="w-full sm:flex justify-between">
-                <a wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">تسویه
-                    حساب
+                <a wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
+                    تکمیل سفارش
                 </a>
             </div>
         </div>

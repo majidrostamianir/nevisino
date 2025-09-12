@@ -23,9 +23,7 @@ return new class extends Migration
             $table->integer('mobile_otp_sent_count')->nullable();
 
             $table->enum('type' , ['client' , 'admin'])->default('client');
-            $table->foreignId('city_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('address')->nullable();
-            $table->string('zipcode')->nullable();
+
             $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();

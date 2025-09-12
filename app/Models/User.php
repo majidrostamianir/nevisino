@@ -24,9 +24,6 @@ class User extends Authenticatable
         'mobile_otp',
         'mobile_otp_sent_at',
         'mobile_otp_sent_count',
-        'city_id',
-        'address',
-        'zipcode',
         'password',
     ];
 
@@ -53,14 +50,19 @@ class User extends Authenticatable
         ];
     }
 
-    public function city()
+    public function addresses()
     {
-        return $this->belongsTo(City::class);
+        return $this->hasMany(Address::class);
     }
 
-    // اگر بخوای استان کاربر رو مستقیم از طریق شهر بگیری:
-    public function province()
+
+    public function cart()
     {
-        return $this->hasOneThrough(Province::class, City::class);
+        return $this->hasOne(Cart::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

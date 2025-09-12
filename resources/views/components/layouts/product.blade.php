@@ -15,18 +15,18 @@
 <body>
 
 
-<livewire:home.header/>
+<livewire:components.header/>
 
-<livewire:home.side-bar/>
+<livewire:components.side-bar/>
 
 <div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20 place-items-center ">
     {{ $slot }}
 </div>
 
-<livewire:home.toast />
+<livewire:components.toast />
 
 
-{{--<livewire:home.footer />--}}
+<livewire:components.footer />
 
 @livewireScripts
 

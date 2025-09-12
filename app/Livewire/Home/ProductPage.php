@@ -5,6 +5,7 @@ namespace App\Livewire\Home;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -14,7 +15,7 @@ class ProductPage extends Component
     public string $title;
     public Product $product;
     public string $message = '';
-    public string $count = "۱";
+    public string $quantity = "۱";
     public string $src;
     public Collection $images;
     public string|null $selectedVariant = null;
@@ -35,7 +36,7 @@ class ProductPage extends Component
 
     public function updatedSelectedVariant($id): void
     {
-        $this->count = "۱";
+        $this->quantity = "۱";
         if ($id != "")
             $this->setImage($id);
     }
@@ -57,32 +58,32 @@ class ProductPage extends Component
 
     public function increase(): void
     {
-        $enCount = (int)persian_to_english_num($this->count);
-        if ($enCount < $this->stockCheck()) {
-            $this->count = english_to_persian_num($enCount + 1);
-        } elseif ($enCount >= $this->stockCheck()) {
-            $this->count = english_to_persian_num($this->stockCheck());
+        $enQuantity = (int)persian_to_english_num($this->quantity);
+        if ($enQuantity < $this->stockCheck()) {
+            $this->quantity = english_to_persian_num($enQuantity + 1);
+        } elseif ($enQuantity >= $this->stockCheck()) {
+            $this->quantity = english_to_persian_num($this->stockCheck());
 
         }
     }
 
     public function decrease(): void
     {
-        $enCount = (int)persian_to_english_num($this->count);
-        if ($enCount > $this->stockCheck()) {
-            $this->count = english_to_persian_num($this->stockCheck());
-        } elseif ($enCount > 1) {
-            $this->count = english_to_persian_num($enCount - 1);
+        $enQuantity = (int)persian_to_english_num($this->quantity);
+        if ($enQuantity > $this->stockCheck()) {
+            $this->quantity = english_to_persian_num($this->stockCheck());
+        } elseif ($enQuantity > 1) {
+            $this->quantity = english_to_persian_num($enQuantity - 1);
         }
     }
 
-    public function updatedCount(): void
+    public function updatedQuantity(): void
     {
-        $enCount = (int)persian_to_english_num($this->count);
-        if ($enCount > $this->stockCheck()) {
-            $this->count = english_to_persian_num($this->stockCheck());
-        } elseif ($enCount < 1) {
-            $this->count = english_to_persian_num(1);
+        $enQuantity = (int)persian_to_english_num($this->quantity);
+        if ($enQuantity > $this->stockCheck()) {
+            $this->quantity = english_to_persian_num($this->stockCheck());
+        } elseif ($enQuantity < 1) {
+            $this->quantity = english_to_persian_num(1);
         }
     }
 
@@ -94,46 +95,104 @@ class ProductPage extends Component
                 Rule::when($this->product->variant === null, 'prohibited'), // وقتی نداره باید خالی باشه
             ],
         ]);
-        $cart = session()->get('cart', []);
+
         $key = $this->product->id . '-' . ($this->selectedVariant ?? 'default');
+        $maxStock = $this->stockCheck();
+        if ($maxStock > 0) {
+            if (Auth::check()) {
+                $cart = Auth::user()->cart()->firstOrCreate();
+                $cartItem = $cart->items()->where('product_id', $this->product->id)
+                    ->where('variant_id', $this->selectedVariant ?? null)
+                    ->first();
+                $requestedQuantity = (int)persian_to_english_num($this->quantity);
 
-
-        if (isset($cart[$key])) {
-            if ($cart[$key]['count'] == $this->stockCheck()) {
-                if ($this->product->variant) {
-                    $this->dispatch('showNotification',
-                        message: 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید لطفا ' . '<strong>' .  $this->product->variant . '</strong>' . ' دیگری را انتخاب کنید',
-                        type: 'warning'
-                    );
+                if ($cartItem) {
+                    if ($cartItem->quantity >= $maxStock) {
+                        $this->dispatch('showNotification',
+                            message: $this->product->variant
+                                ? 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید لطفا ' . '<strong>' . $this->product->variant . '</strong>' . ' دیگری را انتخاب کنید'
+                                : 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید',
+                            type: 'warning'
+                        );
+                    } elseif ($cartItem->quantity + $requestedQuantity > $maxStock) {
+                        $cartItem->quantity = $maxStock;
+                        $cartItem->save();
+                        $this->dispatch('showNotification',
+                            message: 'محصول با موفقیت به سبد خرید اضافه شد',
+                            type: 'success'
+                        );
+                    } else {
+                        $cartItem->quantity += $requestedQuantity;
+                        $cartItem->save();
+                        $this->dispatch('showNotification',
+                            message: 'محصول با موفقیت به سبد خرید اضافه شد',
+                            type: 'success'
+                        );
+                    }
                 } else {
+                    $cart->items()->create([
+                        'product_id' => $this->product->id,
+                        'variant_id' => $this->selectedVariant ?? null,
+                        'quantity' => $requestedQuantity,
+                    ]);
                     $this->dispatch('showNotification',
-                        message: 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید',
-                        type: 'warning'
+                        message: 'محصول با موفقیت به سبد خرید اضافه شد',
+                        type: 'success'
                     );
                 }
-                return;
-            } elseif ($cart[$key]['count'] + (int)persian_to_english_num($this->count) > $this->stockCheck()) {
-                $cart[$key]['count'] = $this->stockCheck();
             } else {
-                $cart[$key]['count'] += (int)persian_to_english_num($this->count);
+                $cart = session()->get('cart', []);
+                $requestedQuantity = (int)persian_to_english_num($this->quantity);
+
+                if (isset($cart[$key])) {
+                    if ($cart[$key]['quantity'] >= $maxStock) {
+                        $this->dispatch('showNotification',
+                            message: $this->product->variant
+                                ? 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید لطفا ' . '<strong>' . $this->product->variant . '</strong>' . ' دیگری را انتخاب کنید'
+                                : 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید',
+                            type: 'warning'
+                        );
+                    } elseif ($cart[$key]['quantity'] + $requestedQuantity > $maxStock) {
+                        $cart[$key]['quantity'] = $maxStock;
+                        session()->put('cart', $cart);
+                        $this->dispatch('showNotification',
+                            message: 'محصول با موفقیت به سبد خرید اضافه شد',
+                            type: 'success'
+                        );
+                    } else {
+                        $cart[$key]['quantity'] += $requestedQuantity;
+                        session()->put('cart', $cart);
+                        $this->dispatch('showNotification',
+                            message: 'محصول با موفقیت به سبد خرید اضافه شد',
+                            type: 'success'
+                        );
+                    }
+                } else {
+                    $cart[$key] = [
+                        'id' => $this->product->id,
+                        'title' => $this->product->title,
+                        'price' => ProductVariant::query()->find($this->selectedVariant)->price ?? $this->product->price,
+                        'code' => $this->product->code,
+                        'quantity' => $requestedQuantity,
+                        'variant' => $this->selectedVariant ?? null,
+                        'variantName' => ProductVariant::query()->find($this->selectedVariant)->name ?? null,
+                    ];
+                    session()->put('cart', $cart);
+                    $this->dispatch('showNotification',
+                        message: 'محصول با موفقیت به سبد خرید اضافه شد',
+                        type: 'success'
+                    );
+                }
             }
-        } else {
-            $cart[$key] = [
-                'id' => $this->product->id,
-                'title' => $this->product->title,
-                'price' => ProductVariant::query()->find($this->selectedVariant)->price ?? $this->product->price,
-                'code' => $this->product->code,
-                'count' => (int)persian_to_english_num($this->count),
-                'variant' => $this->selectedVariant ?? null,
-                'variantName' => ProductVariant::query()->find($this->selectedVariant)->name ?? null,
-            ];
+            $this->dispatch('cart-updated');
+        }else{
+            $this->dispatch('showNotification',
+                message: $this->product->variant
+                    ? 'موجودی این محصول به اتمام رسیده است لطفا ' . '<strong>' . $this->product->variant . '</strong>' . ' دیگری را انتخاب کنید'
+                    : 'موجودی این محصول به اتمام رسیده است',
+                type: 'warning'
+            );
         }
-        session()->put('cart', $cart);
-        $this->dispatch('showNotification',
-            message: 'محصول با موفقیت به سبد خرید اضافه شد',
-            type: 'success'
-        );
-        $this->dispatch('cart-updated');
     }
 
 
