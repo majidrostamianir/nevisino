@@ -83,7 +83,7 @@ class Checkout extends Component
             return $this->redirect('/cart', navigate: true);
         }
 
-        $order = $cart->convertToOrder($this->description);
+        $order = $cart->convertToOrder($this->recipient_name , $this->recipient_mobile , $this->postal_address , $this->zipcode ,$this->description);
 
 
         $invoice = (new Invoice)->amount($this->amount);

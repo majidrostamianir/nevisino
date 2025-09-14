@@ -19,9 +19,9 @@ class Cart extends Model
         return $this->hasMany(CartItem::class);
     }
 
-    public function convertToOrder($description = null)
+    public function convertToOrder($recipient_name , $recipient_mobile , $postal_address , $zipcode ,$description = null)
     {
-        return DB::transaction(function () use ($description) {
+        return DB::transaction(function () use ($zipcode, $postal_address, $recipient_mobile, $recipient_name, $description) {
 
             $totalPrice = $this->items->sum(function ($item) {
                 if ($item->variant_id && $item->variant) {
@@ -30,9 +30,22 @@ class Cart extends Model
                 return $item->product->price * $item->quantity;
             });
 
+            $lastOrderNumber = \App\Models\Order::max('order_number');
+
+            $newOrderNumber = $lastOrderNumber
+                ? $lastOrderNumber + rand(1, 20)
+                : 2145180;
+
             $order = $this->user->orders()->create([
+                'order_number' => $newOrderNumber,
                 'status' => 'pending',
+                'total_price' => $totalPrice,
+                'shipping_price' => config('shop.shipping'),
                 'amount' => $totalPrice + config('shop.shipping'),
+                'recipient_name' => $recipient_name,
+                'recipient_mobile' => $recipient_mobile,
+                'postal_address' => $postal_address,
+                'zipcode' => $zipcode,
                 'description' => $description,
                 'expires_at' => now()->addMinutes( config('shop.expire_order_time_minutes') ),
             ]);

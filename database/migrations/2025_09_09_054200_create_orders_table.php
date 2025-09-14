@@ -13,9 +13,18 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('order_number');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending', 'paid', 'canceled'])->default('pending');
+            $table->enum('shipping_status', ['pending','processing', 'preparing', 'shipped' , 'delivered' , 'returned'])->default('pending');
+            $table->string('tracking_code')->nullable();
+            $table->unsignedBigInteger('total_price')->default(0);
+            $table->unsignedBigInteger('shipping_price')->default(0);
             $table->unsignedBigInteger('amount')->default(0);
+            $table->string('recipient_name');
+            $table->string('recipient_mobile');
+            $table->text('postal_address');
+            $table->string('zipcode');
             $table->text('description')->nullable();
             $table->timestamp('expires_at');
             $table->timestamps();

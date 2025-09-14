@@ -6,7 +6,7 @@ Route::get('/', \App\Livewire\Home\Index::class)->name('home');
 
 
 Route::group(['middleware' => ['throttle:60']], function () {
-    Route::get('/category/{dashed}' , \App\Livewire\Home\CategoryPage::class)->name('category-page');
+    Route::get('/category/{dashed}', \App\Livewire\Home\CategoryPage::class)->name('category-page');
     Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
 });
@@ -21,7 +21,9 @@ Route::group(['middleware' => ['throttle:60', 'guest']], function () {
 
 
 Route::group(['middleware' => ['throttle:60', 'auth']], function () {
-    Route::get('/dashboard', \App\Livewire\Dashboard\Index::class)->name('dashboard');
+    Route::get('/dashboard/{page?}', App\Livewire\Dashboard\Index::class)
+        ->whereAlpha('page')
+        ->name('dashboard');
     Route::get('/checkout', \App\Livewire\Payment\Checkout::class)->name('checkout');
     Route::get('/payment/callback', \App\Livewire\Payment\Callback::class)->name('payment.callback');
 });

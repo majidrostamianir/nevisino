@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id', 'status', 'amount','description', 'expires_at'];
+    protected $fillable = ['order_number', 'user_id', 'status',
+        'total_price', 'shipping_price', 'amount',
+        'recipient_name', 'recipient_mobile', 'postal_address', 'zipcode',
+        'description', 'expires_at'];
 
     protected $dates = ['expires_at'];
 
@@ -24,6 +27,7 @@ class Order extends Model
     {
         $this->update(['status' => 'paid']);
     }
+
     public function markAsCanceled()
     {
         // آزاد کردن موجودی محصولات یا واریانت‌ها
