@@ -1,13 +1,14 @@
 <div>
     <div class="sm:flex">
         @if($cart)
-            <table class="w-full sm:w-2/3 text-right bg-pars-100 rounded-2xl">
+            <table class="w-full sm:w-2/3 text-right bg-pars-100 rounded-2xl overflow-x-scroll">
                 <thead>
                 <tr class="shadow-xs">
                     <th class="px-4 py-2">تصویر</th>
                     <th class="px-4 py-2">محصول</th>
                     <th class="px-4 py-2">تعداد</th>
                     <th class="px-4 py-2">قیمت کل</th>
+                    <th class="px-4 py-2">حذف</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -25,17 +26,17 @@
                         </td>
 
                         <td class="px-4 py-2">
-                            <div class="flex">
+                            <div class="flex flex-col sm:flex-row items-center">
                                 <div wire:click.prevent="increase('{{ $key }}')"
-                                     class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 rounded-r-2xl cursor-pointer select-none">
+                                     class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400  sm:rounded-none rounded-t-2xl sm:rounded-r-2xl  cursor-pointer select-none">
                                     +
                                 </div>
                                 <input type="text"
                                        disabled
-                                       class="w-14 h-10 text-center border-t border-b border-pars-300 border-l-0 border-r-0 focus:outline-none"
+                                       class="w-10 sm:w-14 h-10 text-center border-t border-b border-pars-300 border-l-0 border-r-0 focus:outline-none"
                                        value="{{ strtr($product['quantity'], ['0' =>'۰' ,'1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) }}">
                                 <div wire:click.prevent="decrease('{{ $key }}')"
-                                     class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 rounded-l-2xl cursor-pointer select-none">
+                                     class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 sm:rounded-none rounded-b-2xl  sm:rounded-l-2xl cursor-pointer select-none">
                                     -
                                 </div>
                             </div>
@@ -101,9 +102,9 @@
             </div>
 
             <div class="w-full sm:flex justify-between">
-                <a wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
+                <button wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
                     تکمیل سفارش
-                </a>
+                </button>
             </div>
         </div>
     </div>

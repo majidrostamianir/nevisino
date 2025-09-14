@@ -21,7 +21,7 @@ class Header extends Component
             $this->cartCount = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
             )->sum('quantity');
         } else {
-            $this->cartCount = collect(session()->get('cart', []))->sum('count');
+            $this->cartCount = collect(session()->get('cart', []))->sum('quantity');
         }
 
     }
