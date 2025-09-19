@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Shetabit\Multipay\Exceptions\InvalidPaymentException;
+use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
 
 class Order extends Component
@@ -39,7 +41,25 @@ class Order extends Component
     public function mount()
     {
         $this->user = Auth::user();
-        $this->orders = $this->user->orders;
+        $this->orders = $this->user->orders()
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    public function payAgain($orderId)
+    {
+        $order = \App\Models\Order::query()->find($orderId);
+        $invoice = (new Invoice)->amount($order->amount);
+        $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
+            Transaction::query()->create([
+                'order_id' => $order->id,
+                'amount' => $order->amount,
+                'status' => 'pending',
+                'payment_gateway' => 'zibal',
+                'authority' => (string)$transactionId,
+            ]);
+        });
+        return redirect()->away($payment->pay()->getAction());
     }
 
     public function render()

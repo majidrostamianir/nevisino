@@ -5,7 +5,20 @@
              wire:click="toggleOrder({{ $order->id }})">
             @switch($order->status)
                 @case('pending')
-                    <p class="text-orange-300 font-bold mb-2">در انتظار پرداخت ...</p>
+                    <div class="flex mb-4">
+                        <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
+                        <button wire:click.prevent="payAgain('{{$order->id}}')"
+                                wire:loading.attr="disabled"
+                                wire:target="payAgain"
+                                class="w-fix px-4 mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 cursor-pointer">
+                    <span wire:loading.remove wire:target="payAgain">
+                        پرداخت
+                    </span>
+                            <span wire:loading wire:target="payAgain">
+                        در حال انتقال به درگاه...
+                    </span>
+                        </button>
+                    </div>
                     @break
                 @case('paid')
                     <p class="text-green-500 font-bold mb-2">پرداخت شده</p>
@@ -27,7 +40,7 @@
                 <div class="mt-8">
                     <div class="flex mb-2">
                         <span class="text-gray-400">تحویل گیرنده <span
-                                class="text-pars-700">{{ english_to_persian_num($order->recipient_mobile) }}</span></span>
+                                class="text-pars-700">{{ english_to_persian_num($order->recipient_name) }}</span></span>
                         <span class="mx-4  text-pars-400">&#9679;</span>
                         <span class="text-gray-400">شماره موبایل <span
                                 class="text-pars-700">{{ english_to_persian_num($order->recipient_mobile) }}</span></span>
@@ -96,15 +109,14 @@
                     <div class="mb-2">
                         <div class="text-gray-400 mb-3">تراکنش ها</div>
                         <div class=" px-2 py-2 border-pars-400 rounded mb-4">
-                            @foreach($order->transactions as $key => $value)
+                            @foreach($order->transactions->sortByDesc('created_at') as $key => $value)
                                 @if($key>0)
                                     <hr class="text-pars-400">
                                 @endif
                                 <div class="mt-4 mb-2 flex flex-wrap">
                                     @switch($value->status)
                                         @case('pending')
-                                            <span><span
-                                                    class="ml-4  text-orange-500">&#9679;</span>در انتظار پرداخت</span>
+                                            <span><span class="ml-4  text-orange-500">&#9679;</span>در انتظار پرداخت</span>
                                             @break
                                         @case('success')
                                             <span><span class="ml-4  text-green-500">&#9679;</span>پرداخت موفق</span>
@@ -118,7 +130,7 @@
                                     @endswitch
                                     <div>
                                         <span class="mx-4  text-pars-400">&#9679;</span>
-                                        <span>کد پیگیری تراکنش {{ english_to_persian_num($value->transaction_id) }}</span>
+                                        <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
                                     </div>
                                     <div>
                                         <span class="mx-4  text-pars-400">&#9679;</span>

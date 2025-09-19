@@ -11,7 +11,7 @@ use Livewire\Component;
 class Login extends Component
 {
     public User $user;
-    #[Validate('required|string|min:4|max:12')]
+    #[Validate('required|string|min:4|max:255')]
     public string $password = '';
     public string $mobile;
 

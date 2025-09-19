@@ -33,4 +33,7 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/url', \App\Livewire\Admin\Url\Index::class)->name('admin.url.index');
     Route::get('/admin/product', \App\Livewire\Admin\Product\Index::class)->name('admin.product.index');
     Route::get('/admin/product/save/{product?}', \App\Livewire\Admin\Product\Save::class)->name('admin.product.save');
+    Route::get('/admin/user', \App\Livewire\Admin\User\Index::class)->name('admin.user.index');
+    Route::get('/admin/order', \App\Livewire\Admin\Order\Index::class)->name('admin.order.index');
+    Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
 });

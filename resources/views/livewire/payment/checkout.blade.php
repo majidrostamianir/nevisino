@@ -12,7 +12,9 @@
                 </div>
                 <div class="my-3 h-72 overflow-y-scroll px-3">
                     @foreach($addresses as $value)
-                        <div class="w-full shadow-md  @if($value == $selectedAddress) border-2 shadow-pars-500 @else border @endif border-pars-400 p-2 mb-3 flex cursor-pointer" wire:click.prevent="selectAddress('{{ $value->id }}')">
+                        <div
+                            class="w-full shadow-md  @if($value == $selectedAddress) border-2 shadow-pars-500 @else border @endif border-pars-400 p-2 mb-3 flex cursor-pointer"
+                            wire:click.prevent="selectAddress('{{ $value->id }}')">
                             <img class="w-6 h-fit" src="{{ asset('images/location.png') }}" alt="">
                             <div class="mr-4">
                                 <p class="mb-2  mt-1 text-pars-500">{{ $value['postal_address'] }}</p>
@@ -24,7 +26,8 @@
                     @endforeach
                 </div>
                 <div class="border-t-2  border-t-pars-400 py-4">
-                    <span class="font-bold cursor-pointer" wire:click.prevent="changeAddress()"> + افزودن آدرس جدید</span>
+                    <span class="font-bold cursor-pointer"
+                          wire:click.prevent="changeAddress()"> + افزودن آدرس جدید</span>
                 </div>
             </div>
         </div>
@@ -140,7 +143,7 @@
                     <strong>زمان تحویل به پست:</strong>
                 </div>
                 <div class="w-full text-left">
-                    <span>همه روزه راس ساعت ۱۲ ظهر(بجز روزهای تعطیل)</span>
+                    <span>همه روزه راس ساعت ۱۰ صبح(بجز روزهای تعطیل)</span>
                 </div>
             </div>
 
@@ -156,9 +159,25 @@
 
             <div class="w-full">
                 <button wire:click.prevent="pay"
-                        class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
-                    پرداخت
+                        wire:loading.attr="disabled"
+                        wire:target="pay"
+                        class="w-full text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 cursor-pointer">
+                    <span wire:loading.remove wire:target="pay">
+                        پرداخت
+                    </span>
+                    <span wire:loading wire:target="pay">
+                        در حال انتقال به درگاه...
+                    </span>
                 </button>
+                @if ($errors->any())
+                    <div class="mt-3 bg-red-100 text-red-500 rounded-xl p-2 text-sm">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

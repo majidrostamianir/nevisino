@@ -171,12 +171,17 @@ class Save extends Component
 
     public function save()
     {
-        if ($this->variant === null)
-            $this->stock = null;
-
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
         $this->variant = trim(preg_replace('/\s+/', ' ', $this->variant));
         $dashed_title = trim(preg_replace('/\s+/', '-', $this->title));
+
+        if ($this->variant == null || $this->variant == '') {
+            $this->variant = null;
+        } else {
+            $this->stock = null;
+        }
+
+
         $this->validate();
         $this->product->title = $this->title;
         $this->product->dashed_title = $dashed_title;

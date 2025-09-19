@@ -73,17 +73,20 @@ class Checkout extends Component
                 'postal_address' => $this->postal_address,
                 'zipcode' => $this->zipcode,
             ]);
+            if ($this->user->name == null) {
+                $this->user->update(['name' => $this->recipient_name]);
+            }
         }
 
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
-            ->firstOrFail();
+            ->first();
 
-        if ($cart->items->isEmpty()) {
+        if (!$cart || $cart->items->isEmpty()) {
             return $this->redirect('/cart', navigate: true);
         }
 
-        $order = $cart->convertToOrder($this->recipient_name , $this->recipient_mobile , $this->postal_address , $this->zipcode ,$this->description);
+        $order = $cart->convertToOrder($this->province_id , $this->city_id ,$this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
 
 
         $invoice = (new Invoice)->amount($this->amount);
@@ -93,9 +96,11 @@ class Checkout extends Component
                 'amount' => $this->amount,
                 'status' => 'pending',
                 'payment_gateway' => 'zibal',
-                'transaction_id' => (string)$transactionId,
+                'authority' => (string)$transactionId,
             ]);
         });
+
+
         return redirect()->away($payment->pay()->getAction());
 
     }

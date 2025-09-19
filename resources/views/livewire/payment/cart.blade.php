@@ -87,7 +87,7 @@
                     <strong>زمان تحویل به پست:</strong>
                 </div>
                 <div class="w-full text-left">
-                    <span>همه روزه راس ساعت ۱۲ ظهر(بجز روزهای تعطیل)</span>
+                    <span>همه روزه راس ساعت ۱۰ صبح(بجز روزهای تعطیل)</span>
                 </div>
             </div>
 

@@ -6,13 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['order_number', 'user_id', 'status',
+    protected $fillable = ['order_number', 'user_id', 'status','shipping_status','tracking_code',
         'total_price', 'shipping_price', 'amount',
         'recipient_name', 'recipient_mobile', 'postal_address', 'zipcode',
-        'description', 'expires_at'];
+        'province', 'city' , 'description', 'expires_at'];
 
     protected $dates = ['expires_at'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function items()
     {
         return $this->hasMany(OrderItem::class);

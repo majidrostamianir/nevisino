@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'success', 'failed' , 'cancel'])->default('pending');
             $table->unsignedBigInteger('amount');
             $table->string('payment_gateway')->nullable();
-            $table->string('transaction_id');
+            $table->string('authority');
             $table->timestamps();
         });
     }

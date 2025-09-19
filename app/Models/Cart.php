@@ -19,9 +19,9 @@ class Cart extends Model
         return $this->hasMany(CartItem::class);
     }
 
-    public function convertToOrder($recipient_name , $recipient_mobile , $postal_address , $zipcode ,$description = null)
+    public function convertToOrder($province_id , $city_id ,$recipient_name , $recipient_mobile , $postal_address , $zipcode ,$description = null)
     {
-        return DB::transaction(function () use ($zipcode, $postal_address, $recipient_mobile, $recipient_name, $description) {
+        return DB::transaction(function () use ($city_id, $province_id, $zipcode, $postal_address, $recipient_mobile, $recipient_name, $description) {
 
             $totalPrice = $this->items->sum(function ($item) {
                 if ($item->variant_id && $item->variant) {
@@ -46,6 +46,8 @@ class Cart extends Model
                 'recipient_mobile' => $recipient_mobile,
                 'postal_address' => $postal_address,
                 'zipcode' => $zipcode,
+                'province' => Province::find($province_id)->name,
+                'city' => City::find($city_id)->name,
                 'description' => $description,
                 'expires_at' => now()->addMinutes( config('shop.expire_order_time_minutes') ),
             ]);
@@ -62,11 +64,6 @@ class Cart extends Model
                     'price_snapshot' => $priceSnapshot,
                 ]);
 
-                if ($item->variant_id && $item->variant) {
-                    $item->variant->decrement('stock', $item->quantity);
-                } else {
-                    $item->product->decrement('stock', $item->quantity);
-                }
             }
 
             $this->items()->delete();

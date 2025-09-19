@@ -14,7 +14,7 @@ class ResetPassword extends Component
     public User $user;
     #[Validate('required|numeric|digits:4')]
     public string $otp;
-    #[Validate('required|string|min:4|max:12')]
+    #[Validate('required|string|min:4|max:255')]
     public string $password;
 
     public function mount()

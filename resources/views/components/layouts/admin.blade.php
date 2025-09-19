@@ -49,6 +49,48 @@
     <div class="h-full px-3 py-4 overflow-y-auto bg-pars-100">
         <ul class="space-y-2 font-medium overflow-x-hidden ">
             <li>
+                <a href="{{ route('admin.user.index') }}"
+                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                    <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
+                        <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
+                            <line x1="5" y1="11" x2="25" y2="11"/>
+                            <path d="M17 14h5v5"/>
+                            <path d="M22 14l-5 5"/>
+                        </g>
+                    </svg>
+                    <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">کاربران</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.order.index') }}"
+                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                    <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
+                        <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
+                            <line x1="5" y1="11" x2="25" y2="11"/>
+                            <path d="M17 14h5v5"/>
+                            <path d="M22 14l-5 5"/>
+                        </g>
+                    </svg>
+                    <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سفارشات</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.setting.index') }}"
+                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                    <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
+                        <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
+                            <line x1="5" y1="11" x2="25" y2="11"/>
+                            <path d="M17 14h5v5"/>
+                            <path d="M22 14l-5 5"/>
+                        </g>
+                    </svg>
+                    <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">تنظیمات</span>
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('admin.url.index') }}"
                    class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
@@ -90,8 +132,6 @@
                     <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">محصولات</span>
                 </a>
             </li>
-
-
         </ul>
     </div>
 </aside>

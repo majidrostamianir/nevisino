@@ -94,8 +94,6 @@ class Upload extends Component
             return $file->getClientOriginalName();
         }, SORT_NATURAL | SORT_FLAG_CASE)->values()->all();
 
-//        $watermark = $manager->read(public_path('images/watermark.png'));
-//        $picture->place($watermark);
 
 
         foreach ($sortedPictures as $key => $image) {
@@ -110,8 +108,9 @@ class Upload extends Component
                 $path = "$folder/$name";
 
                 Storage::disk('public')->makeDirectory($path);
+                $watermark = $manager->read(public_path('images/watermark.png'))->scale(height: $height);
 
-                $picture->scale(height: $height)->toWebp()
+                $picture->scale(height: $height)->place($watermark)->toWebp()
                     ->save(Storage::disk('public')->path("$path/{$index}.webp"));
             }
         }

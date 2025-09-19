@@ -55,7 +55,7 @@
                 تومان
             </h4>
             <h4 class="bg-pars-200 shadow rounded mb-3 p-1">
-                <span >محصول ارسالی دقیقا مشابه تصاویر می باشد.</span>
+                <span>محصول ارسالی دقیقا مشابه تصاویر می باشد.</span>
             </h4>
             @if($product->variant)
                 <h4 class="bg-pars-200 shadow rounded mb-6 p-1">
@@ -79,7 +79,8 @@
                     @enderror
                 </h4>
             @endif
-            @if($product->stock > 0)
+            @if((is_null($product->variant) && $product->stock > 0) ||
+                    (!is_null($product->variant) && $product->variants->sum('stock') > 0))
                 <div class="flex items-center gap-2">
                     <div class="flex">
                         <div wire:click.prevent="increase()"

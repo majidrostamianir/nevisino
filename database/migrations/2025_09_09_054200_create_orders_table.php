@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('recipient_mobile');
             $table->text('postal_address');
             $table->string('zipcode');
+            $table->string('province');
+            $table->string('city');
             $table->text('description')->nullable();
             $table->timestamp('expires_at');
             $table->timestamps();
