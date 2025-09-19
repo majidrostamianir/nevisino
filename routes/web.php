@@ -5,12 +5,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', \App\Livewire\Home\Index::class)->name('home');
 
 
-Route::group(['middleware' => ['throttle:60']], function () {
+Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/category/{dashed}', \App\Livewire\Home\CategoryPage::class)->name('category-page');
     Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
 });
-Route::group(['middleware' => ['throttle:60', 'guest']], function () {
+Route::group(['middleware' => ['throttle:60', 'guest' , \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
     Route::get('/forget', \App\Livewire\Auth\ForgetPassword::class)->name('forget');
@@ -34,6 +34,7 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/product', \App\Livewire\Admin\Product\Index::class)->name('admin.product.index');
     Route::get('/admin/product/save/{product?}', \App\Livewire\Admin\Product\Save::class)->name('admin.product.save');
     Route::get('/admin/user', \App\Livewire\Admin\User\Index::class)->name('admin.user.index');
+    Route::get('/admin/user/order/{user}', \App\Livewire\Admin\User\Order::class)->name('admin.user.order');
     Route::get('/admin/order', \App\Livewire\Admin\Order\Index::class)->name('admin.order.index');
     Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
 });

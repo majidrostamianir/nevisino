@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('type' , ['client' , 'admin'])->default('client');
 
             $table->string('password')->nullable();
+            $table->text('referrer')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

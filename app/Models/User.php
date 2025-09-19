@@ -25,6 +25,7 @@ class User extends Authenticatable
         'mobile_otp_sent_at',
         'mobile_otp_sent_count',
         'password',
+        'referrer',
     ];
 
     /**

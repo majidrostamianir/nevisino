@@ -52,6 +52,7 @@ class Register extends Component
                 'mobile' => $this->mobile,
                 'mobile_otp' => $otp,
                 'mobile_otp_sent_count' => 0,
+                'referrer' => session('referrer', ''),
             ]);
         }
         session()->put('mobile', $this->mobile);
