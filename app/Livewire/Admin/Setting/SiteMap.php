@@ -37,7 +37,7 @@ class SiteMap extends Component
 
         $sitemap .= '</urlset>';
 
-        File::put(public_path('sitemap.xml'), $sitemap);
+        File::put(base_path('../public_html/sitemap.xml'), $sitemap);
 
         return 'Sitemap created successfully.';
     }

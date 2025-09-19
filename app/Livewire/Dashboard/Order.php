@@ -64,6 +64,6 @@ class Order extends Component
 
     public function render()
     {
-        return view('livewire.dashboard.order');
+        return view('livewire.dashboard.order')->layout('components.layouts.admin');
     }
 }
