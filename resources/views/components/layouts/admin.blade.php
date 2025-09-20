@@ -142,6 +142,8 @@
 
 @livewireScripts
 
+<livewire:components.toast />
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

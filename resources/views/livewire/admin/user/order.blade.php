@@ -36,7 +36,7 @@
             </div>
 
             <div class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
-            <div class="mt-8">
+                <div class="mt-8">
                     <div class="w-full sm:flex">
                         <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
                             <div>
@@ -70,41 +70,68 @@
                                     <div class="flex w-full">
                                         <div class="w-full">
                                             <div class="flex justify-between">
-                                                <span class="text-sm text-green-500 font-bold">در حال پردازش سفارش</span>
-                                                <span class="text-xs">مرحله بعد: تحویل از انبار</span>
+                                                <span
+                                                    class="text-sm text-green-500 font-bold">در حال پردازش سفارش</span>
+                                                <span class="text-xs">مرحله بعد: بسته بندی</span>
                                             </div>
                                             <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
                                                 <div class="bg-green-500 h-2 rounded-full" style="width: 25%"></div>
                                             </div>
                                         </div>
                                         <button wire:click.prevent="nextStep('{{ $order->id }}')"
-                                            class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl text-white cursor-pointer">
+                                                class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl  h-fit text-white cursor-pointer">
                                             مرحله بعد
                                         </button>
                                     </div>
                                     @break
                                 @case('preparing')
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-green-500 font-bold">در حال بسته بندی و ارسال</span>
-                                        <span class="text-xs">مرحله بعد: تحویل به اداره پست</span>
+                                    <div class="flex w-full">
+                                        <div class="w-full">
+                                            <div class="flex justify-between">
+                                                <span
+                                                    class="text-sm text-green-500 font-bold">در حال بسته بندی و ارسال</span>
+                                                <span class="text-xs">مرحله بعد: تحویل به اداره پست</span>
+                                            </div>
+                                            <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
+                                                <div class="bg-green-500 h-2 rounded-full" style="width: 40%"></div>
+                                            </div>
+                                        </div>
+                                        <button wire:click.prevent="nextStep('{{ $order->id }}')"
+                                                class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl  h-fit text-white cursor-pointer">
+                                            مرحله بعد
+                                        </button>
                                     </div>
-                                    <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full" style="width: 40%"></div>
-                                    </div>
-
-
                                     @break
                                 @case('shipped')
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-green-500 font-bold">در حال ارسال به آدرس شما</span>
-                                        <span class="text-xs">مرحله بعد: تحویل کالا به مشتری</span>
-                                    </div>
-                                    <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full" style="width: 70%"></div>
-                                    </div>
-                                    <div class="flex justify-between">
-                                <span
-                                    class="text-sm mt-2">کد پیگیری مرسوله {{ english_to_persian_num($order->tracking_code) }}</span>
+                                    <div class="flex w-full">
+                                        <div class="w-full">
+                                            <div class="flex justify-between">
+                                                <span
+                                                    class="text-sm text-green-500 font-bold">در حال ارسال به آدرس شما</span>
+                                                <span class="text-xs">مرحله بعد: تحویل کالا به مشتری</span>
+                                            </div>
+                                            <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
+                                                <div class="bg-green-500 h-2 rounded-full" style="width: 70%"></div>
+                                            </div>
+                                            <div class="flex w-full ">
+                                                <span class="text-sm text-nowrap mt-2">کد پیگیری مرسوله</span>
+                                                <input type="text"
+                                                       wire:model.defer="trackingCodes.{{ $order->id }}"
+                                                       class="bg-white w-full rounded-2xl border py-0 px-2 mt-0.5 mr-2">
+                                                @error("trackingCodes.$order->id")
+                                                <span class="text-red-500">{{ $message }}</span>
+                                                @enderror
+
+                                                <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
+                                                        class="bg-pars-700 hover:bg-pars-800 px-3 py-1 rounded-2xl text-white cursor-pointer ml-2">
+                                                    ذخیره
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button wire:click.prevent="nextStep('{{ $order->id }}')"
+                                                class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl  h-fit text-white cursor-pointer">
+                                            مرحله بعد
+                                        </button>
                                     </div>
                                     @break
                                 @case('delivered')
@@ -153,9 +180,10 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
                                         </div>
-                                            <div class="mb-2">
+                                        <div class="mb-2">
                                             <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span wire:click.prevent="verifyTransaction('{{$value->authority}}')" class="cursor-pointer text-sm">استعلام</span>
+                                            <span wire:click.prevent="verifyTransaction('{{$value->authority}}')"
+                                                  class="cursor-pointer text-sm">استعلام</span>
                                         </div>
                                     </div>
                                 @endforeach

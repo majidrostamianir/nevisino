@@ -9,7 +9,7 @@
         @endforeach
     </div>
 
-    <div class="w-full bg-pars-100 rounded-2xl shadow p-4  min-h-[80vh] ">
+    <div class="w-full mt-2">
         @switch($page)
             @case('overview')
                 <livewire:dashboard.overview wire:navigate="true"/>

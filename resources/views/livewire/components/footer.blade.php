@@ -31,6 +31,6 @@
     </div>
     <div class="flex w-full sm:w-1/3 justify-center  justify-items-center ">
         <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot' alt='' style='cursor:pointer' code='sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'></a>   <div class="mx-1"></div>
-        <img referrerpolicy='origin' id = 'rgvjjzpeoeukjxlzwlaoesgt' style = 'cursor:pointer' onclick = 'window.open("https://logo.samandehi.ir/Verify.aspx?id=378140&p=xlaojyoemcsirfthaodsobpd", "Popup","toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30")' alt = 'logo-samandehi' src = 'https://logo.samandehi.ir/logo.aspx?id=378140&p=qftiyndtaqgwnbpdshwllyma' />
+        <img  referrerpolicy='origin' id = 'rgvjjzpeoeukjxlzwlaoesgt' style = 'cursor:pointer' onclick = 'window.open("https://logo.samandehi.ir/Verify.aspx?id=378140&p=xlaojyoemcsirfthaodsobpd", "Popup","toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30")' alt = 'logo-samandehi' src = 'https://logo.samandehi.ir/logo.aspx?id=378140&p=qftiyndtaqgwnbpdshwllyma' />
     </div>
 </div>
