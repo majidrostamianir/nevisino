@@ -9,6 +9,7 @@
                 <th class="px-4 py-2">تاریخ ثبت نام</th>
                 <th class="px-4 py-2">ورود از</th>
                 <th class="px-4 py-2">سفارشات</th>
+                <th class="px-4 py-2">لاگین</th>
             </tr>
             </thead>
             <tbody>
@@ -18,9 +19,12 @@
                     <td class="px-4 py-2">{{ $user->name }}</td>
                     <td class="px-4 py-2">{{ english_to_persian_num($user->mobile) }}</td>
                     <td class="px-4 py-2">{{ english_to_persian_num(verta($user->created_at)) }}</td>
-                    <td class="px-4 py-2">{{ $user->referre }}</td>
+                    <td class="px-4 py-2">{{ $user->referrer }}</td>
                     <td class="px-4 py-2">
                         <a href="{{ route('admin.user.order' , ['user' => $user]) }}"> مشاهده</a>
+                    </td>
+                    <td class="px-4 py-2">
+                        <span wire:click="loginUser('{{ $user->id }}')">ورود</span>
                     </td>
 
                 </tr>

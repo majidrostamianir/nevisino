@@ -14,6 +14,12 @@ class Profile extends Component
     {
         $this->user = Auth::user();
     }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('home');
+    }
     public function render()
     {
         return view('livewire.dashboard.profile');
