@@ -16,8 +16,9 @@ class CategoryPage extends Component
     }
     public function render()
     {
-        $products = $this->url->products()->latest('id')->get();
-
+        $products = $this->url->products()
+            ->orderBy('title')
+            ->get();
         return view('livewire.home.category-page',compact('products'))->title($this->url->title);
     }
 }

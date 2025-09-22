@@ -1,6 +1,6 @@
 <div>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        @foreach(\App\Models\Product::all() as $product)
+        @foreach(\App\Models\Product::query()->orderBy('title')->get() as $product)
             <livewire:components.product-card :product="$product"/>
         @endforeach
     </div>
