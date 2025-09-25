@@ -7,9 +7,20 @@ use Livewire\Component;
 
 class Index extends Component
 {
+    public string $query;
+    public  $products;
+
+    public function mount()
+    {
+        $this->products = Product::query()->latest()->get();
+
+    }
+    public function updatedQuery()
+    {
+        $this->products = Product::search($this->query, 3);
+    }
     public function render()
     {
-        $products = Product::query()->latest()->paginate(50);
-        return view('livewire.admin.product.index',compact('products'))->layout('components.layouts.admin');
+        return view('livewire.admin.product.index')->layout('components.layouts.admin');
     }
 }

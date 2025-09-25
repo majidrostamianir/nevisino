@@ -82,7 +82,7 @@ class Order extends Component
 
     public function render()
     {
-        $orders = $this->user->orders;
+        $orders = $this->user->orders()->latest()->get();
         return view('livewire.admin.user.order', compact('orders'))->layout('components.layouts.admin');
     }
 }

@@ -38,4 +38,5 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/user/order/{user}', \App\Livewire\Admin\User\Order::class)->name('admin.user.order');
     Route::get('/admin/order', \App\Livewire\Admin\Order\Index::class)->name('admin.order.index');
     Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
+    Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
 });

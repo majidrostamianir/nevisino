@@ -50,6 +50,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public static function search($term)
+    {
+        return self::where('name', 'like', "%{$term}%")
+            ->orWhere('mobile', 'like', "%{$term}%")
+            ->get();
+    }
+
 
     public function addresses()
     {

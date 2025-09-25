@@ -4,8 +4,11 @@
             <thead>
             <tr class="shadow">
                 <th class="px-4 py-2">شناسه</th>
-                <th class="px-4 py-2">عنوان</th>
+                <th class="px-4 py-2">
+                    <input wire:model.live="query" class="rounded-2xl bg-white h-8 px-2" placeholder="جستجوی عنوان ...">
+                </th>
                 <th class="px-4 py-2">تصویر</th>
+                <th class="px-4 py-2">لینک در سایت</th>
             </tr>
             </thead>
             <tbody>
@@ -21,12 +24,14 @@
                                  src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}" alt="">
                         @endif
                     </td>
+                    <td class="px-4 py-2">
+                        <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}" target="_blank" >
+                            برو
+                        </a>
+                    </td>
                 </tr>
             @endforeach
             </tbody>
         </table>
-        <div class="w-full place-items-center mt-4 mb-2">
-            {{ $products->links() }}
-        </div>
-    </div>
+       </div>
 </div>

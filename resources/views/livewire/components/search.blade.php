@@ -2,7 +2,7 @@
     <input type="text" wire:model.live="query"
            wire:focus="focus"
            wire:click.away="blur"
-           class="text-sm bg-white w-full mr-3 rounded-2xl pr-4"
+           class="text-sm bg-white w-full mr-3 rounded-2xl pr-4 shadow"
            placeholder="جستجو ...">
     <span class="absolute top-2.5 left-0  cursor-pointer" wire:click="clearSearch">
         @if($query != '' )

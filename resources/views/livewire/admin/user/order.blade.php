@@ -49,6 +49,9 @@
                             <div class="w-full sm:w-1/2">
                             <span class=" text-gray-400">آدرس <span
                                     class="text-pars-700">{{ english_to_persian_num($order->postal_address) }}</span></span>
+                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                <span class="text-gray-400">کد پستی <span
+                                        class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
                             </div>
                         </div>
                         <div class="w-full sm:w-1/2">
