@@ -54,6 +54,7 @@
                 {{ english_to_persian_num(number_format($product->price)) }}
                 تومان
             </h4>
+
             <h4 class="bg-pars-200 shadow rounded mb-3 p-1">
                 <span>محصول ارسالی دقیقا مشابه تصاویر می باشد.</span>
             </h4>
@@ -116,6 +117,7 @@
             @endif
         </div>
     </div>
+
 
     {{-- <div class="w-full sm:w-11/12  p-4 rounded-2xl mx-auto mt-10 bg-pars-100 shadow min-h-24 mb-6">
          <small>طرح های مشابه</small>
