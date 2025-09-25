@@ -15,7 +15,7 @@
     <div class="w-2/5 flex ">
         <button data-drawer-target="sidebar-multi-level-sidebar" data-drawer-toggle="sidebar-multi-level-sidebar"
                 aria-controls="sidebar-multi-level-sidebar" type="button"
-                class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 ">
             <span class="sr-only">Open sidebar</span>
             <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                  xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@
         <ul class="space-y-2 font-medium overflow-x-hidden ">
             <li>
                 <a href="{{ route('admin.user.index') }}"
-                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                   class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
                         <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
@@ -64,7 +64,7 @@
             </li>
             <li>
                 <a href="{{ route('admin.order.index') }}"
-                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                   class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
                         <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
@@ -78,7 +78,7 @@
             </li>
             <li>
                 <a href="{{ route('admin.setting.index') }}"
-                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                   class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
                         <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
@@ -92,7 +92,7 @@
             </li>
             <li>
                 <a href="{{ route('admin.url.index') }}"
-                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                   class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
                         <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
@@ -106,7 +106,7 @@
             </li>
             <li>
                 <a href="{{ route('admin.product.save') }}"
-                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                   class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
                         <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
@@ -120,7 +120,7 @@
             </li>
             <li>
                 <a href="{{ route('admin.product.index') }}"
-                   class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
+                   class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                     <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
                         <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>

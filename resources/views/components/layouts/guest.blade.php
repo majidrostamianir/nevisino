@@ -13,7 +13,7 @@
     </head>
     <body class="text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4 ">
-            <div class="w-full relative sm:w-4/12  p-4 h-[85vh] bg-pars-100 dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full relative sm:w-4/12  p-4 h-[85vh] bg-pars-100  shadow-md overflow-hidden sm:rounded-lg">
                 <a class="absolute top-4 left-4 bg-pars-700 text-white text-sm py-1 px-3 rounded-2xl" href="/" wire:navigate>
                     بازگشت
                 </a>
