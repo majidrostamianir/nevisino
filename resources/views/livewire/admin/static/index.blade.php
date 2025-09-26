@@ -13,7 +13,7 @@
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('status' , 'paid')->count()) }}</h5>
         </div>
         <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
-            <h5 class="font-bold text-green-400">تعداد سفارشات ارسال شده</h5>
+            <h5 class="font-bold text-green-400">تعداد سفارشات در مسیر</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('shipping_status' , 'shipped')->count()) }}</h5>
         </div>
         <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">

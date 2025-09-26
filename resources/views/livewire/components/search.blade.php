@@ -15,18 +15,17 @@
     </span>
     @if($isFocused && ($urls->isNotEmpty() || $products->isNotEmpty()))
         <div class="absolute top-10 rounded right-3 w-full bg-white p-4 z-10 shadow" wire:ignore.self>
-            <span class="text-xs bg-pars-100 py-0.5 px-1 rounded cursor-default">دسته بندی</span>
-            @foreach($urls as $url)
-                <a wire:navigate href="{{ route('category-page', ['dashed' => $url->dashed_title] ) }}"
-                   class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ $url->title }}</a>
-            @endforeach
-            <hr class="my-2">
             <span class="text-xs bg-pars-100 py-0.5 px-1 rounded cursor-default">محصولات</span>
             @foreach($products as $product)
                 <a wire:navigate href="{{ route('product-page', ['title' => $product->dashed_title] ) }}"
-                   class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ $product->title }}</a>
+                   class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ english_to_persian_num($product->title) }}</a>
             @endforeach
-
+            <hr class="my-2">
+            <span class="text-xs bg-pars-100 py-0.5 px-1 rounded cursor-default">دسته بندی</span>
+            @foreach($urls as $url)
+                <a wire:navigate href="{{ route('category-page', ['dashed' => $url->dashed_title] ) }}"
+                   class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ english_to_persian_num($url->title) }}</a>
+            @endforeach
         </div>
     @endif
 </div>

@@ -1,7 +1,7 @@
 <div>
     @if($showPopup)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" wire:click="togglePopup">
-            <div class="bg-white rounded-2xl shadow-lg w-10/12 sm:w-1/3 px-4" wire:click.stop>>
+            <div class="bg-white rounded-2xl shadow-lg w-10/12 sm:w-1/3 px-4" wire:click.stop>
                 <div class="flex justify-between border-b-2  border-b-pars-400 py-4">
                     <strong class="text-lg font-semibold">آدرس های شما</strong>
                     <strong

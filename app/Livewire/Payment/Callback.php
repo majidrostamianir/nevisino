@@ -3,6 +3,7 @@
 namespace App\Livewire\Payment;
 
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Shetabit\Multipay\Exceptions\InvalidPaymentException;
@@ -43,6 +44,9 @@ class Callback extends Component
                         $item->product->decrement('stock', $item->quantity);
                     }
                 }
+
+                $this->sendVerifySms($this->data['order_number']);
+
             } else {
                 abort(402, 'تراکنش نامعتبر');
             }
@@ -52,6 +56,26 @@ class Callback extends Component
         } catch (\Throwable $e) {
             $this->message = "خطای غیرمنتظره:" . PHP_EOL . $e->getMessage();
         }
+    }
+
+    public function sendVerifySms($order): void
+    {
+        $username = '09169889759';
+        $password = 'Faraz@1920115072';
+        $from = '3000505';
+        $pattern_code = 'yhvz50h4nox3dq4';
+        $to = array('98' . substr($this->user->mobile, 1));
+        $input_data = array('order' => $order);
+
+        $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
+            urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
+            "&pattern_code=$pattern_code";
+        $handler = curl_init($url);
+        curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $input_data);
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($handler);
+        curl_close($handler);
     }
 
     public function render()

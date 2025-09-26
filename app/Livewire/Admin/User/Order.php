@@ -51,13 +51,31 @@ class Order extends Component
             "trackingCodes.$orderId.regex" => 'کد مرسوله باید ۱۳ یا ۱۴ یا ۲۴ رقم باشد.',
         ]);
 
-
         $order->tracking_code = $this->trackingCodes[$orderId];
         $order->save();
-
+        $this->sendTrackingSms($this->trackingCodes[$orderId]);
         $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد');
     }
+    public function sendTrackingSms($tracking): void
+    {
+        $link = 'https://tracking.post.ir/?id=' . $tracking;
+        $username = '09169889759';
+        $password = 'Faraz@1920115072';
+        $from = '3000505';
+        $pattern_code = 'kvuck8sq6r7mwgd';
+        $to = array('98' . substr($this->user->mobile, 1));
+        $input_data = array('order' => $link);
 
+        $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
+            urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
+            "&pattern_code=$pattern_code";
+        $handler = curl_init($url);
+        curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($handler, CURLOPT_POSTFIELDS, $input_data);
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
+        curl_exec($handler);
+        curl_close($handler);
+    }
     public function verifyTransaction($authority)
     {
         $transaction = Transaction::query()->where('authority', $authority)->first();
