@@ -37,6 +37,7 @@ class Order extends Component
             $this->trackingCodes[$order->id] = $order->tracking_code;
         }
     }
+
     public function saveTrackingCode($orderId)
     {
         $order = \App\Models\Order::query()->findOrFail($orderId);
@@ -53,9 +54,10 @@ class Order extends Component
 
         $order->tracking_code = $this->trackingCodes[$orderId];
         $order->save();
-        $this->sendTrackingSms($this->trackingCodes[$orderId]);
+//        $this->sendTrackingSms($this->trackingCodes[$orderId]);
         $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد');
     }
+
     public function sendTrackingSms($tracking): void
     {
         $link = 'https://tracking.post.ir/?id=' . $tracking;
@@ -76,15 +78,12 @@ class Order extends Component
         curl_exec($handler);
         curl_close($handler);
     }
+
     public function verifyTransaction($authority)
     {
         $transaction = Transaction::query()->where('authority', $authority)->first();
 
-        try {
-            Payment::amount($transaction->amount)
-                ->transactionId($transaction->authority)
-                ->verify();
-
+        if ($transaction->status == 'pending') {
             $transaction->status = 'success';
             $transaction->save();
 
@@ -93,9 +92,21 @@ class Order extends Component
             $order->shipping_status = 'processing';
             $order->save();
 
-        } catch (InvalidPaymentException $exception) {
+            foreach ($transaction->order->items as $item) {
 
+                if ($item->variant_id && $item->variant) {
+                    $item->variant->decrement('stock', $item->quantity);
+                } else {
+                    $item->product->decrement('stock', $item->quantity);
+                }
+            }
+            $this->dispatch('showNotification', message: 'تراکنش تایید شد و موجودی اقلام سفارش کاهش یافت');
+
+        } else {
+            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید هستند');
         }
+
+
     }
 
     public function render()

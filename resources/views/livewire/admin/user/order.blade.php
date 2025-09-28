@@ -186,7 +186,7 @@
                                         <div class="mb-2">
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span wire:click.prevent="verifyTransaction('{{$value->authority}}')"
-                                                  class="cursor-pointer text-sm">استعلام</span>
+                                                  class="cursor-pointer text-sm">تایید دستی</span>
                                         </div>
                                     </div>
                                 @endforeach

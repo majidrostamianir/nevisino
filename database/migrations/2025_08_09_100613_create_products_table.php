@@ -25,6 +25,9 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
+
+            $table->fullText('title');
+
         });
 
         Schema::create('product_url', function (Blueprint $table) {

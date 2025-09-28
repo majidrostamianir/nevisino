@@ -45,7 +45,7 @@ class Callback extends Component
                     }
                 }
 
-                $this->sendVerifySms($this->data['order_number']);
+//                $this->sendVerifyOrderSms($this->data['order_number']);
 
             } else {
                 abort(402, 'تراکنش نامعتبر');
@@ -58,7 +58,7 @@ class Callback extends Component
         }
     }
 
-    public function sendVerifySms($order): void
+    public function sendVerifyOrderSms($order): void
     {
         $username = '09169889759';
         $password = 'Faraz@1920115072';
