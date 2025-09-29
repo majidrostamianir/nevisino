@@ -19,6 +19,9 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories');
             $table->boolean('in_menu')->default(false);
             $table->timestamps();
+
+            $table->fullText('title');
+
         });
     }
 

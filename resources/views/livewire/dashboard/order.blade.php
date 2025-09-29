@@ -1,6 +1,6 @@
 <div>
     @foreach($orders as $order)
-        <div class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
+        <div wire:key="{{ $order->order_number }}" class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
             <div class="toggle-btn flex justify-between items-center cursor-pointer">
                 <div>
                     @switch($order->status)
@@ -28,7 +28,7 @@
                             @break
                     @endswitch
                     <div class="flex flex-wrap">
-                        <span>{{ english_to_persian_num(verta($order->create_at)->format('%d %B %Y')) }}</span>
+                        <span>{{ english_to_persian_num(verta($order->created_at)->format('%d %B %Y - H:i:s')) }}</span>
                         <span class="mx-4  text-pars-400">&#9679;</span>
                         <span>کد پیگیری سفارش: {{ english_to_persian_num($order->order_number) }}</span>
                         <span class="mx-4  text-pars-400">&#9679;</span>
@@ -58,7 +58,11 @@
                             </div>
                             <div class="w-full sm:w-1/2">
                             <span class=" text-gray-400">آدرس <span
-                                    class="text-pars-700">{{ english_to_persian_num($order->postal_address) }}</span></span>
+                                    class="text-pars-700">
+                                    {{ $order->province }} -
+                                    {{ $order->city }} -
+                                    {{ english_to_persian_num($order->postal_address) }}
+                                </span></span>
                                 <span class="mx-4  text-pars-400">&#9679;</span>
                                 <span class="text-gray-400">کد پستی <span
                                         class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
@@ -168,9 +172,15 @@
                                            class="flex flex-row sm:flex-col items-center bg-white rounded shadow hover:shadow-lg cursor-pointer h-full">
                                             <div
                                                 class="w-24 sm:w-full  overflow-hidden rounded-r-sm sm:rounded-t-sm sm:rounded-b-none">
-                                                <img class="w-full aspect-square hover:scale-105 transition-all"
-                                                     src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
-                                                     alt="">
+                                                @if($item->variant_id)
+                                                    <img class="w-full aspect-square hover:scale-105 transition-all"
+                                                         src="{{ asset('storage/products/' . $product->id . '/small/'. $item->variant_id.'.webp') }}"
+                                                         alt="">
+                                                @else
+                                                    <img class="w-full aspect-square hover:scale-105 transition-all"
+                                                         src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
+                                                         alt="">
+                                                @endif
                                             </div>
                                             <div class="flex-1 px-2 sm:px-0 sm:py-4 text-right sm:text-center">
                                                 <h5 class="text-xs font-bold">
@@ -183,6 +193,12 @@
                                                 <h5 class="text-xs sm:text-sm mt-2">
                                                     تعداد {{ english_to_persian_num($item->quantity) }} عدد
                                                 </h5>
+                                                @if($item->variant_id)
+                                                    <h5 class="text-xs sm:text-sm mt-2">
+                                                        {{ $product->variant }}
+                                                        : {{ \App\Models\ProductVariant::query()->find($item->variant_id)->name }}
+                                                    </h5>
+                                                @endif
                                             </div>
                                         </a>
                                     </div>

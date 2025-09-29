@@ -18,20 +18,27 @@ class Product extends Model
     public static function search($q, $limit = 10)
     {
         $q = self::normalize($q);
+        $keywords = explode(' ', $q);
 
-        // fulltext
-        $results = self::select('id', 'title' ,'dashed_title')
+        // بررسی وجود کلمات کوتاه یا عدد
+        $hasShort = collect($keywords)->contains(fn($w) => is_numeric($w) || mb_strlen($w) < 4);
+
+        $results = collect();
+
+        // حالت fulltext
+        $fulltextResults = self::select('id', 'title', 'dashed_title')
             ->selectRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance", [$q])
             ->whereRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$q])
             ->orderByDesc('relevance')
             ->limit($limit)
             ->get();
 
-        // fallback
-        if ($results->isEmpty()) {
-            $keywords = explode(' ', $q);
+        $results = $results->merge($fulltextResults);
 
-            $query = self::select('id', 'title' , 'dashed_title');
+        // اگر کلمه کوتاه/عدد وجود داشت → LIKE هم بزن
+        if ($hasShort) {
+            $query = self::select('id', 'title', 'dashed_title');
+
             foreach ($keywords as $word) {
                 $query->where('title', 'LIKE', "%{$word}%");
             }
@@ -42,21 +49,29 @@ class Product extends Model
                 ) as relevance
             ");
 
-            $results = $query->orderByDesc('relevance')->limit($limit)->get();
+            $likeResults = $query->orderByDesc('relevance')->limit($limit)->get();
+
+            $results = $results->merge($likeResults);
         }
 
-        return $results;
+        // حذف رکوردهای تکراری و محدود کردن به n نتیجه
+        return $results->unique('id')->sortByDesc('relevance')->take($limit)->values();
     }
 
     public static function normalize($query)
     {
         $query = trim($query);
+
+        // تبدیل اعداد فارسی به انگلیسی
         $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
         $english = ['0','1','2','3','4','5','6','7','8','9'];
         $query = str_replace($persian, $english, $query);
+
+        // حذف فاصله‌های اضافه
         return preg_replace('/\s+/', ' ', $query);
     }
-    // قیمت نهایی → اگه ورینت نداره همون قیمت محصول، اگر داره مینیمم قیمت ورینت‌ها
+
+// قیمت نهایی → اگه ورینت نداره همون قیمت محصول، اگر داره مینیمم قیمت ورینت‌ها
 //    public function getFinalPriceAttribute(): int
 //    {
 //        if ($this->variants()->count() > 0) {
