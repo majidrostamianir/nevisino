@@ -4,14 +4,15 @@ use App\Http\Controllers\BasalamTestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', \App\Livewire\Home\Index::class)->name('home');
+Route::get('/shop', \App\Livewire\Home\Shop::class)->name('shop');
 
 
-Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\getReferrer::class]], function () {
+Route::group(['middleware' => ['throttle:60', \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/category/{dashed}', \App\Livewire\Home\CategoryPage::class)->name('category-page');
     Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
 });
-Route::group(['middleware' => ['throttle:60', 'guest' , \App\Http\Middleware\getReferrer::class]], function () {
+Route::group(['middleware' => ['throttle:60', 'guest', \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
     Route::get('/forget', \App\Livewire\Auth\ForgetPassword::class)->name('forget');
@@ -39,4 +40,21 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/order', \App\Livewire\Admin\Order\Index::class)->name('admin.order.index');
     Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
     Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
+
+    /*
+     *
+     * Use For Basalam
+     * Add Products in Basalam
+     *
+     */
+    Route::get('/basalam/test', [BasalamTestController::class, 'send']);
+
 });
+
+/*
+     *
+     * Use For Emalls
+     * List Of Products
+     *
+     */
+Route::match(['get', 'post'], '/list', [\App\Http\Controllers\EmallsProductsController::class, 'list']);

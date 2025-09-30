@@ -70,7 +70,10 @@ class Product extends Model
         // حذف فاصله‌های اضافه
         return preg_replace('/\s+/', ' ', $query);
     }
-
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 // قیمت نهایی → اگه ورینت نداره همون قیمت محصول، اگر داره مینیمم قیمت ورینت‌ها
 //    public function getFinalPriceAttribute(): int
 //    {
