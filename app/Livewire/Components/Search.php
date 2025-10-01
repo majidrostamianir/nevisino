@@ -3,6 +3,7 @@
 namespace App\Livewire\Components;
 
 use App\Models\Product;
+use App\Models\SearchQuery;
 use App\Models\Url;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -32,9 +33,17 @@ class Search extends Component
 
     public function updatedQuery(): void
     {
+
         $this->products = Product::search($this->query, 3);
         $this->urls = Url::search($this->query, 3);
 
+        $this->validate(['query' => 'string']);
+
+        SearchQuery::query()->create([
+            'query' => $this->query,
+            'ip' => request()->ip(),
+            'user_id' => auth()->id() ?? null,
+        ]);
     }
 
     public function clearSearch()

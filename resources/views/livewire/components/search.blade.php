@@ -1,5 +1,5 @@
 <div class="w-full self-center relative">
-    <input type="text" wire:model.live="query"
+    <input type="text" wire:model.live.debounce.750ms="query"
            wire:focus="focus"
            wire:click.away="blur"
            class="text-sm bg-white w-full mr-3 rounded-2xl pr-4 shadow"

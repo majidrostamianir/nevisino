@@ -28,7 +28,7 @@
                             @case('paid')
                                 <span class="text-green-500 font-bold">پرداخت شده</span>
                                 @break
-                            @case('pending')
+                            @case('canceled')
                                 <span class="text-red-500">لغو شده</span>
                                 @break
                         @endswitch

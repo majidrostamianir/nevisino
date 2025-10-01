@@ -27,7 +27,7 @@ class EmallsProductsController extends Controller
                 "image" => asset('storage/products/' . $product->id . '/large/1.webp'),
                 "color"        =>  null,
                 "guarantee"    => null,
-                "is_available" => $product->stock > 0,
+                "is_available" => ($product->stock > 0) || ($product->variants()->sum('stock') > 0),
                 "url"          => url("/product/{$product->dashed_title}"),
             ];
         });
