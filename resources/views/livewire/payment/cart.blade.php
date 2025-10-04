@@ -1,7 +1,8 @@
-<div>
-    <div class="sm:flex">
+<div class="flex flex-col sm:flex-row gap-2">
+    <!-- جدول -->
+    <div class="w-full sm:w-2/3 overflow-x-auto">
         @if($cart)
-            <table class="w-full sm:w-2/3 text-right bg-pars-100 rounded-2xl overflow-x-scroll">
+            <table class="min-w-[600px] w-full text-right bg-pars-100 rounded-2xl">
                 <thead>
                 <tr class="shadow-xs">
                     <th class="px-4 py-2">تصویر</th>
@@ -13,18 +14,24 @@
                 </thead>
                 <tbody>
                 @foreach ($cart as $key => $product)
-                    <tr wire:key="{{$key}}" class=" border-b border-b-gray-200 last:border-0 ">
+                    <tr wire:key="{{$key}}" class="border-b border-b-gray-200 last:border-0">
                         <td class="px-4 py-2">
-                            <img class="w-24 rounded"
-                                 src="{{ asset('storage/products/'.$product['id'].'/small/1.webp') }}">
+                            @if($product['variant'])
+                                <img class="w-24 rounded"
+                                     src="{{ asset('storage/products/' . $product['id'] . '/small/'. $product['variant'] .'.webp') }}"
+                                     alt="">
+                            @else
+                                <img class="w-24 rounded"
+                                     src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}"
+                                     alt="">
+                            @endif
                         </td>
                         <td class="px-4 py-2">
                             {{ $product['title'] }}  {{ english_to_persian_num($product['code']) }}
                             @if($product['variant'])
-                                - {{ $product['variantName'] }}
+                           -   {{ \App\Models\Product::query()->find($product['id'])->variant }}  : {{ $product['variantName'] }}
                             @endif
                         </td>
-
                         <td class="px-4 py-2">
                             <div class="flex flex-col sm:flex-row items-center">
                                 <div wire:click.prevent="increase('{{ $key }}')"
@@ -56,56 +63,42 @@
                         </td>
                     </tr>
                 @endforeach
-
                 </tbody>
             </table>
         @else
-            <div class="w-full sm:w-2/3 bg-pars-100 rounded-2xl shadow">
-                <img class="w-32 mx-auto pt-8" src="{{ asset('images/cart2.png') }}" alt="">
-                <p class="text-center  pt-8 w-full">سبد خرید شما خالی است</p>
+            <div class="w-full bg-pars-100 rounded-2xl shadow text-center py-8">
+                <img class="w-32 mx-auto" src="{{ asset('images/cart2.png') }}" alt="">
+                <p class="pt-4">سبد خرید شما خالی است</p>
             </div>
         @endif
-        <div class="sticky top-20 h-fit w-full  sm:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2">
-            <div class="w-full mb-4 sm:flex justify-between">
-                <div class="w-full">
-                    <strong>جمع مبلغ سفارش:</strong>
-                </div>
-                <div class="w-full text-left">
-                    <span>{{ english_to_persian_num(number_format($sum)) }} تومان</span>
-                </div>
-            </div>
-            <div class="w-full mb-4 sm:flex justify-between">
-                <div class="w-full">
-                    <strong>حمل و نقل:</strong>
-                </div>
-                <div class="w-full text-left">
-                    <span>{{ english_to_persian_num(number_format($shipping)) }} تومان</span>
-                </div>
-            </div>
-            <div class="w-full sm:flex justify-between">
-                <div class="w-full">
-                    <strong>زمان تحویل به پست:</strong>
-                </div>
-                <div class="w-full text-left">
-                    <span>همه روزه راس ساعت ۱۰ صبح(بجز روزهای تعطیل)</span>
-                </div>
-            </div>
+    </div>
 
-            <hr class="text-gray-300 my-5">
-            <div class="w-full mb-4 sm:flex justify-between">
-                <div class="w-full">
-                    <strong>مبلغ قابل پرداخت:</strong>
-                </div>
-                <div class="w-full text-left">
-                    <span>{{ english_to_persian_num(number_format($total)) }} تومان</span>
-                </div>
-            </div>
+    <!-- منوی سمت راست -->
+    <div class="w-full sm:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2 sticky top-20">
+        <div class="w-full mb-4 sm:flex justify-between">
+            <div class="w-full"><strong>جمع مبلغ سفارش:</strong></div>
+            <div class="w-full text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
+        </div>
+        <div class="w-full mb-4 sm:flex justify-between">
+            <div class="w-full"><strong>حمل و نقل:</strong></div>
+            <div class="w-full text-left"><span>{{ english_to_persian_num(number_format($shipping)) }} تومان</span></div>
+        </div>
+        <div class="w-full sm:flex justify-between">
+            <div class="w-full"><strong>زمان تحویل به پست:</strong></div>
+            <div class="w-full text-left"><span>همه روزه راس ساعت ۱۰ صبح(بجز روزهای تعطیل)</span></div>
+        </div>
 
-            <div class="w-full sm:flex justify-between">
-                <button wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
-                    تکمیل سفارش
-                </button>
-            </div>
+        <hr class="text-gray-300 my-5">
+
+        <div class="w-full mb-4 sm:flex justify-between">
+            <div class="w-full"><strong>مبلغ قابل پرداخت:</strong></div>
+            <div class="w-full text-left"><span>{{ english_to_persian_num(number_format($total)) }} تومان</span></div>
+        </div>
+
+        <div class="w-full sm:flex justify-between">
+            <button wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
+                تکمیل سفارش
+            </button>
         </div>
     </div>
 </div>

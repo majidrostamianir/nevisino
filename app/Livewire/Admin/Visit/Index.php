@@ -18,11 +18,11 @@ class Index extends Component
     }
     public function updatedQueryIp()
     {
-        $this->visits = Visit::ipSearch($this->queryIp , 100);
+        $this->visits = Visit::ipSearch($this->queryIp );
     }
     public function updatedQueryUser()
     {
-        $this->visits = Visit::userSearch($this->queryUser , 100);
+        $this->visits = Visit::userSearch($this->queryUser );
     }
     public function render()
     {

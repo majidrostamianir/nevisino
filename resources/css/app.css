@@ -73,4 +73,7 @@
         -webkit-appearance: none;
         margin: 0;
     }
+    #zibal-trust-badge img{
+        height: 7.7rem!important;
+    }
 }

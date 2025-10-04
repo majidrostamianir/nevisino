@@ -6,18 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Visit extends Model
 {
-    protected $fillable = ['url' , 'url_id' , 'ip' , 'user_id'];
+    protected $fillable = ['url' , 'url_id' , 'ip' , 'user_id','referrer','is_bot','user_agent'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public static function ipSearch($q, $limit = 100)
+    public static function ipSearch($q, $limit = 1000)
     {
         $q = self::normalize($q);
         return Visit::query()->where('ip', 'LIKE', '%' . $q . '%')->orderBy('created_at', 'desc')->limit($limit)->get();
     }
-    public static function userSearch($q, $limit = 100)
+    public static function userSearch($q, $limit = 1000)
     {
         $q = self::normalize($q);
 

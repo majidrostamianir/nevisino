@@ -85,7 +85,7 @@ class VerifyMobile extends Component
                 $this->user->mobile_verified_at = Carbon::now()->toDateTimeString();
                 $this->user->password = Hash::make($this->password);
                 $this->user->save();
-                Auth::login($this->user);
+                Auth::login($this->user , true);
                 if (session('previous_url')) {
                     $url = session('previous_url');
                     session()->forget('previous_url');

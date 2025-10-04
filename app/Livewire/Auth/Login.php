@@ -37,7 +37,7 @@ class Login extends Component
         ]);
 
         if (Hash::check($this->password, $this->user->password)) {
-            Auth::login($this->user);
+            Auth::login($this->user  , true);
 
             $this->transferCartFromSession($this->user);
 

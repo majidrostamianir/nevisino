@@ -1,6 +1,7 @@
 <div>
     @foreach($orders as $order)
-        <div wire:key="{{ $order->order_number }}" class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
+        <div wire:key="{{ $order->order_number }}"
+             class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
             <div class="toggle-btn flex justify-between items-center cursor-pointer">
                 <div>
                     @switch($order->status)
@@ -212,35 +213,45 @@
     @endforeach
 
     <script>
-        const toggleButtons = document.querySelectorAll('.toggle-btn');
-
-        toggleButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const card = btn.closest('.order-card');
-                const details = card.querySelector('.order-details');
-                const arrow = btn.querySelector('svg');
-
-                // بستن سایر کارت‌ها
-                document.querySelectorAll('.order-card .order-details').forEach(d => {
-                    if (d !== details) {
-                        d.style.height = '0px';
-                        d.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
-                    }
-                });
-
-                // باز/بسته کردن کارت جاری با ارتفاع اتوماتیک
-                if (details.style.height && details.style.height !== '0px') {
-                    details.style.height = '0px';
-                    arrow.classList.remove('rotate-180');
-                } else {
-                    details.style.height = details.scrollHeight + 'px';
-                    arrow.classList.add('rotate-180');
-                }
-            });
+        document.addEventListener("DOMContentLoaded", function () {
+            setupToggleButtons();
+        });
+        document.addEventListener("livewire:navigated", function () {
+            setupToggleButtons();
         });
 
-        // تنظیم اولیه همه کارت‌ها
-        document.querySelectorAll('.order-card .order-details').forEach(d => d.style.height = '0px');
+
+        function setupToggleButtons() {
+            const toggleButtons = document.querySelectorAll('.toggle-btn');
+
+            toggleButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = btn.closest('.order-card');
+                    const details = card.querySelector('.order-details');
+                    const arrow = btn.querySelector('svg');
+
+                    // بستن سایر کارت‌ها
+                    document.querySelectorAll('.order-card .order-details').forEach(d => {
+                        if (d !== details) {
+                            d.style.height = '0px';
+                            d.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
+                        }
+                    });
+
+                    // باز/بسته کردن کارت جاری با ارتفاع اتوماتیک
+                    if (details.style.height && details.style.height !== '0px') {
+                        details.style.height = '0px';
+                        arrow.classList.remove('rotate-180');
+                    } else {
+                        details.style.height = details.scrollHeight + 'px';
+                        arrow.classList.add('rotate-180');
+                    }
+                });
+            });
+
+            // تنظیم اولیه همه کارت‌ها
+            document.querySelectorAll('.order-card .order-details').forEach(d => d.style.height = '0px');
+        }
     </script>
 </div>

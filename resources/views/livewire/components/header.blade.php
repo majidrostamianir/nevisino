@@ -28,7 +28,7 @@
                     <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                        href="{{ route('register') }}" wire:navigate>
                         <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-sm py-2.5">ورود به حساب کاربری</span>
+                        <span class="text-sm py-2.5">ورود به حساب</span>
                     </a>
                 @endif
             </div>
