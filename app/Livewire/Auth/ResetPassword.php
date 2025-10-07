@@ -5,17 +5,15 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class ResetPassword extends Component
 {
     public string $mobile;
     public User $user;
-    #[Validate('required|numeric|digits:4')]
-    public string $otp;
-    #[Validate('required|string|min:4|max:255')]
-    public string $password;
+
+    public string $otp= '';
+    public string $password = '';
 
     public function mount()
     {
@@ -79,7 +77,20 @@ class ResetPassword extends Component
 
     public function checkMobileOtp()
     {
-        $this->validate();
+        $this->otp = persian_to_english_num($this->otp);
+        $this->password = persian_to_english_num(str_replace(' ', '', $this->password));
+        $this->validate([
+            'otp' => 'required|string|digits:4',
+            'password' => [
+                'required',
+                'string',
+                'min:4',
+                'max:255',
+                'regex:/^[A-Za-z0-9!@#$%^&*()_\-+=\[\]{}|:;"\'<>,.?\/`~\\\\]+$/'
+            ],
+        ], [
+            'password.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای خاص !@#$%^&*()_-+=[]{}|:;"\'<>,.?/`~ باشد.'
+        ]);
         if (Carbon::create($this->user->mobile_otp_sent_at)->addMinutes(5) > Carbon::now()) {
             if ($this->otp === $this->user->mobile_otp) {
                 $this->user->mobile_verified_at = Carbon::now()->toDateTimeString();

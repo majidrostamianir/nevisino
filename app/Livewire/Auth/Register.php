@@ -7,7 +7,7 @@ use Livewire\Component;
 
 class Register extends Component
 {
-    public string $mobile;
+    public string $mobile = '';
 
     protected function rules(): array
     {
@@ -32,6 +32,7 @@ class Register extends Component
 
     public function submit()
     {
+        $this->mobile = persian_to_english_num($this->mobile);
         $this->validate();
         $otp = rand(1234, 9876);
 

@@ -5,15 +5,13 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class Login extends Component
 {
     public User $user;
-    #[Validate('required|string|min:4|max:255')]
     public string $password = '';
-    public string $mobile;
+    public string $mobile = '';
 
 
     public function mount()
@@ -32,9 +30,19 @@ class Login extends Component
 
     public function submit()
     {
+        $this->password = persian_to_english_num(str_replace(' ', '', $this->password));
         $this->validate([
-            'password' => 'required|string|min:4|max:255',
+            'password' => [
+                'required',
+                'string',
+                'min:4',
+                'max:255',
+                'regex:/^[A-Za-z0-9!@#$%^&*()_\-+=\[\]{}|:;"\'<>,.?\/`~\\\\]+$/'
+            ],
+        ], [
+            'password.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای خاص !@#$%^&*()_-+=[]{}|:;"\'<>,.?/`~ باشد.'
         ]);
+
 
         if (Hash::check($this->password, $this->user->password)) {
             Auth::login($this->user  , true);

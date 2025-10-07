@@ -26,6 +26,7 @@ class ForgetPassword extends Component
 
     public function submit()
     {
+        $this->mobile = persian_to_english_num($this->mobile);
         $this->validate();
 
         if (preg_match('/^09\d{9}$/', $this->mobile)) {
