@@ -1,12 +1,25 @@
 <div>
-    <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}"
+    <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}" wire:navigate
        class="flex flex-row sm:flex-col items-center bg-white rounded shadow hover:shadow-lg cursor-pointer h-full">
 
         <!-- عکس -->
-        <div class="w-24 sm:w-full  overflow-hidden rounded-r-sm sm:rounded-t-sm sm:rounded-b-none">
-            <img class="w-full aspect-square hover:scale-105 transition-all"
-                 src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
-                 alt="">
+        <div class="w-24 sm:w-full relative overflow-hidden rounded-r-sm sm:rounded-t-sm sm:rounded-b-none">
+
+            @if((is_null($product->variant) && $product->stock == 0) ||
+                                (!is_null($product->variant) && $product->variants->sum('stock') == 0))
+                <img class="w-full aspect-square hover:scale-105 transition-all grayscale"
+                     src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
+                     alt="">
+                <div class="absolute top-3 -left-15 rotate-[-45deg] bg-red-600 text-white text-sm font-bold px-16 py-1 shadow-md">
+                    ناموجود
+                </div>
+            @else
+                <img class="w-full aspect-square hover:scale-105 transition-all "
+                     src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
+                     alt="">
+            @endif
+
+
         </div>
 
         <!-- متن -->
