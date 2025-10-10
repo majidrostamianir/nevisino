@@ -97,6 +97,9 @@ class VerifyMobile extends Component
                 $this->user->password = Hash::make($this->password);
                 $this->user->save();
                 Auth::login($this->user , true);
+
+                $this->transferCartFromSession($this->user);
+
                 if (session('previous_url')) {
                     $url = session('previous_url');
                     session()->forget('previous_url');
@@ -114,6 +117,31 @@ class VerifyMobile extends Component
         }
         return null;
     }
+
+    protected function transferCartFromSession($user)
+    {
+        $sessionCart = session()->get('cart', []);
+
+        if (!empty($sessionCart)) {
+            $previousCart = $user->cart()->first();
+            if ($previousCart) {
+                $previousCart->items()->delete();
+                $previousCart->delete();
+            }
+            $cart = $user->cart()->create();
+
+            foreach ($sessionCart as  $item) {
+                $cart->items()->create([
+                    'product_id' => $item['id'],
+                    'variant_id' => $item['variant'] ?? null,
+                    'quantity' =>(int) persian_to_english_num($item['quantity']),
+                ]);
+            }
+            session()->forget('cart');
+            session()->save();
+        }
+    }
+
     public function edit()
     {
         session()->forget('mobile');

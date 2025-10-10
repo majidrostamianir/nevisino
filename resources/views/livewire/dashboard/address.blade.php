@@ -63,7 +63,7 @@
                                 @error('city_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                             </div>
                             <div class="mt-4">
-                                <label class="mr-4 text-sm">آدرس کامل و دقیق:<strong class="text-red-500">*</strong></label>
+                                <label class="mr-4 text-sm">آدرس دقیق پستی:<strong class="text-red-500">*</strong></label>
                                 <textarea wire:model="postal_address"
                                           class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4 border border-pars-600"></textarea>
                                 @error('postal_address') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror

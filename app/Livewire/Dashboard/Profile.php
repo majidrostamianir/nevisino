@@ -17,8 +17,8 @@ class Profile extends Component
 
     public function logout()
     {
+        session()->forget('mobile');
         Auth::logout();
-        return redirect()->route('home');
     }
     public function render()
     {
