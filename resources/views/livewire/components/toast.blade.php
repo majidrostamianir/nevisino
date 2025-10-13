@@ -3,7 +3,7 @@
         /* استایل‌های نوتیفیکیشن */
         .notification-container {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
             z-index: 1000;
             max-width: 350px;
@@ -137,19 +137,19 @@
         </div>
     @endif
 
-        <script>
-            document.addEventListener('livewire:init', () => {
-                Livewire.on('start-notification-timer', (event) => {
-                    setTimeout(() => {
-                        const notification = document.getElementById('notification-' + event.notificationId);
-                        if (notification) {
-                            notification.classList.add('notification-leave');
-                            setTimeout(() => {
-                                @this.call('hide');
-                            }, 300);
-                        }
-                    }, 3000);
-                });
-            });
-        </script>
+{{--        <script>--}}
+{{--            document.addEventListener('livewire:init', () => {--}}
+{{--                Livewire.on('start-notification-timer', (event) => {--}}
+{{--                    setTimeout(() => {--}}
+{{--                        const notification = document.getElementById('notification-' + event.notificationId);--}}
+{{--                        if (notification) {--}}
+{{--                            notification.classList.add('notification-leave');--}}
+{{--                            setTimeout(() => {--}}
+{{--                                @this.call('hide');--}}
+{{--                            }, 300);--}}
+{{--                        }--}}
+{{--                    }, 3000);--}}
+{{--                });--}}
+{{--            });--}}
+{{--        </script>--}}
 </div>

@@ -7,12 +7,12 @@ use Livewire\Component;
 
 class Register extends Component
 {
-    public string $mobile = '';
+    public string $faMobile = '', $enMobile = '';
 
     protected function rules(): array
     {
         return [
-            'mobile' => [
+            'enMobile' => [
                 'required',
                 'string',
                 'digits:11',
@@ -30,16 +30,24 @@ class Register extends Component
         session()->forget('mobile');
     }
 
+    public function syncMobile()
+    {
+        $this->enMobile = persian_to_english_num($this->faMobile);
+        $this->faMobile = english_to_persian_num($this->enMobile);
+
+    }
+
     public function submit()
     {
-        $this->mobile = persian_to_english_num($this->mobile);
+        $this->syncMobile();
+
         $this->validate();
         $otp = rand(1234, 9876);
 
-        $user = User::where('mobile', $this->mobile)->orderByDesc('mobile_verified_at')->first();
+        $user = User::where('mobile', $this->enMobile)->orderByDesc('mobile_verified_at')->first();
         if ($user) {
             if ($user->mobile_verified_at) {
-                session()->put('mobile', $this->mobile);
+                session()->put('mobile', $this->enMobile);
                 return $this->redirect(route('login'), navigate: true);
             } else {
                 $user->update([
@@ -50,17 +58,18 @@ class Register extends Component
             }
         } else {
             User::create([
-                'mobile' => $this->mobile,
+                'mobile' => $this->enMobile,
                 'mobile_otp' => $otp,
                 'mobile_otp_sent_count' => 0,
                 'referrer' => session('referrer', ''),
             ]);
         }
-        session()->put('mobile', $this->mobile);
+        session()->put('mobile', $this->enMobile);
         return $this->redirect(route('verify-mobile'), navigate: true);
     }
+
     public function render()
     {
-        return view('livewire.auth.register')->layout('components.layouts.guest');
+        return view('livewire.auth.register')->layout('components.layouts.guest')->title('ثبت نام - نویسینو');
     }
 }

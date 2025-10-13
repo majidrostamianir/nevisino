@@ -155,6 +155,8 @@ return array(
         "recipient_mobile"=>"شماره موبایل",
         "recipient_name"=>"نام",
         "postal_address"=>"آدرس",
+        "enMobile" => "شماره تلفن",
+
 
     ),
 );
