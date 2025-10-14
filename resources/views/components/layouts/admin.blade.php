@@ -185,7 +185,7 @@
 
 @livewireScripts
 
-<livewire:components.toast />
+{{--<livewire:components.toast />--}}
 
 
 

@@ -23,7 +23,7 @@
 
 <livewire:components.footer />
 
-<livewire:components.toast />
+{{--<livewire:components.toast />--}}
 
 <script>
     function justPersianDigits(el) {
