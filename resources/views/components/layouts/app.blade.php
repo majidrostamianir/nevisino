@@ -17,8 +17,6 @@
 
 <livewire:components.header/>
 
-<livewire:components.side-bar/>
-
 <div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20  min-h-[65vh]">
     {{ $slot }}
 </div>
