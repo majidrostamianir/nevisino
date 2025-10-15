@@ -47,16 +47,21 @@
                                         class="text-pars-700">{{ english_to_persian_num($order->recipient_mobile) }}</span></span>
                             </div>
                             <div class="w-full sm:w-1/2">
-                            <span class=" text-gray-400">آدرس <span
-                                    class="text-pars-700">
-                                    {{ $order->province }} -
-                                    {{ $order->city }} -
-                                    {{ english_to_persian_num($order->postal_address) }}
-                                </span></span>
-                                <span class="mx-4  text-pars-400">&#9679;</span>
-                                <span class="text-gray-400">کد پستی <span
-                                        class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
+                                <span class=" text-gray-400">آدرس <span
+                                        class="text-pars-700">
+                                        {{ $order->province }} -
+                                        {{ $order->city }} -
+                                        {{ english_to_persian_num($order->postal_address) }}
+                                    </span></span>
+                                    <span class="mx-4  text-pars-400">&#9679;</span>
+                                    <span class="text-gray-400">کد پستی <span
+                                            class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
                             </div>
+                            <div class="w-full sm:w-1/2">
+                                <span class=" text-gray-400">توضیحات <span
+                                        class="text-pars-700">
+                                        {{ $order->description }}
+                                 </div>
                         </div>
                         <div class="w-full sm:w-1/2">
                             @switch($order->shipping_status)
@@ -228,7 +233,8 @@
                                                 </h5>
                                                 @if($item->variant_id)
                                                     <h5 class="text-xs sm:text-sm mt-2">
-                                                       {{ $product->variant }} : {{ \App\Models\ProductVariant::query()->find($item->variant_id)->name }}
+                                                        {{ $product->variant }}
+                                                        : {{ \App\Models\ProductVariant::query()->find($item->variant_id)->name }}
                                                     </h5>
                                                 @endif
                                             </div>

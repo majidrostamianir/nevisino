@@ -118,7 +118,8 @@
                         <ul
                             x-show="activeDropdown === {{ $key }}"
                             x-collapse
-                            class="pl-8 text-xs overflow-hidden transition-all duration-300 ease-in-out"
+                            x-cloak
+                            class="pr-8 text-xs overflow-hidden transition-all duration-300 ease-in-out"
                         >
                         @foreach(\App\Models\Category::query()->where('parent_id',$value->id)->get() as $value )
                                 <li>

@@ -29,7 +29,8 @@
                         <td class="px-4 py-2">
                             {{ $product['title'] }}  {{ english_to_persian_num($product['code']) }}
                             @if($product['variant'])
-                           -   {{ \App\Models\Product::query()->find($product['id'])->variant }}  : {{ $product['variantName'] }}
+                                -   {{ \App\Models\Product::query()->find($product['id'])->variant }}
+                                : {{ $product['variantName'] }}
                             @endif
                         </td>
                         <td class="px-4 py-2">
@@ -68,35 +69,41 @@
         @else
             <div class="w-full bg-pars-100 rounded-2xl shadow text-center py-8">
                 <img class="w-32 mx-auto" src="{{ asset('images/cart2.png') }}" alt="">
-                <p class="pt-4">سبد خرید شما خالی است</p>
+                <p class="pt-4 mb-8">سبد خرید شما خالی است</p>
+                <a href="{{ route('shop') }}" wire:navigate
+                   class="bg-pars-500 text-white px-2 py-1 rounded hover:bg-pars-600 shadow">برو به فروشگاه</a>
             </div>
         @endif
     </div>
 
     <!-- منوی سمت راست -->
-    <div class="w-full sm:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2 sticky top-20">
-        <div class="w-full mb-4 sm:flex justify-between">
-            <div class="w-full"><strong>جمع مبلغ سفارش:</strong></div>
-            <div class="w-full text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
+    <div class="w-full h-fit sm:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2 sticky top-20">
+        <div class="w-full mb-4 flex justify-between">
+            <div class=""><strong>جمع مبلغ سفارش</strong></div>
+            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+            <div class=" text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
         </div>
-        <div class="w-full mb-4 sm:flex justify-between">
-            <div class="w-full"><strong>حمل و نقل:</strong></div>
-            <div class="w-full text-left"><span>{{ english_to_persian_num(number_format($shipping)) }} تومان</span></div>
+        <div class="w-full mb-4 flex justify-between">
+            <div class=""><strong>روش ارسال</strong></div>
+            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+            <div class=" text-left">پست پیشتاز</div>
         </div>
+        <div class="w-full mb-4 flex justify-between">
+            <div class=""><strong>زمان ارسال</strong></div>
+            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+            <div class=text-left">
+                <span>هر روز ساعت ۱۰ صبح<span class="text-xs">(روزهای کاری)</span></span>
+            </div>
+        </div>
+        <div class="w-full mb-16 flex justify-between">
+            <div class=""><strong>زمان رسیدن به مقصد</strong></div>
+            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+            <div class="text-left">{{ english_to_persian_num('بین 3 تا 5 روز') }}</div>
+        </div>
+
         <div class="w-full sm:flex justify-between">
-            <div class="w-full"><strong>زمان تحویل به پست:</strong></div>
-            <div class="w-full text-left"><span>همه روزه راس ساعت ۱۰ صبح(بجز روزهای تعطیل)</span></div>
-        </div>
-
-        <hr class="text-gray-300 my-5">
-
-        <div class="w-full mb-4 sm:flex justify-between">
-            <div class="w-full"><strong>مبلغ قابل پرداخت:</strong></div>
-            <div class="w-full text-left"><span>{{ english_to_persian_num(number_format($total)) }} تومان</span></div>
-        </div>
-
-        <div class="w-full sm:flex justify-between">
-            <button wire:click.prevent="checkout" class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
+            <button wire:click.prevent="checkout"
+                    class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
                 تکمیل سفارش
             </button>
         </div>

@@ -10,7 +10,7 @@
                 <img class="w-full aspect-square hover:scale-105 transition-all grayscale"
                      src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
                      alt="">
-                <div class="absolute top-3 -left-15 rotate-[-45deg] bg-red-600 text-white text-sm font-bold px-16 py-1 shadow-md">
+                <div class="absolute top-3 -left-15 rotate-[-45deg] bg-red-600 text-white text-xs sm:text-sm sm:font-bold px-16 py-1 shadow-md">
                     ناموجود
                 </div>
             @else

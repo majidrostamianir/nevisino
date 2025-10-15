@@ -3,11 +3,29 @@
         <div class="w-full sm:w-7/12 sm:mr-2">
             <h1 class="sm:hidden font-bold text-xl mb-6">{{ english_to_persian_num($product->title) }}</h1>
             <div class="overflow-hidden h-[60vh] relative flex justify-center items-center"
-                 id="zoomContainer-{{ $product->id }}">
-                <img id="zoomImg-{{ $product->id }}" src="{{ $src }}"
-                     class="h-[60vh] object-contain transition-transform duration-200 mx-auto">
-            </div>
+                 x-data="{
+                            scale: 1,
+                            originX: '50%',
+                            originY: '50%',
+                            zoom(e) {
+                                const rect = e.target.getBoundingClientRect();
+                                this.originX = ((e.clientX - rect.left) / rect.width) * 100 + '%';
+                                this.originY = ((e.clientY - rect.top) / rect.height) * 100 + '%';
+                                this.scale = 2;
+                            },
+                            reset() {
+                                this.scale = 1;
+                                this.originX = '50%';
+                                this.originY = '50%';
+                            }
+                         }"
+                 @mousemove="zoom($event)"
+                 @mouseleave="reset()">
 
+                <img src="{{ $src }}"
+                     :style="`transform: scale(${scale}); transform-origin: ${originX} ${originY};`"
+                     class="h-[60vh] cursor-zoom-in object-contain transition-transform duration-200 mx-auto select-none">
+            </div>
             <div class="flex flex-wrap justify-center mt-2">
                 @foreach($images as $image)
                     <div>
@@ -60,21 +78,35 @@
             </h4>
             @if($product->variant)
                 <h4 class="bg-pars-200 shadow rounded mb-6 p-1">
-                <span class="font-bold">
-                   {{$product->variant}}
-                </span>
-                    <select
-                        class="w-fit rounded-2xl border border-pars-500 py-0 px-4 focus:outline-none focus:ring-2 focus:ring-pars-500 focus:border-pars-500 cursor-pointer"
-                        wire:model.live="selectedVariant">
-                        <option value="">انتخاب کنید</option>
+                    <div
+                        x-data="{ selected: @entangle('selectedVariant') }"
+                        class="flex flex-wrap gap-2">
+                      <span class="font-bold">
+                           {{$product->variant}}:
+                        </span>
                         @foreach($product->variants as $value)
-                            <option value="{{ $value->id }}">{{ $value->name }}
+                            <div
+                                @click="if({{ $value->stock }} > 0) selected = '{{ $value->id }}'"
+                                class="relative px-2 rounded border border-gray-400  select-none transition-all duration-150"
+                                :class="{
+                                    'border-pars-500  pr-5 bg-pars-200 text-pars-500 font-bold shadow': selected == '{{ $value->id }}',
+                                    'border-gray-400 cursor-pointer hover:border-pars-500': selected != '{{ $value->id }}' && {{ $value->stock }} > 0,
+                                    'opacity-60  cursor-not-allowed border-gray-400': {{ $value->stock }} == 0
+                                }">
+                                <span class="">{{ $value->name }}</span>
                                 @if($value->stock == 0)
-                                    (اتمام موجودی)
+                                    <span class="text-[8px] text-red-500">ناموجود</span>
                                 @endif
-                            </option>
+
+                                {{-- تیک انتخاب --}}
+                                <template x-if="selected == '{{ $value->id }}'">
+                                    <svg class="absolute top-1 right-1 w-4 h-4 text-pars-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </template>
+                            </div>
                         @endforeach
-                    </select>
+                    </div>
                     @error('selectedVariant')
                     <span class="text-red-500 text-xs">{{ $message }}</span>
                     @enderror
@@ -117,62 +149,4 @@
             @endif
         </div>
     </div>
-
-
-    {{-- <div class="w-full sm:w-11/12  p-4 rounded-2xl mx-auto mt-10 bg-pars-100 shadow min-h-24 mb-6">
-         <small>طرح های مشابه</small>
-         <div class="container mt-2">
-             @foreach($similar as $value)
-                 <a class="similar-item relative h-40"
-                    href="{{ route('product-page' , ['title' => $value->dashed_title]) }}">
-                     <img src="{{ $value->url }}" alt="" class="h-40 rounded">
-                 </a>
-             @endforeach
-         </div>
-     </div>--}}
-
-    <script>
-        document.addEventListener('livewire:navigated', () => {
-            initZoom('{{ $product->id }}');
-        });
-
-        document.addEventListener('livewire:init', () => {
-            initZoom('{{ $product->id }}');
-        });
-
-        function initZoom(productId) {
-            const container = document.getElementById('zoomContainer-' + productId);
-            const img = document.getElementById('zoomImg-' + productId);
-
-            if (!container || !img) return;
-
-            // حذف event listenerهای قبلی (اگر وجود دارن)
-            container.removeEventListener('mousemove', container._zoomHandler);
-            container.removeEventListener('mouseleave', container._resetHandler);
-
-            function zoom(e) {
-                const {left, top, width, height} = container.getBoundingClientRect();
-                const x = ((e.clientX - left) / width) * 100;
-                const y = ((e.clientY - top) / height) * 100;
-
-                img.style.transformOrigin = `${x}% ${y}%`;
-                img.style.transform = "scale(2)";
-            }
-
-            function resetZoom() {
-                img.style.transformOrigin = "center center";
-                img.style.transform = "scale(1)";
-            }
-
-            // ذخیره reference به توابع برای حذف بعدی
-            container._zoomHandler = zoom;
-            container._resetHandler = resetZoom;
-
-            container.addEventListener('mousemove', zoom);
-            container.addEventListener('mouseleave', resetZoom);
-        }
-
-        // مقداردهی اولیه
-        initZoom('{{ $product->id }}');
-    </script>
 </div>

@@ -179,13 +179,14 @@
     </aside>
 </div>
 
+<livewire:components.toast />
+
 <div class="p-4 sm:mr-16 mt-16">
     {{ $slot }}
 </div>
 
 @livewireScripts
 
-{{--<livewire:components.toast />--}}
 
 
 

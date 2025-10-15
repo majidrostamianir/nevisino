@@ -21,7 +21,6 @@ class Checkout extends Component
     public array|null $cart = [];
     public Collection $addresses;
     public $cities = [];
-    public bool $showPopup = false;
     public int $shipping = 0, $amount = 0, $sum = 0;
     public $recipient_name, $recipient_mobile, $province_id, $city_id, $postal_address, $zipcode, $description;
 
@@ -36,20 +35,16 @@ class Checkout extends Component
 
     public function selectAddress($value)
     {
-        $this->togglePopup();
+        $this->dispatch('close-popup');
         $this->selectedAddress = Address::query()->find($value);
     }
 
     public function changeAddress()
     {
-        $this->togglePopup();
+        $this->dispatch('close-popup');
         $this->selectedAddress = null;
     }
 
-    public function togglePopup()
-    {
-        $this->showPopup = !$this->showPopup;
-    }
 
     protected $rules = [
         'recipient_name' => 'required|min:3|string',

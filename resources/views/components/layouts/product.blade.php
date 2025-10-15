@@ -16,13 +16,13 @@
 
 
 <livewire:components.header/>
+<livewire:components.toast />
 
 
 <div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20 place-items-center ">
     {{ $slot }}
 </div>
 
-{{--<livewire:components.toast />--}}
 
 
 <livewire:components.footer />

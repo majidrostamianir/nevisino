@@ -76,4 +76,8 @@
     #zibal-trust-badge img{
         height: 7.7rem!important;
     }
+    [x-cloak] {
+        display: none !important;
+    }
+
 }
