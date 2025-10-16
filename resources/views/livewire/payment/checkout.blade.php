@@ -67,7 +67,7 @@
                         <strong>{{ english_to_persian_num( $selectedAddress->recipient_mobile)  }}</strong></p>
                     <p class="mb-2">استان: <strong>{{ $selectedAddress->province->name }}</strong></p>
                     <p class="mb-2">شهر: <strong>{{ $selectedAddress->city->name }}</strong></p>
-                    <p class="mb-2">آدرس کامل پستی: <strong>{{ $selectedAddress->postal_address }}</strong></p>
+                    <p class="mb-2">آدرس دقیق پستی: <strong>{{ $selectedAddress->postal_address }}</strong></p>
                     <p class="mb-2">کد پستی: <strong>{{ english_to_persian_num($selectedAddress->zipcode) }}</strong>
                     </p>
                     <div class="mt-4">
@@ -114,7 +114,7 @@
                     @error('city_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
                 </div>
                 <div class="mt-4">
-                    <label class="mr-4 text-sm">آدرس کامل و دقیق:<strong class="text-red-500">*</strong></label>
+                    <label class="mr-4 text-sm">آدرس دقیق پستی:<strong class="text-red-500">*</strong></label>
                     <textarea wire:model="postal_address"
                               class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
                     @error('postal_address') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror

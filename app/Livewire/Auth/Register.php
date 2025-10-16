@@ -30,17 +30,8 @@ class Register extends Component
         session()->forget('mobile');
     }
 
-    public function syncMobile()
-    {
-        $this->enMobile = persian_to_english_num($this->faMobile);
-        $this->faMobile = english_to_persian_num($this->enMobile);
-
-    }
-
     public function submit()
     {
-        $this->syncMobile();
-
         $this->validate();
         $otp = rand(1234, 9876);
 

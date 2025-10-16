@@ -10,10 +10,9 @@ use Livewire\Component;
 
 class VerifyMobile extends Component
 {
-    public string $otp = '';
-    public string $password = '';
+    public string $faOtp = '' , $enOtp = '' , $faPassword = '' , $enPassword = '' ;
     public User $user;
-    public string $mobile;
+    public string $mobile = '';
 
 
     public function mount()
@@ -25,24 +24,22 @@ class VerifyMobile extends Component
             return redirect()->route('register');
         }
         $this->user = User::where('mobile', $this->mobile)->first();
-        $this->sendOtp();
+//        $this->sendOtp();
     }
 
     public function submit(): void
     {
-        $this->otp = persian_to_english_num($this->otp);
-        $this->password = persian_to_english_num(str_replace(' ', '', $this->password));
         $this->validate([
-            'otp' => 'required|string|digits:4',
-            'password' => [
+            'enOtp' => 'required|string|digits:4',
+            'enPassword' => [
                 'required',
                 'string',
                 'min:4',
                 'max:255',
-                'regex:/^[A-Za-z0-9!@#$%^&*()_\-+=\[\]{}|:;"\'<>,.?\/`~\\\\]+$/'
+                'regex:/^[A-Za-z0-9!@#$%&]+$/'
             ],
         ], [
-            'password.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای خاص !@#$%^&*()_-+=[]{}|:;"\'<>,.?/`~ باشد.'
+            'enPassword.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای ! @ # $ %  &  باشد.'
         ]);
 
         $this->check_otp();

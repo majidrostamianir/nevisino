@@ -7,17 +7,18 @@ use Livewire\Component;
 
 class ForgetPassword extends Component
 {
-    public string $mobile;
+    public string $faMobile = '', $enMobile = '';
 
     protected function rules(): array
     {
         return [
-            'mobile' => [
+            'enMobile' => [
                 'required',
                 'string',
+                'digits:11',
                 function ($attribute, $value, $fail) {
-                    if (!preg_match('/^09\d{9}$/', $value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                        $fail('شماره موبایل یا ایمیل وارد شده معتبر نیست.');
+                    if (!preg_match('/^09\d{9}$/', $value)) {
+                        $fail('شماره موبایل وارد شده معتبر نیست.');
                     }
                 }
             ]
@@ -26,26 +27,18 @@ class ForgetPassword extends Component
 
     public function submit()
     {
-        $this->mobile = persian_to_english_num($this->mobile);
         $this->validate();
 
-        if (preg_match('/^09\d{9}$/', $this->mobile)) {
-            if (User::where('mobile', $this->mobile)->whereNotNull('mobile_verified_at')->first()) {
-                session()->put('mobile', $this->mobile);
-                return redirect(route('reset-password'));
-            }else{
-                $this->addError('mobile' , 'شماره شما یافت نشد.');
-            }
-        } elseif (filter_var($this->mobile, FILTER_VALIDATE_EMAIL)) {
-            if (User::where('email', $this->mobile)->whereNotNull('email_verified_at')->first()) {
-                session()->put('mobile', $this->mobile);
-                return redirect(route('reset-password'));
-            }else{
-                $this->addError('mobile' , 'ایمیل شما یافت نشد.');
-
+        if (preg_match('/^09\d{9}$/', $this->enMobile)) {
+            if (User::where('mobile', $this->enMobile)->whereNotNull('mobile_verified_at')->first()) {
+                session()->put('mobile', $this->enMobile);
+                return redirect(route('verify-mobile'));
+            } else {
+                $this->addError('enMobile', 'شماره شما یافت نشد.');
             }
         }
     }
+
     public function render()
     {
         return view('livewire.auth.forget-password')->layout('components.layouts.guest');

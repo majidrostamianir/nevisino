@@ -10,7 +10,7 @@ use Livewire\Component;
 class Login extends Component
 {
     public User $user;
-    public string $password = '';
+    public string $faPassword = '', $enPassword = '';
     public string $mobile = '';
 
 
@@ -30,22 +30,21 @@ class Login extends Component
 
     public function submit()
     {
-        $this->password = persian_to_english_num(str_replace(' ', '', $this->password));
         $this->validate([
-            'password' => [
+            'enPassword' => [
                 'required',
                 'string',
                 'min:4',
                 'max:255',
-                'regex:/^[A-Za-z0-9!@#$%^&*()_\-+=\[\]{}|:;"\'<>,.?\/`~\\\\]+$/'
+                'regex:/^[A-Za-z0-9!@#$%&]+$/'
             ],
         ], [
-            'password.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای خاص !@#$%^&*()_-+=[]{}|:;"\'<>,.?/`~ باشد.'
+            'enPassword.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای ! @ # $ %  &  باشد.'
         ]);
 
 
-        if (Hash::check($this->password, $this->user->password)) {
-            Auth::login($this->user  , true);
+        if (Hash::check($this->enPassword, $this->user->password)) {
+            Auth::login($this->user, true);
 
             $this->transferCartFromSession($this->user);
 
@@ -57,7 +56,7 @@ class Login extends Component
             }
             return $this->redirect('/', navigate: true);
         } else {
-            $this->addError('password', 'رمز عبور اشتباه است.');
+            $this->addError('enPassword', 'رمز عبور اشتباه است.');
             return null;
         }
     }
@@ -74,11 +73,11 @@ class Login extends Component
             }
             $cart = $user->cart()->create();
 
-            foreach ($sessionCart as  $item) {
+            foreach ($sessionCart as $item) {
                 $cart->items()->create([
                     'product_id' => $item['id'],
                     'variant_id' => $item['variant'] ?? null,
-                    'quantity' =>(int) persian_to_english_num($item['quantity']),
+                    'quantity' => (int)persian_to_english_num($item['quantity']),
                 ]);
             }
             session()->forget('cart');

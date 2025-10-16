@@ -156,6 +156,8 @@ return array(
         "recipient_name"=>"نام",
         "postal_address"=>"آدرس",
         "enMobile" => "شماره تلفن",
+        "enPassword" => "رمز عبور",
+        "enOtp" => "کد تایید",
 
 
     ),

@@ -18,7 +18,7 @@ Route::group(['middleware' => ['throttle:60', 'guest', \App\Http\Middleware\getR
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::get('/login', \App\Livewire\Auth\Login::class)->name('login');
     Route::get('/forget', \App\Livewire\Auth\ForgetPassword::class)->name('forget');
-    Route::get('/reset', \App\Livewire\Auth\ResetPassword::class)->name('reset-password');
+//    Route::get('/reset', \App\Livewire\Auth\ResetPassword::class)->name('reset-password');
     Route::get('/verify-mobile', \App\Livewire\Auth\VerifyMobile::class)->name('verify-mobile');
 
 });
