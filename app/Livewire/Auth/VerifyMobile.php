@@ -24,7 +24,7 @@ class VerifyMobile extends Component
             return redirect()->route('register');
         }
         $this->user = User::where('mobile', $this->mobile)->first();
-//        $this->sendOtp();
+        $this->sendOtp();
     }
 
     public function submit(): void
@@ -61,9 +61,9 @@ class VerifyMobile extends Component
                 $username = '09169889759';
                 $password = 'Faraz@1920115072';
                 $from = '3000505';
-                $pattern_code = '3cslb0fnh3htun7';
+                $pattern_code = '15zgbzfkih0dllr';
                 $to = array('98' . substr($this->user->mobile, 1));
-                $input_data = array('vcode' => $code);
+                $input_data = array('code' => $code , 'autocode' => $code);
 
                 $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
                     urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
@@ -86,12 +86,10 @@ class VerifyMobile extends Component
 
     public function check_otp()
     {
-        $this->validate(['otp' => 'required|numeric|digits:4']);
-
         if (Carbon::create($this->user->mobile_otp_sent_at)->addMinutes(5) > Carbon::now()) {
-            if ($this->otp === $this->user->mobile_otp) {
+            if ($this->enOtp === $this->user->mobile_otp) {
                 $this->user->mobile_verified_at = Carbon::now()->toDateTimeString();
-                $this->user->password = Hash::make($this->password);
+                $this->user->password = Hash::make($this->enPassword);
                 $this->user->save();
                 Auth::login($this->user , true);
 

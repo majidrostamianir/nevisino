@@ -1,4 +1,5 @@
-<div x-data="{
+<div
+    x-data="{
     showPassword: false,
     value: '',
     enValue: '',
@@ -30,16 +31,34 @@
     },
     togglePassword() {
         this.showPassword = !this.showPassword;
-    }
-}">
+    },
+    initWebOtp() {
+        if ('OTPCredential' in window) {
+            const ac = new AbortController();
+            window.addEventListener('beforeunload', () => ac.abort());
 
-<div class="mt-10">
+            navigator.credentials.get({
+                otp: { transport: ['sms'] },
+                signal: ac.signal
+            }).then(otp => {
+                if (otp?.code) {
+                    this.convertOtp(otp.code);
+                }
+            }).catch(err => console.log('WebOTP error:', err));
+        }
+    }
+}"
+    x-init="initWebOtp()"
+>
+
+    <div class="mt-10">
         <div class="w-full">
             <strong>کاربر گرامی؛</strong>
             <div>کد ارسال شده به شماره <strong>{{ english_to_persian_num($mobile) }}</strong> را وارد نموده و یک رمز
                 عبور تنظیم نمایید:
             </div>
         </div>
+
         <div class="relative">
             <input inputmode="numeric"
                    type="text"
@@ -51,17 +70,18 @@
                    placeholder="کد تایید"
                    class="mt-8 w-full rounded-2xl placeholder:text-gray-300 placeholder:text-center text-center">
             <a @click.prevent="sendOtp()"
-               class="text-xs absolute top-8 left-0 bg-pars-300 hover:bg-pars-400 hover:text-pars-500  py-3 w-3/12 text-center rounded-l-2xl cursor-pointer">ارسال
-                مجدد</a>
+               class="text-xs absolute top-8 left-0 bg-pars-300 hover:bg-pars-400 hover:text-pars-500  py-3 w-3/12 text-center rounded-l-2xl cursor-pointer">
+                ارسال مجدد
+            </a>
         </div>
+
         <div class="w-full relative">
             <input :type="showPassword ? 'text' : 'password'"
                    @keydown.enter.prevent="submit()"
                    @input="convertPassword($event.target.value)"
                    x-model="value"
-                   autofocus
                    dir="auto"
-                   placeholder="رمز عبور"
+                   placeholder="رمز عبور جدید"
                    class="mt-2 w-full rounded-2xl placeholder:text-gray-300 placeholder:text-center text-center">
             <button
                 type="button"
@@ -80,15 +100,15 @@
                 </svg>
             </button>
         </div>
+
         <div class="mt-8 mb-4">
             <button @click.prevent="submit()"
-                    class="w-full text-center cursor-pointer rounded-2xl  p-1.5 bg-pars-500 hover:bg-pars-600  transition-all text-white">
+                    class="w-full text-center cursor-pointer rounded-2xl p-1.5 bg-pars-500 hover:bg-pars-600 transition-all text-white">
                 تایید و ورود
             </button>
             <div class="w-full p-2 flex justify-between">
                 <div class="text-xs cursor-pointer" wire:click="edit">ویرایش شماره موبایل</div>
-                <a class="text-xs cursor-pointer" href="{{ route('forget') }}" wire:navigate.hover>فراموشی رمز
-                    عبور</a>
+                <a class="text-xs cursor-pointer" href="{{ route('forget') }}" wire:navigate.hover>فراموشی رمز عبور</a>
             </div>
         </div>
 
