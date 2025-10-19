@@ -181,7 +181,7 @@
 
 <livewire:components.toast />
 
-<div class="p-4 sm:mr-16 mt-16">
+<div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20  min-h-[65vh]">
     {{ $slot }}
 </div>
 

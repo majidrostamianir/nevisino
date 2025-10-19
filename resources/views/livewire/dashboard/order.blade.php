@@ -1,8 +1,11 @@
-<div>
+<div x-data="{ openOrderId: null }">
     @foreach($orders as $order)
-        <div wire:key="{{ $order->order_number }}"
+        <div
+             wire:key="{{ $order->order_number }}"
              class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
-            <div class="toggle-btn flex justify-between items-center cursor-pointer">
+
+            <div @click="openOrderId = (openOrderId === '{{ $order->id }}' ? null : '{{ $order->id }}')"
+                 class="toggle-btn flex justify-between items-center cursor-pointer">
                 <div>
                     @switch($order->status)
                         @case('pending')
@@ -12,12 +15,12 @@
                                         wire:loading.attr="disabled"
                                         wire:target="payAgain"
                                         class="w-fix px-4 mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 cursor-pointer">
-                    <span wire:loading.remove wire:target="payAgain">
-                        پرداخت
-                    </span>
+                                    <span wire:loading.remove wire:target="payAgain">
+                                        پرداخت
+                                    </span>
                                     <span wire:loading wire:target="payAgain">
-                        در حال انتقال به درگاه...
-                    </span>
+                                        در حال انتقال به درگاه...
+                                    </span>
                                 </button>
                             </div>
                             @break
@@ -39,14 +42,18 @@
                     </div>
                 </div>
 
-                <button class=" flex items-center cursor-pointer">
-                    <svg class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
+                <button class="flex items-center cursor-pointer">
+                    <svg x-bind:class="{'rotate-180': openOrderId === '{{ $order->id }}'}"
+                         class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
                          viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
             </div>
-            <div class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
+
+            <div x-show="openOrderId === '{{ $order->id }}'"
+                 x-collapse
+                 class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
                 <div class="mt-8">
                     <div class="w-full sm:flex">
                         <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
@@ -211,47 +218,4 @@
             </div>
         </div>
     @endforeach
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            setupToggleButtons();
-        });
-        document.addEventListener("livewire:navigated", function () {
-            setupToggleButtons();
-        });
-
-
-        function setupToggleButtons() {
-            const toggleButtons = document.querySelectorAll('.toggle-btn');
-
-            toggleButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const card = btn.closest('.order-card');
-                    const details = card.querySelector('.order-details');
-                    const arrow = btn.querySelector('svg');
-
-                    // بستن سایر کارت‌ها
-                    document.querySelectorAll('.order-card .order-details').forEach(d => {
-                        if (d !== details) {
-                            d.style.height = '0px';
-                            d.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
-                        }
-                    });
-
-                    // باز/بسته کردن کارت جاری با ارتفاع اتوماتیک
-                    if (details.style.height && details.style.height !== '0px') {
-                        details.style.height = '0px';
-                        arrow.classList.remove('rotate-180');
-                    } else {
-                        details.style.height = details.scrollHeight + 'px';
-                        arrow.classList.add('rotate-180');
-                    }
-                });
-            });
-
-            // تنظیم اولیه همه کارت‌ها
-            document.querySelectorAll('.order-card .order-details').forEach(d => d.style.height = '0px');
-        }
-    </script>
 </div>

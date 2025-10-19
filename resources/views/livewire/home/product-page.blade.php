@@ -1,3 +1,22 @@
+@push('torob-meta-tags')
+    <meta name="product_id" content="{{ $product->id }}">
+    @php
+        $variantPrice = $product->variant === null ? null : $product->variants->min('price');
+        $finalPrice = ($product->variant === null || $variantPrice == 0 || $variantPrice === null)
+            ? $product->price
+            : $variantPrice;
+    @endphp
+    <meta name="product_price" content="{{ $finalPrice }}">
+    @php
+        $totalStock = $product->variant === null
+            ? $product->stock
+            : $product->variants->sum('stock');
+    @endphp
+    <meta name="availability" content="{{ $totalStock > 0 ? 'instock' : 'outofstock' }}">
+    <meta name="product_name" content="{{ $product->title }}">
+    <meta property="og:image" content="{{ $src }}">
+    <meta name="guarantee" content="{{ $product->guarantee ?? 'گارانتی اصالت و سلامت فیزیکی کالا' }}">
+@endpush
 <div class="w-full">
     <div class="sm:flex flex-row-reverse w-full p-4  sm:p-8 rounded-2xl mx-auto mt-10 bg-pars-100 shadow">
         <div class="w-full sm:w-7/12 sm:mr-2">
@@ -29,7 +48,7 @@
             <div class="flex flex-wrap justify-center mt-2">
                 @foreach($images as $image)
                     <div>
-                        <img wire:click.prevent="setImage('{{ $image }}')" wo
+                        <img wire:click.prevent="setImage('{{ $image }}')"
                              class="w-16 h-16 mx-1 cursor-pointer rounded hover:scale-105"
                              src="{{ asset('storage/products/' . $product->id. '/small/' . $image . '.webp') }}">
                         @if(\App\Models\ProductVariant::query()->find($image))
@@ -82,11 +101,13 @@
                         x-data="{ selected: @entangle('selectedVariant') }"
                         class="flex flex-wrap gap-2">
                       <span class="font-bold">
-                           {{$product->variant}}:
+                          انتخاب {{$product->variant}}:
                         </span>
                         @foreach($product->variants as $value)
                             <div
-                                @click="if({{ $value->stock }} > 0) selected = '{{ $value->id }}'"
+                                @if($value->stock > 0 )
+                                    @click="selected = '{{ $value->id }}'; $wire.setImage('{{ $value->id }}')"
+                                @endif
                                 class="relative px-2 rounded border border-gray-400  select-none transition-all duration-150"
                                 :class="{
                                     'border-pars-500  pr-5 bg-pars-200 text-pars-500 font-bold shadow': selected == '{{ $value->id }}',
@@ -100,8 +121,10 @@
 
                                 {{-- تیک انتخاب --}}
                                 <template x-if="selected == '{{ $value->id }}'">
-                                    <svg class="absolute top-1 right-1 w-4 h-4 text-pars-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                    <svg class="absolute top-1 right-1 w-4 h-4 text-pars-500" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                              d="M5 13l4 4L19 7"/>
                                     </svg>
                                 </template>
                             </div>

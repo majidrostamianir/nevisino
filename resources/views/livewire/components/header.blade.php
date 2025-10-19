@@ -1,9 +1,6 @@
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
     <div class="w-full fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
-
-        <!-- موبایل -->
         <div class="flex flex-col sm:hidden">
-            <!-- ردیف اول در موبایل -->
             <div class="flex justify-between items-center mb-2">
                 <a href="{{ route('home') }}" class="self-center" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
@@ -33,7 +30,6 @@
                     @endif
                 </div>
             </div>
-            <!-- ردیف دوم در موبایل -->
             <div class="flex justify-between items-center">
                 <button  @click="sidebarOpen = !sidebarOpen; if(!sidebarOpen) activeDropdown=null"
                          type="button"
@@ -51,8 +47,6 @@
 
             </div>
         </div>
-
-        <!-- دسکتاپ -->
         <div class="hidden sm:flex justify-between items-center">
             <div class="flex items-center w-2/5">
                 <a href="{{ route('home') }}" class="w-fit" wire:navigate>
@@ -92,6 +86,7 @@
         </div>
     </div>
     <aside
+        x-cloak
         class="fixed top-10 sm:top-0 right-0 group z-40 pt-16 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
         :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'"
@@ -144,5 +139,4 @@
             </ul>
         </div>
     </aside>
-
 </div>

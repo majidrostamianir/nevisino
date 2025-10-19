@@ -23,17 +23,17 @@
                 <p class="flex items-center justify-between">
                     <span>مبلغ سفارش</span>
                     <span class="flex-1 border-b border-dotted border-gray-400 mx-2"></span>
-                    <span class="font-bold ">{{ number_format(english_to_persian_num($data['total_price'])) }}</span>
+                    <span class="font-bold ">{{ english_to_persian_num(number_format($data['total_price'])) }}</span>
                 </p>
                 <p class="flex items-center justify-between">
                     <span>حمل و نقل</span>
                     <span class="flex-1 border-b border-dotted border-gray-400 mx-2"></span>
-                    <span class="font-bold ">{{ number_format(english_to_persian_num($data['shipping_price'])) }}</span>
+                    <span class="font-bold ">{{ english_to_persian_num(number_format($data['shipping_price'])) }}</span>
                 </p>
                 <p class="flex items-center justify-between">
                     <span>مبلغ کل پرداختی</span>
                     <span class="flex-1 border-b border-dotted border-gray-400 mx-2"></span>
-                    <span class="font-bold ">{{ number_format(english_to_persian_num($data['amount'])) }}</span>
+                    <span class="font-bold ">{{ english_to_persian_num(number_format($data['amount'])) }}</span>
                 </p>
             </div>
         @endif

@@ -11,6 +11,9 @@
 
     @vite('resources/css/app.css')
     @livewireStyles
+
+    @stack('torob-meta-tags') {{-- متاتگ‌های مخصوص ترب  --}}
+
 </head>
 <body>
 
