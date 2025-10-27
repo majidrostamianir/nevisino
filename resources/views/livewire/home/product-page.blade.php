@@ -17,43 +17,41 @@
     <meta property="og:image" content="{{ $src }}">
     <meta name="guarantee" content="{{ $product->guarantee ?? 'گارانتی اصالت و سلامت فیزیکی کالا' }}">
 @endpush
-<div class="w-full">
+<div class="w-full"
+     x-data="{
+        selected: @entangle('selectedVariant')
+     }">
     <div class="sm:flex flex-row-reverse w-full p-4  sm:p-8 rounded-2xl mx-auto mt-10 bg-pars-100 shadow">
         <div class="w-full sm:w-7/12 sm:mr-2">
             <h1 class="sm:hidden font-bold text-xl mb-6">{{ english_to_persian_num($product->title) }}</h1>
-            <div class="overflow-hidden h-[60vh] relative flex justify-center items-center"
-                 x-data="{
-                            scale: 1,
-                            originX: '50%',
-                            originY: '50%',
-                            zoom(e) {
-                                const rect = e.target.getBoundingClientRect();
-                                this.originX = ((e.clientX - rect.left) / rect.width) * 100 + '%';
-                                this.originY = ((e.clientY - rect.top) / rect.height) * 100 + '%';
-                                this.scale = 2;
-                            },
-                            reset() {
-                                this.scale = 1;
-                                this.originX = '50%';
-                                this.originY = '50%';
-                            }
-                         }"
-                 @mousemove="zoom($event)"
-                 @mouseleave="reset()">
+            <div class="overflow-hidden h-[60vh] relative flex justify-center items-center">
 
                 <img src="{{ $src }}"
-                     :style="`transform: scale(${scale}); transform-origin: ${originX} ${originY};`"
-                     class="h-[60vh] cursor-zoom-in object-contain transition-transform duration-200 mx-auto select-none">
+                     class="h-[60vh] cursor-zoom-in object-contain transition-transform duration-200 mx-auto select-none rounded-2xl">
+                <div class="absolute inset-0 w-full h-full" wire:loading wire:target="setImage">
+                    <div
+                        class="w-full h-full rounded-2xl flex items-center justify-center  backdrop-blur-sm z-50 transition-opacity duration-300">
+                        <div
+                            class="w-10 h-10 border-4 border-pars-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
             </div>
             <div class="flex flex-wrap justify-center mt-2">
                 @foreach($images as $image)
                     <div>
-                        <img wire:click.prevent="setImage('{{ $image }}')"
-                             class="w-16 h-16 mx-1 cursor-pointer rounded hover:scale-105"
-                             src="{{ asset('storage/products/' . $product->id. '/small/' . $image . '.webp') }}">
+                        <img
+                            @click="selected = '{{ $image }}'; $wire.setImage('{{ $image }}')"
+                            class="w-16 h-16 mx-1 cursor-pointer rounded transition-all"
+                            :class="{
+                                 'border-2 border-green-400 scale-125': selected == '{{ $image }}'
+                             }"
+                            src="{{ asset('storage/products/' . $product->id. '/small/' . $image . '.webp') }}">
                         @if(\App\Models\ProductVariant::query()->find($image))
                             <div
-                                class="text-center text-xs">{{ \App\Models\ProductVariant::query()->find($image)->name }}</div>
+                                :class="{
+                                 'text-green-400 font-bold mt-2 ': selected == '{{ $image }}'
+                             }"
+                                class="text-center text-xs transition-all">{{ \App\Models\ProductVariant::query()->find($image)->name }}</div>
                         @endif
                     </div>
                 @endforeach
@@ -98,15 +96,32 @@
             @if($product->variant)
                 <h4 class="bg-pars-200 shadow rounded mb-6 p-1">
                     <div
-                        x-data="{ selected: @entangle('selectedVariant') }"
                         class="flex flex-wrap gap-2">
                       <span class="font-bold">
                           انتخاب {{$product->variant}}:
                         </span>
+                        <div
+                            @click="selected = 1;$wire.setImage('1')"
+                            class="relative px-2 rounded border border-gray-400  select-none transition-all duration-150"
+                            :class="{
+                                    'border-pars-500  pr-5 bg-pars-200 text-pars-500 font-bold shadow': selected < 1000,
+                                    'border-gray-400 cursor-pointer hover:border-pars-500': selected > 1000
+                                }">
+                            <span class="">به انتخاب نویسینو</span>
+                            <template x-if="selected < 1000">
+                                <svg class="absolute top-1 right-1 w-4 h-4 text-pars-500" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                          d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </template>
+                        </div>
                         @foreach($product->variants as $value)
                             <div
-                                @if($value->stock > 0 )
+                                @if($value->stock > 0 && $value->id > 1000)
                                     @click="selected = '{{ $value->id }}'; $wire.setImage('{{ $value->id }}')"
+                                @else
+                                    @click="selected = null; $wire.setImage('{{ $value->id }}')"
                                 @endif
                                 class="relative px-2 rounded border border-gray-400  select-none transition-all duration-150"
                                 :class="{
@@ -118,8 +133,6 @@
                                 @if($value->stock == 0)
                                     <span class="text-[8px] text-red-500">ناموجود</span>
                                 @endif
-
-                                {{-- تیک انتخاب --}}
                                 <template x-if="selected == '{{ $value->id }}'">
                                     <svg class="absolute top-1 right-1 w-4 h-4 text-pars-500" fill="none"
                                          viewBox="0 0 24 24" stroke="currentColor">
@@ -157,7 +170,7 @@
                     <button wire:click="addToCart()" wire:navigate wire:loading.attr="disabled"
                             class="flex items-center cursor-pointer justify-center bg-pars-500 text-white px-4 h-10 rounded shadow hover:bg-pars-600 transition-all">
                         افزودن به سبد خرید
-                        <svg wire:loading wire:target="makePayment" class="w-5 h-5 ml-2 animate-spin text-white"
+                        <svg wire:loading wire:target="addToCart" class="w-5 h-5 mr-2 animate-spin text-white"
                              fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
                                     stroke-width="4"></circle>

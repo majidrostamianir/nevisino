@@ -18,7 +18,7 @@ class ProductPage extends Component
     public string $quantity = "۱";
     public string $src;
     public Collection $images;
-    public string|null $selectedVariant = null;
+    public string $selectedVariant = "1";
 
     public function mount(): void
     {
@@ -26,12 +26,11 @@ class ProductPage extends Component
         $path = 'products/' . $this->product->id . '/large';
 
         $this->images = collect(Storage::disk('public')->files($path))
-            ->map(fn($file) => pathinfo($file, PATHINFO_FILENAME)) // گرفتن فقط اسم بدون پسوند
-            ->sortBy(fn($name) => intval($name)) // مرتب‌سازی عددی
-            ->values(); // ریسِت کلیدها
+            ->map(fn($file) => pathinfo($file, PATHINFO_FILENAME))
+            ->sortBy(fn($name) => intval($name))
+            ->values();
 
         $this->src = asset('storage/products/' . $this->product->id . '/large/' . $this->images[0] . '.webp');
-
     }
 
     public function updatedSelectedVariant($id): void
@@ -198,13 +197,6 @@ class ProductPage extends Component
 
     public function render(): \Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
     {
-        $product = $this->product;
-        $similar = Product::whereHas('urls', function ($query) use ($product) {
-            $query->whereIn('urls.id', $product->urls->pluck('id'));
-        })
-            ->where('id', '!=', $product->id) // خود محصول فعلی رو نیاره
-            ->distinct()
-            ->get();
-        return view('livewire.home.product-page', compact('product', 'similar'))->layout('components.layouts.product');
+        return view('livewire.home.product-page')->layout('components.layouts.product');
     }
 }
