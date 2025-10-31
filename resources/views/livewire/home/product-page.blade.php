@@ -65,7 +65,99 @@
                     تومان
                 </h4>
             </div>
-            <div class="overflow-hidden h-[60vh] relative flex justify-center items-center">
+            <div class="overflow-hidden h-[60vh] relative flex justify-center items-center"
+                 x-data="{
+                        isZoomed: false,
+                        zoomOnHover: false,
+                        originX: '50%',
+                        originY: '50%',
+                        lastTap: 0,
+
+                        init() {
+                            this.zoomOnHover = window.matchMedia('(hover: hover)').matches;
+                        },
+
+                        setZoomOrigin(event) {
+                            const rect = this.$el.getBoundingClientRect();
+                            let clientX, clientY;
+
+                            // گرفتن مختصات از event
+                            if (event.clientX && event.clientY) {
+                                clientX = event.clientX;
+                                clientY = event.clientY;
+                            } else if (event.touches && event.touches[0]) {
+                                clientX = event.touches[0].clientX;
+                                clientY = event.touches[0].clientY;
+                            } else if (event.changedTouches && event.changedTouches[0]) {
+                                clientX = event.changedTouches[0].clientX;
+                                clientY = event.changedTouches[0].clientY;
+                            } else {
+                                return;
+                            }
+
+                            const x = ((clientX - rect.left) / rect.width) * 100;
+                            const y = ((clientY - rect.top) / rect.height) * 100;
+
+                            this.originX = `${Math.max(0, Math.min(100, x))}%`;
+                            this.originY = `${Math.max(0, Math.min(100, y))}%`;
+                        },
+
+                        // هندلر ساده برای موبایل
+                       handleMobileAction(event) {
+                                if (this.zoomOnHover) return;
+
+                                const currentTime = new Date().getTime();
+                                const tapLength = currentTime - this.lastTap;
+
+                                // تنظیم موقعیت زوم
+                                this.setZoomOrigin(event);
+
+                                if (tapLength < 500 && this.isZoomed) {
+                                    // دبل کلیک وقتی زوم شده - زوم اوت
+                                    this.isZoomed = false;
+                                    this.lastTap = 0;
+                                } else {
+                                    // تک کلیک - toggle زوم
+                                    this.isZoomed = !this.isZoomed;
+                                    this.lastTap = currentTime;
+                                }
+                            },
+
+                            // این تابع جدید رو اضافه کن
+                            resetZoomState() {
+                                this.isZoomed = false;
+                                this.originX = '50%';
+                                this.originY = '50%';
+                                this.lastTap = 0;
+                            },
+
+                        // برای دسکتاپ
+                        handleMouseEnter() {
+                            if (this.zoomOnHover) this.isZoomed = true;
+                        },
+
+                        handleMouseMove(event) {
+                            if (this.zoomOnHover && this.isZoomed) {
+                                this.setZoomOrigin(event);
+                            }
+                        },
+
+                        handleMouseLeave() {
+                            if (this.zoomOnHover) this.isZoomed = false;
+                        }
+                    }"
+
+                    @mouseenter="handleMouseEnter()"
+                    @mousemove="handleMouseMove($event)"
+                    @mouseleave="handleMouseLeave()"
+
+                    @click="handleMobileAction($event)"
+
+                    :class="{
+                    'cursor-zoom-in': zoomOnHover && !isZoomed,
+                    'cursor-pointer': !zoomOnHover
+                    }"
+                     style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
 
                 <img src="{{ $src }}"
                      x-bind:src="$wire.src"
@@ -73,6 +165,12 @@
                      x-on:error="imageLoaded = true; isLoading = false;"
                      wire:loading.remove
                      wire:target="setImage"
+                     :class="{
+                        'scale-200': isZoomed,
+                        'scale-100': !isZoomed
+                    }"
+                     :style="`transform-origin: ${originX} ${originY};`"
+                     style="width: 100%; height: 100%; object-fit: cover;"
                      class="h-[60vh] object-contain transition-transform duration-200 mx-auto select-none rounded-2xl">
                 <div class="absolute inset-0 w-full h-full" x-show="isLoading">
                     <div
