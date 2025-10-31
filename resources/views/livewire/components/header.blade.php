@@ -9,7 +9,7 @@
                     <a class="flex relative bg-pars-500 hover:bg-pars-600 text-white rounded-md items-center px-2 ml-2"
                        href="{{ route('cart') }}" wire:navigate>
                         <img src="{{ asset('images/cart.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-sm py-2.5">سبد خرید</span>
+                        <span class="text-xs sm:text-sm py-2.5">سبد خرید</span>
                         @if($cartCount > 0)
                             <span
                                 class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
@@ -19,13 +19,13 @@
                         <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                            href="{{ route('dashboard') }}" wire:navigate>
                             <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                            <span class="text-sm py-2.5">پیش‌خوان</span>
+                            <span class="text-xs sm:text-sm py-2.5">پیش‌خوان</span>
                         </a>
                     @else
                         <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                            href="{{ route('register') }}" wire:navigate>
                             <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                            <span class="text-sm py-2.5">ورود به حساب</span>
+                            <span class="text-xs sm:text-sm py-2.5">ورود به حساب</span>
                         </a>
                     @endif
                 </div>
@@ -61,7 +61,7 @@
                 <a class="flex relative bg-pars-500 hover:bg-pars-600 text-white rounded-md items-center px-2 ml-2"
                    href="{{ route('cart') }}" wire:navigate>
                     <img src="{{ asset('images/cart.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                    <span class="text-sm py-2.5">سبد خرید</span>
+                    <span class="text-xs sm:text-sm py-2.5">سبد خرید</span>
                     @if($cartCount > 0)
                         <span
                             class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
@@ -72,13 +72,13 @@
                     <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                        href="{{ route('dashboard') }}" wire:navigate>
                         <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-sm py-2.5">پیش‌خوان</span>
+                        <span class="text-xs sm:text-sm py-2.5">پیش‌خوان</span>
                     </a>
                 @else
                     <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                        href="{{ route('register') }}" wire:navigate>
                         <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-sm py-2.5">ورود به حساب کاربری</span>
+                        <span class="text-xs sm:text-sm py-2.5">ورود به حساب کاربری</span>
                     </a>
                 @endif
 

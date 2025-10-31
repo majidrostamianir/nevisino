@@ -1,7 +1,9 @@
 <div class="w-full self-center relative">
     <input type="text" wire:model.live.debounce.750ms="query"
            wire:focus="focus"
-{{--           wire:click.away="blur"--}}
+           @if($isFocused && ($urls->isNotEmpty() || $products->isNotEmpty()))
+               wire:click.away="blur"
+           @endif
            class="text-sm bg-white w-full mr-3 rounded-2xl pr-4 shadow"
            placeholder="جستجو ...">
     <span class="absolute top-2.5 left-0  cursor-pointer" wire:click="clearSearch">

@@ -2,54 +2,49 @@
     <!-- جدول -->
     <div class="w-full sm:w-2/3 overflow-x-auto">
         @if($cart)
-            <table class="min-w-[600px] w-full text-right bg-pars-100 rounded-2xl">
-                <thead>
-                <tr class="shadow-xs">
-                    <th class="px-4 py-2">تصویر</th>
-                    <th class="px-4 py-2">محصول</th>
-                    <th class="px-4 py-2">تعداد</th>
-                    <th class="px-4 py-2">قیمت کل</th>
-                    <th class="px-4 py-2">حذف</th>
-                </tr>
-                </thead>
+            <table class=" w-full text-right bg-pars-100 rounded-2xl">
                 <tbody>
                 @foreach ($cart as $key => $product)
+
                     <tr wire:key="{{$key}}" class="border-b border-b-gray-200 last:border-0">
                         <td class="px-4 py-2">
                             @if($product['variant'])
-                                <img class="w-24 rounded"
-                                     src="{{ asset('storage/products/' . $product['id'] . '/small/'. $product['variant'] .'.webp') }}"
-                                     alt="">
+                                <a wire:navigate href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_title]) }}">
+                                    <img class="w-24 rounded"
+                                         src="{{ asset('storage/products/' . $product['id'] . '/small/'. $product['variant'] .'.webp') }}"
+                                         alt="">
+                                </a>
                             @else
-                                <img class="w-24 rounded"
-                                     src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}"
-                                     alt="">
+                                <a wire:navigate href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_title]) }}">
+                                    <img class="w-24 rounded"
+                                         src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}"
+                                         alt="">
+                                </a>
                             @endif
                         </td>
                         <td class="px-4 py-2">
-                            {{ $product['title'] }}  {{ english_to_persian_num($product['code']) }}
+                            <span
+                                class="font-bold">{{ $product['title'] }}  {{ english_to_persian_num($product['code']) }}</span>
                             @if($product['variant'])
-                                -   {{ \App\Models\Product::query()->find($product['id'])->variant }}
+                                <br>
+                                <span class="text-sm">
+                                    {{ \App\Models\Product::query()->find($product['id'])->variant }}
                                 : {{ $product['variantName'] }}
+                                </span>
+                                <br>
+                                <div class="sm:hidden pt-2">
+                                    @if($product['quantity'] > 1)
+{{--                                        {{  english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}--}}
+{{--                                        = --}}
+                                        {{ english_to_persian_num($product['quantity']) }}
+                                        × {{ english_to_persian_num(number_format($product['price'])) }}
+                                    @else
+                                        {{  english_to_persian_num(number_format( $product['price'])) }}
+                                    @endif
+                                </div>
                             @endif
                         </td>
-                        <td class="px-4 py-2">
-                            <div class="flex flex-col sm:flex-row items-center">
-                                <div wire:click.prevent="increase('{{ $key }}')"
-                                     class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400  sm:rounded-none rounded-t-2xl sm:rounded-r-2xl  cursor-pointer select-none">
-                                    +
-                                </div>
-                                <input type="text"
-                                       disabled
-                                       class="w-10 sm:w-14 h-10 text-center border-t border-b border-pars-300 border-l-0 border-r-0 focus:outline-none"
-                                       value="{{ strtr($product['quantity'], ['0' =>'۰' ,'1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹']) }}">
-                                <div wire:click.prevent="decrease('{{ $key }}')"
-                                     class="w-10 h-10 flex items-center justify-center bg-pars-300 hover:bg-pars-400 sm:rounded-none rounded-b-2xl  sm:rounded-l-2xl cursor-pointer select-none">
-                                    -
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2">
+                        <td class="px-4 py-2 hidden sm:table-cell">
                             @if($product['quantity'] > 1)
                                 {{  english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}
                                 =  {{ english_to_persian_num($product['quantity']) }}

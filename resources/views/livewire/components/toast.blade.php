@@ -1,6 +1,6 @@
 <div
     x-data="{ show: @entangle('show'), message: @entangle('message'), type: @entangle('type') }"
-    x-init="$watch('show', value => { if (value) setTimeout(() => show = false, 3000); })"
+    x-init="$watch('show', value => { if (value) setTimeout(() => show = false, 4000); })"
     x-show="show"
     x-transition
     x-cloak
