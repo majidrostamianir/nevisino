@@ -35,9 +35,9 @@
     <div class="flex flex-col items-center mt-8 mb-4">
         <a class="w-full text-center cursor-pointer rounded-2xl p-1.5 bg-pars-500 hover:bg-pars-600 transition-all text-white mb-2"
             @click.prevent="submit()">ورود</a>
-        <a class="text-xs cursor-pointer self-end mt-1" href="{{ route('forget') }}" wire:navigate.hover>
-            فراموشی رمز عبور
-        </a>
+{{--        <a class="text-xs cursor-pointer self-end mt-1" href="{{ route('forget') }}" wire:navigate.hover>--}}
+{{--            فراموشی رمز عبور--}}
+{{--        </a>--}}
     </div>
     @error('enMobile')
     <span class="text-xs text-red-500">{{ $message }}</span>

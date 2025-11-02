@@ -5,12 +5,11 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 class VerifyMobile extends Component
 {
-    public string $faOtp = '' , $enOtp = '' , $faPassword = '' , $enPassword = '' ;
+    public string $faOtp = '' , $enOtp = ''  ;
     public User $user;
     public string $mobile = '';
 
@@ -31,16 +30,7 @@ class VerifyMobile extends Component
     {
         $this->validate([
             'enOtp' => 'required|string|digits:4',
-            'enPassword' => [
-                'required',
-                'string',
-                'min:4',
-                'max:255',
-                'regex:/^[A-Za-z0-9!@#$%&]+$/'
-            ],
-        ], [
-            'enPassword.regex' => 'رمز عبور فقط می‌تواند شامل حروف انگلیسی، اعداد و کاراکترهای ! @ # $ %  &  باشد.'
-        ]);
+             ]);
 
         $this->check_otp();
     }
@@ -48,7 +38,7 @@ class VerifyMobile extends Component
 
     public function sendOtp(): void
     {
-        if ($this->user->mobile_otp_sent_count < 15) {
+        if ($this->user->mobile_otp_sent_count < 30) {
             if ($this->user->mobile_otp_sent_at == null || Carbon::create($this->user->mobile_otp_sent_at)->addMinute() < Carbon::now()) {
                 session()->flash('otp', 'پیامک برای شما ارسال شد.');
                 session()->flash('color', 'text-green-500');
@@ -89,7 +79,6 @@ class VerifyMobile extends Component
         if (Carbon::create($this->user->mobile_otp_sent_at)->addMinutes(5) > Carbon::now()) {
             if ($this->enOtp === $this->user->mobile_otp) {
                 $this->user->mobile_verified_at = Carbon::now()->toDateTimeString();
-                $this->user->password = Hash::make($this->enPassword);
                 $this->user->save();
                 Auth::login($this->user , true);
 

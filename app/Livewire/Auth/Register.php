@@ -35,18 +35,12 @@ class Register extends Component
         $this->validate();
         $otp = rand(1234, 9876);
 
-        $user = User::where('mobile', $this->enMobile)->orderByDesc('mobile_verified_at')->first();
+        $user = User::where('mobile', $this->enMobile)->first();
         if ($user) {
-            if ($user->mobile_verified_at) {
-                session()->put('mobile', $this->enMobile);
-                return $this->redirect(route('login'), navigate: true);
-            } else {
-                $user->update([
-                    'mobile_otp' => $otp,
-                    'mobile_otp_sent_count' => ($user->mobile_otp_sent_count ?? 0) + 1,
-                ]);
-
-            }
+            $user->update([
+                'mobile_otp' => $otp,
+                'mobile_otp_sent_count' => ($user->mobile_otp_sent_count ?? 0) + 1,
+            ]);
         } else {
             User::create([
                 'mobile' => $this->enMobile,

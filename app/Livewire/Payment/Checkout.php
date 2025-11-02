@@ -29,7 +29,7 @@ class Checkout extends Component
         $this->user = Auth::user();
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
-
+        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? english_to_persian_num($this->user->mobile);
         $this->calculateAmount();
     }
 
@@ -43,6 +43,7 @@ class Checkout extends Component
     {
         $this->dispatch('close-popup');
         $this->selectedAddress = null;
+        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? english_to_persian_num($this->user->mobile);
     }
 
 

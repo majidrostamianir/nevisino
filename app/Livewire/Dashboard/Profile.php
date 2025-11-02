@@ -19,6 +19,8 @@ class Profile extends Component
     {
         session()->forget('mobile');
         Auth::logout();
+        return $this->redirect('/', navigate: true);
+
     }
     public function render()
     {

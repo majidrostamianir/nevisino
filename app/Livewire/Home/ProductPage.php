@@ -98,7 +98,7 @@ class ProductPage extends Component
         $this->validate([
             'selectedVariant' => [
                 Rule::when($this->product->variant !== null, 'required'), // وقتی محصول variant داره
-                Rule::when($this->product->variant === null, 'prohibited'), // وقتی نداره باید خالی باشه
+                Rule::when($this->product->variant === null, 'required|in:1'), // وقتی نداره باید 1 باشه
             ],
             'quantity' => 'required|string|min:1|max:5',
         ]);
@@ -110,21 +110,23 @@ class ProductPage extends Component
             return;
         }
 
-        $isAutoDistribution = $this->product->variant && $this->selectedVariant == 1;
-        $isSpecificVariant = $this->product->variant && $this->selectedVariant > 1;
 
+        // *** تعریف شرط‌های جدید برای رفع تداخل ***
+        $isNoVariant = $this->product->variant === null; // حالت جدید: محصول بدون واریانت
+        $isAutoDistribution = $this->product->variant !== null && $this->selectedVariant == 1; // واریانت‌دار + توزیع خودکار
+        $isSpecificVariant = $this->product->variant !== null && $this->selectedVariant > 1; // واریانت‌دار + واریانت خاص
 
         // 3. مسیریابی بر اساس وضعیت لاگین
         if (Auth::check()) {
-            $this->handleAuthenticatedCart($requestedQuantity, $isAutoDistribution, $isSpecificVariant);
+            $this->handleAuthenticatedCart($requestedQuantity, $isAutoDistribution, $isSpecificVariant, $isNoVariant);
         } else {
-            $this->handleGuestCart($requestedQuantity, $isAutoDistribution, $isSpecificVariant);
+            $this->handleGuestCart($requestedQuantity, $isAutoDistribution, $isSpecificVariant, $isNoVariant);
         }
         $this->dispatch('cart-updated');
     }
 
 
-    protected function handleAuthenticatedCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant)
+    protected function handleAuthenticatedCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant, bool $isNoVariant) // آرگومان جدید
     {
         $user = Auth::user();
         $cart = $user->cart()->firstOrCreate();
@@ -132,7 +134,7 @@ class ProductPage extends Component
         $successMessage = 'محصول با موفقیت به سبد خرید اضافه شد';
 
         if ($isAutoDistribution) {
-            // حالت ۱: کاربر لاگین + واریانت‌دار + توزیع خودکار
+            // حالت ۱: کاربر لاگین + واریانت‌دار + توزیع خودکار (بدون تغییر)
             $availableVariants = $this->getAvailableVariantsStock();
             $totalAvailableStock = $availableVariants->sum('available_stock');
 
@@ -145,7 +147,6 @@ class ProductPage extends Component
 
             $distributionResult = $this->distributeQuantityToVariants($availableVariants, $qtyToProcess);
 
-//            این شرط احتمالا هیچوقت اجرا نمیشه
             if (empty($distributionResult['updates'])) {
                 $this->dispatch('showNotification', message: 'متاسفانه موجودی کافی برای انجام درخواست شما وجود ندارد.', type: 'warning');
                 return;
@@ -164,7 +165,7 @@ class ProductPage extends Component
             $this->dispatch('showNotification', message: $successMessage, type: 'success');
 
         } elseif ($isSpecificVariant) {
-            // حالت ۲: کاربر لاگین + واریانت‌دار + واریانت خاص
+            // حالت ۲: کاربر لاگین + واریانت‌دار + واریانت خاص (بدون تغییر)
             $variantId = $this->selectedVariant;
             $variant = ProductVariant::query()->find($variantId);
 
@@ -190,32 +191,66 @@ class ProductPage extends Component
 
             if ($inCartQuantity >= $maxVariantStock) {
                 $this->dispatch('showNotification',
-                    message: 'شما تمام موجودی ' . '<strong>' . $this->product->variant . ' ' . $variant->name . '</strong>' . ' را در سبد خرید خود قرار داده اید.',
-                    type: 'warning');
+                    message: 'شما تمام موجودی ' . '<strong>' . $this->product->variant . ' ' . $variant->name . '</strong>' . ' را در سبد خرید خود قرار داده اید.', type: 'warning');
             } elseif ($newTotalQuantity > $maxVariantStock) {
                 $addedQuantity = $maxVariantStock - $inCartQuantity;
-                $this->dispatch('showNotification', message: 'تنها ' . '<strong>' . $addedQuantity . '</strong>' . ' عدد از ' . '<strong>' . $this->product->variant . ' ' . $variant->name . '</strong>' . ' به دلیل محدودیت موجودی، به سبد خرید اضافه شد.', type: 'success');
+                $this->dispatch('showNotification', message: 'تنها ' . '<strong>' . english_to_persian_num($addedQuantity) . '</strong>' . ' عدد از ' . '<strong>' . $this->product->variant . ' ' . $variant->name . '</strong>' . ' به دلیل محدودیت موجودی، به سبد خرید اضافه شد.', type: 'success');
             } else {
                 $this->dispatch('showNotification', message: $successMessage, type: 'success');
             }
+
+        } elseif ($isNoVariant) {
+            // *** حالت ۳: کاربر لاگین + بدون واریانت (جدید) ***
+
+            // variant_id برای محصول بدون واریانت null یا 0 در نظر گرفته می‌شود.
+            $variantId = null;
+            $maxStock = $this->product->stock; // موجودی از فیلد stock خود محصول خوانده می‌شود
+
+            if ($maxStock <= 0) {
+                $this->dispatch('showNotification', message: 'موجودی این محصول به اتمام رسیده است.', type: 'warning');
+                return;
+            }
+
+            $cartItem = $cart->items()
+                ->where('product_id', $productId)
+                ->where('variant_id', $variantId)
+                ->first();
+
+            $inCartQuantity = $cartItem ? $cartItem->quantity : 0;
+            $newTotalQuantity = $inCartQuantity + $requestedQuantity;
+            $qtyToSave = min($newTotalQuantity, $maxStock);
+
+            $this->updateDatabaseCartItem($cart, $productId, $variantId, $qtyToSave);
+
+            if ($inCartQuantity >= $maxStock) {
+                $this->dispatch('showNotification', message: 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید.', type: 'warning');
+            } elseif ($newTotalQuantity > $maxStock) {
+                $addedQuantity = $maxStock - $inCartQuantity;
+                $this->dispatch('showNotification', message: 'تنها ' . '<strong>' . english_to_persian_num($addedQuantity) . '</strong>' . ' عدد از این محصول به دلیل محدودیت موجودی، به سبد خرید اضافه شد.', type: 'success');
+            } else {
+                $this->dispatch('showNotification', message: $successMessage, type: 'success');
+            }
+
         } else {
-            // حالت ۳: کاربر لاگین + بدون واریانت
-            // این حالت در کد شما نبود، اما برای تمیزی اضافه می‌شود
-            $this->dispatch('showNotification', message: 'عملیات نامعتبر. لطفاً یک واریانت انتخاب کنید.', type: 'error');
+            // حالت نامعتبر (اگر هیچ یک از شرط‌ها صدق نکند)
+            $this->dispatch('showNotification', message: 'عملیات نامعتبر.', type: 'error');
         }
     }
-
     /**
      * مدیریت سبد خرید کاربر مهمان (سشن)
      */
-    protected function handleGuestCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant)
+    /**
+     * مدیریت سبد خرید کاربر مهمان (سشن)
+     */
+    protected function handleGuestCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant, bool $isNoVariant) // آرگومان جدید
     {
         $cart = session()->get('cart', []);
         $productId = $this->product->id;
         $successMessage = 'محصول با موفقیت به سبد خرید اضافه شد';
 
         if ($isAutoDistribution) {
-            // حالت ۴: مهمان + واریانت‌دار + توزیع خودکار
+            // حالت ۴: مهمان + واریانت‌دار + توزیع خودکار (بدون تغییر)
+            // ... (منطق قبلی)
             $variants = $this->product->variants;
             $availableVariants = collect([]);
 
@@ -261,7 +296,8 @@ class ProductPage extends Component
             $this->dispatch('showNotification', message: 'محصولات با موفقیت به سبد خرید اضافه شدند.', type: 'success');
 
         } elseif ($isSpecificVariant) {
-            // حالت ۵: مهمان + واریانت‌دار + واریانت خاص
+            // حالت ۵: مهمان + واریانت‌دار + واریانت خاص (بدون تغییر)
+            // ... (منطق قبلی)
             $variantId = $this->selectedVariant;
             $variant = ProductVariant::query()->find($variantId);
             $key = $productId . '-' . $variantId;
@@ -282,17 +318,45 @@ class ProductPage extends Component
                 $this->dispatch('showNotification', message: 'شما تمام موجودی این ' . '<strong>' . $variant->name . '</strong>' . ' را در سبد خرید خود قرار داده اید.', type: 'warning');
             } elseif ($newTotalQuantity > $maxVariantStock) {
                 $addedQuantity = $maxVariantStock - $inCartQuantity;
-                $this->dispatch('showNotification', message: 'تنها ' . '<strong>' . $addedQuantity . '</strong>' . ' عدد از ' . '<strong>' . $variant->name . '</strong>' . ' به دلیل محدودیت موجودی، به سبد خرید اضافه شد.', type: 'success');
+                $this->dispatch('showNotification', message: 'تنها ' . '<strong>' . english_to_persian_num($addedQuantity) . '</strong>' . ' عدد از ' . '<strong>' . $variant->name . '</strong>' . ' به دلیل محدودیت موجودی، به سبد خرید اضافه شد.', type: 'success');
             } else {
                 $this->dispatch('showNotification', message: $successMessage, type: 'success');
             }
+
+        } elseif ($isNoVariant) {
+            // *** حالت ۶: مهمان + بدون واریانت (جدید) ***
+
+            // variant_id برای محصول بدون واریانت null یا 0 در نظر گرفته می‌شود.
+            $variantId = 0; // در سشن از 0 به جای null استفاده می‌شود تا کلید معتبر باشد
+            $key = $productId . '-' . $variantId;
+            $maxStock = $this->product->stock; // موجودی از فیلد stock خود محصول خوانده می‌شود
+
+            if ($maxStock <= 0) {
+                $this->dispatch('showNotification', message: 'موجودی این محصول به اتمام رسیده است.', type: 'warning');
+                return;
+            }
+
+            $inCartQuantity = $cart[$key]['quantity'] ?? 0;
+            $newTotalQuantity = $inCartQuantity + $requestedQuantity;
+            $qtyToSave = min($newTotalQuantity, $maxStock);
+
+            // در اینجا variantId را 0 (به عنوان واریانت پیش‌فرض) ارسال می‌کنیم
+            $cart = $this->updateSessionCartItem($cart, $productId, $variantId, $qtyToSave);
+
+            if ($inCartQuantity >= $maxStock) {
+                $this->dispatch('showNotification', message: 'شما تمام موجودی این محصول را در سبد خرید خود قرار داده اید.', type: 'warning');
+            } elseif ($newTotalQuantity > $maxStock) {
+                $addedQuantity = $maxStock - $inCartQuantity;
+                $this->dispatch('showNotification', message: 'تنها ' . '<strong>' . english_to_persian_num($addedQuantity) . '</strong>' . ' عدد از این محصول به دلیل محدودیت موجودی، به سبد خرید اضافه شد.', type: 'success');
+            } else {
+                $this->dispatch('showNotification', message: $successMessage, type: 'success');
+            }
+
         } else {
-            // حالت ۶: مهمان + بدون واریانت
-            // این حالت در کد شما نبود، اما برای تمیزی اضافه می‌شود
-            $this->dispatch('showNotification', message: 'عملیات نامعتبر. لطفاً یک واریانت انتخاب کنید.', type: 'error');
+            // حالت نامعتبر (اگر هیچ یک از شرط‌ها صدق نکند)
+            $this->dispatch('showNotification', message: 'عملیات نامعتبر.', type: 'error');
         }
     }
-
 
     /**
      * متد کمکی: دریافت موجودی خالص واریانت‌ها از دیتابیس (پس از کسر سبد خرید کاربر)
@@ -406,11 +470,14 @@ class ProductPage extends Component
     protected function updateSessionCartItem(array $cart, int $productId, int $variantId, int $quantity): array
     {
         $key = $productId . '-' . $variantId;
-        $variant = ProductVariant::query()->find($variantId);
+
+        // اگر variantId برابر 0 یا null بود، دیگر نباید از ProductVariant کوئری گرفت.
+        $variant = ($variantId > 0) ? ProductVariant::query()->find($variantId) : null;
 
         $cart[$key] = [
             'id' => $productId,
             'title' => $this->product->title,
+            // اگر واریانت پیدا نشد (حالت بدون واریانت)، از قیمت محصول استفاده می‌شود
             'price' => $variant->price ?? $this->product->price,
             'code' => $this->product->code,
             'quantity' => $quantity,

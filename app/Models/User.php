@@ -24,7 +24,6 @@ class User extends Authenticatable
         'mobile_otp',
         'mobile_otp_sent_at',
         'mobile_otp_sent_count',
-        'password',
         'referrer',
     ];
 
@@ -34,7 +33,6 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'password',
         'remember_token',
     ];
 
@@ -47,7 +45,6 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
         ];
     }
     public static function search($term)
