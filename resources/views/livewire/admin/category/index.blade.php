@@ -1,4 +1,4 @@
-<div>
+<div class="h-[86vh] w-full bg-pars-100 rounded-2xl shadow-md p-4 sm:ml-2 overflow-y-scroll">
     <div class="sm:flex">
         <div class="flex flex-col w-full ml-2">
             <input type="text" class="w-full pr-4 rounded-2xl" placeholder="عنوان دسته بندی" wire:model="title">

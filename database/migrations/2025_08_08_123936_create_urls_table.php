@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('dashed_title');
+            $table->text('description')->default(null);
+            $table->text('article')->default(null);
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
             $table->boolean('in_menu')->default(false);
+            $table->boolean('indexing')->default(false);
             $table->timestamps();
 
             $table->fullText('title');

@@ -19,7 +19,7 @@
             @enderror
         </div>
         <div class="sm:w-3/12 p-1 ">
-            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="عنوان"
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="عنوان و آدرس"
                    wire:model="title">
             @error('title')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
@@ -76,7 +76,7 @@
                         wire:focus="focus"
                         wire:click.away="blur"
                         wire:model.live.debounce.300ms="query"
-                        placeholder="جستجوی آدرس...">
+                        placeholder="جستجوی سردسته ها...">
                 </div>
                 @if ($isFocused && !empty($urls))
                     <ul class="absolute z-10 bg-white  mt-1 rounded shadow w-full max-h-60 overflow-y-auto">

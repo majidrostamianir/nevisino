@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Url extends Model
 {
 
+    protected $fillable = ['indexing' , 'description'];
     public static function search($q, $limit = 3)
     {
         $q = Product::normalize($q);

@@ -6,6 +6,8 @@
 
     <title>{{ $title ?? 'پنل نویسینو' }}</title>
 
+    @stack('editor')
+
     @vite('resources/css/app.css')
     @livewireStyles
 
@@ -133,6 +135,20 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.category.index') }}"
+                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                        <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
+                            <g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="6" width="20" height="18" rx="3" ry="3"/>
+                                <line x1="5" y1="11" x2="25" y2="11"/>
+                                <path d="M17 14h5v5"/>
+                                <path d="M22 14l-5 5"/>
+                            </g>
+                        </svg>
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">منو و دسته بندی</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.url.index') }}"
                        class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
                         <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="URL provider icon">
@@ -143,7 +159,7 @@
                                 <path d="M22 14l-5 5"/>
                             </g>
                         </svg>
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">آدرس</span>
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">صفحات</span>
                     </a>
                 </li>
                 <li>

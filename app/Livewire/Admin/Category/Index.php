@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Livewire\Admin\Url;
+namespace App\Livewire\Admin\Category;
 
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
-class Category extends Component
+class Index extends Component
 {
     public \App\Models\Category $category;
     public string $title = '';
@@ -54,13 +54,12 @@ class Category extends Component
         $this->parent_id = $this->category->parent_id;
         $this->order = $this->category->order;
     }
-
     public function render()
     {
         $categories = \App\Models\Category::query()->whereNull('parent_id')
             ->with('children')
             ->orderBy('order')
             ->get();
-        return view('livewire.admin.url.category', compact('categories'));
+        return view('livewire.admin.category.index' ,compact('categories'))->layout('components.layouts.admin');
     }
 }
