@@ -44,7 +44,6 @@
                 <div class="w-full pl-4">
                     <livewire:components.search/>
                 </div>
-
             </div>
         </div>
         <div class="hidden sm:flex justify-between items-center">
@@ -85,6 +84,12 @@
             </div>
         </div>
     </div>
+    <div
+        x-show="sidebarOpen && window.innerWidth < 640"
+        x-transition.opacity
+        @click="sidebarOpen = false; activeDropdown = null"
+        class="fixed inset-0  z-30 sm:hidden"
+    ></div>
     <aside
         x-cloak
         class="fixed top-10 sm:top-0 right-0 group z-40 pt-16 w-64 sm:w-16 hover:w-64 shadow-sm h-screen

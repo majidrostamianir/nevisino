@@ -59,7 +59,7 @@
         <div class="w-full flex flex-wrap gap-4 items-start">
             <div class="flex-1 w-3/4 flex flex-col" wire:ignore>
                 <div id="editor">
-                   {!! $article !!}
+                   {!! english_to_persian_num($article) !!}
                 </div>
                 @error('article')
                 <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
