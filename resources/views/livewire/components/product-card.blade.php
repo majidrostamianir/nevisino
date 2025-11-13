@@ -27,9 +27,18 @@
             <h5 class="text-xs sm:text-lg font-bold">
                 {{ english_to_persian_num($product->title) }}
             </h5>
-            <h5 class="text-xs sm:text-sm mt-2">
-                {{ english_to_persian_num(number_format($product->price)) }} تومان
-            </h5>
+            @if($product->discounted_price)
+                <h5 class="text-xs  mt-2 line-through text-gray-400">
+                    {{ english_to_persian_num(number_format($product->price)) }} تومان
+                </h5>
+                <h5 class="text-xs sm:text-sm mt-1 font-bold">
+                    {{ english_to_persian_num(number_format($product->discounted_price)) }} تومان
+                </h5>
+            @else
+                <h5 class="text-xs sm:text-sm mt-2 font-bold">
+                    {{ english_to_persian_num(number_format($product->price)) }} تومان
+                </h5>
+            @endif
         </div>
     </a>
 </div>

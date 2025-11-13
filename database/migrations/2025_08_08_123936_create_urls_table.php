@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories');
             $table->boolean('in_menu')->default(false);
             $table->boolean('indexing')->default(false);
+            $table->boolean('following')->default(true);
             $table->timestamps();
 
             $table->fullText('title');

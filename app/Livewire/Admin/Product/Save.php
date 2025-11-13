@@ -12,7 +12,7 @@ use Livewire\Component;
 class Save extends Component
 {
     public Product $product;
-    public int|null $categoryId = null, $stock = null;
+    public int|null $categoryId = null, $stock = null ,$discounted_price = null;
     public int $size, $price, $weight;
     public string $title = '', $query = '';
     public string|null $variant = null, $code = null;
@@ -80,6 +80,7 @@ class Save extends Component
             $this->categoryId = $product->category_id;
             $this->size = $product->size;
             $this->price = $product->price;
+            $this->discounted_price = $product->discounted_price;
             $this->weight = $product->weight;
             $this->stock = $product->stock;
 //            $this->clearTemporaryFiles();
@@ -164,6 +165,7 @@ class Save extends Component
             'size' => 'nullable|integer|min:0',
             'weight' => 'required|integer|min:0',
             'price' => 'required|integer|min:0',
+            'discounted_price' => 'nullable|integer|min:0',
             'stock' => 'nullable|integer|min:0',
             'code' => 'nullable|string|min:1|max:255',
         ];
@@ -180,6 +182,9 @@ class Save extends Component
         } else {
             $this->stock = null;
         }
+        if ($this->discounted_price == null || $this->discounted_price == '') {
+            $this->discounted_price = null;
+        }
 
 
         $this->validate();
@@ -190,6 +195,7 @@ class Save extends Component
         $this->product->size = "0";          ////////  change it
         $this->product->weight = $this->weight;
         $this->product->price = $this->price;
+        $this->product->discounted_price = $this->discounted_price;
         $this->product->stock = $this->stock;
         $this->product->code = $this->code;
         $this->product->save();

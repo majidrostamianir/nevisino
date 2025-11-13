@@ -12,7 +12,7 @@ use Livewire\Component;
 class Index extends Component
 {
     public \App\Models\Url $url;
-    public string $title = '', $dashed_title = '' ;
+    public string $title = '', $dashed_title = '';
     public null|string $description = '', $article = '';
     public int $categoryId = 0;
 
@@ -26,6 +26,14 @@ class Index extends Component
         $url = Url::query()->find($id);
         $url->update([
             'indexing' => !$url->indexing,
+        ]);
+    }
+
+    public function toggleFollowing($id)
+    {
+        $url = Url::query()->find($id);
+        $url->update([
+            'following' => !$url->following,
         ]);
     }
 
@@ -71,7 +79,7 @@ class Index extends Component
         $this->description = $this->url->description;
         $this->article = $this->url->article;
         $this->categoryId = $this->url->category_id;
-        $this->dispatch('articleUpdated',$this->article);
+        $this->dispatch('articleUpdated', $this->article);
 
     }
 

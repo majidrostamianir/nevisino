@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
     @stack('seo-meta-tags')
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css','resources/js/app.js'])
 
     @livewireStyles
 
@@ -25,5 +25,6 @@
 
 <livewire:components.footer />
 
+@livewireScripts
 </body>
 </html>

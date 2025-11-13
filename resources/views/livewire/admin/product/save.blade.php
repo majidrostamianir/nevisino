@@ -1,7 +1,7 @@
 <div>
     <div class="sm:flex sm:flex-wrap justify-between">
         <div class="sm:w-3/12 p-1">
-            <select class="w-full rounded-2xl p-2" wire:model.live="categoryId">
+            <select class="w-full rounded-2xl" wire:model.live="categoryId">
                 <option value="{{ null }}">دسته بندی</option>
                 @foreach(\App\Models\Category::query()->whereNotNull('parent_id')->get() as $value)
                     <option value="{{ $value->id }}">{{ $value->title }}</option>
@@ -55,13 +55,20 @@
             @enderror
         </div>
         <div class="sm:w-3/12 p-1 ">
+            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت با تخفیف"
+                   wire:model="discounted_price">
+            @error('discounted_price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="sm:w-3/12 p-1 ">
             <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="موجودی"
                    wire:model="stock" @if($variant) disabled @endif>
             @error('stock')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="relative sm:w-6/12 p-1 ">
+        <div class="relative sm:w-9/12 p-1">
             <div class="w-full relative rounded-2xl bg-white">
                 <div class="px-2 flex flex-wrap items-center gap-1">
                     @foreach ($selectedUrls as $key => $value)

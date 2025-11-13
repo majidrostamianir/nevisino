@@ -9,7 +9,7 @@
 
     <title>{{ $title ?? 'نویسینو' }}</title>
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
 
     @stack('torob-meta-tags') {{-- متاتگ‌های مخصوص ترب  --}}
@@ -31,10 +31,5 @@
 <livewire:components.footer />
 
 @livewireScripts
-
-
-
-{{--@stack('scripts')--}}
-
 </body>
 </html>

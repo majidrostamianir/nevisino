@@ -61,7 +61,12 @@
                 </h4>
                 <h4 class="bg-pars-200 shadow rounded mb-8 p-1">
                     <span class="font-bold">قیمت:</span>
-                    {{ english_to_persian_num(number_format($product->price)) }}
+                    @if($product->discounted_price)
+                        <span class="line-through text-gray-400 text-sm">{{ english_to_persian_num(number_format($product->price)) }}</span>
+                        <span class="font-bold">{{ english_to_persian_num(number_format($product->discounted_price)) }}</span>
+                    @else
+                        <span>{{ english_to_persian_num(number_format($product->price)) }}</span>
+                    @endif
                     تومان
                 </h4>
             </div>
@@ -240,7 +245,12 @@
                 </h4>
                 <h4 class="bg-pars-200 shadow rounded mb-8 p-1">
                     <span class="font-bold">قیمت:</span>
-                    {{ english_to_persian_num(number_format($product->price)) }}
+                    @if($product->discounted_price)
+                        <span class="line-through text-gray-400 text-sm">{{ english_to_persian_num(number_format($product->price)) }}</span>
+                        <span class="font-bold">{{ english_to_persian_num(number_format($product->discounted_price)) }}</span>
+                    @else
+                        <span>{{ english_to_persian_num(number_format($product->price)) }}</span>
+                    @endif
                     تومان
                 </h4>
             </div>

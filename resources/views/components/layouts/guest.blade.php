@@ -8,7 +8,7 @@
 
     <title>{{ $title ?? 'نویسینو' }}</title>
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
 </head>
 <body class="text-gray-900 antialiased">

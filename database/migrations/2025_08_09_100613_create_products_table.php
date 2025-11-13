@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('dashed_title');
             $table->string('variant')->nullable()->default(null);
             $table->unsignedBigInteger('price');
+            $table->unsignedBigInteger('discounted_price');
             $table->unsignedBigInteger('stock')->nullable();
             $table->unsignedBigInteger('sold_quantity')->default(0);
             $table->string('size');

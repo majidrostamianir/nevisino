@@ -9,7 +9,7 @@
 
     @stack('editor')
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
 
 </head>
@@ -160,7 +160,7 @@
                                 <path d="M22 14l-5 5"/>
                             </g>
                         </svg>
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">صفحات</span>
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سئو صفحات دسته بندی</span>
                     </a>
                 </li>
                 <li>
@@ -203,9 +203,5 @@
 </div>
 
 @livewireScripts
-
-
-
-
 </body>
 </html>

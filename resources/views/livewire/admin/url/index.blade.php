@@ -95,6 +95,7 @@
                 <th class="px-4 py-3 font-semibold">عنوان</th>
                 <th class="px-4 py-3 font-semibold">وضعیت منو</th>
                 <th class="px-4 py-3 font-semibold">ایندکس</th>
+                <th class="px-4 py-3 font-semibold">فالو</th>
                 <th class="px-4 py-3 font-semibold">محصولات</th>
             </tr>
             </thead>
@@ -105,9 +106,24 @@
                     class=" hover:bg-pars-50 border-b border-gray-100 transition-colors">
                     <td class="px-4 py-3 text-gray-600">{{ $index + 1 }}</td>
                     <td class="px-4 py-3 font-medium cursor-pointer
-                            @if($value->in_menu) text-pars-900 @else text-pars-500 @endif"
-                        wire:click.prevent="setUrl({{ $value->id }})">
-                        {{ $value->title }}
+                            @if($value->in_menu) text-pars-900 @else text-pars-500 @endif">
+                        <span wire:click.prevent="setUrl({{ $value->id }})">{{ $value->title }}</span>
+                        <a target="_blank" href="{{ route('category-page' , ['dashed' => $value->dashed_title]) }}" class="text-xs text-yellow-500">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 class="w-4 h-4 inline-block ml-1 align-text-top">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                <polyline points="15 3 21 3 21 9"/>
+                                <line x1="10" y1="14" x2="21" y2="3"/>
+                            </svg>
+                        </a>
+
                     </td>
                     <td class="px-4 py-3">
                         @if($value->in_menu)
@@ -123,6 +139,14 @@
                                 class="inline-block px-2.5 py-1 text-xs bg-green-100 text-green-700 rounded-md">ایندکس</span>
                         @else
                             <span class="inline-block px-2.5 py-1 text-xs bg-gray-100 text-gray-600 rounded-md">نو ایندکس</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3 cursor-pointer" wire:click="toggleFollowing('{{ $value->id }}')">
+                        @if($value->following)
+                            <span
+                                class="inline-block px-2.5 py-1 text-xs bg-green-100 text-green-700 rounded-md">فالو</span>
+                        @else
+                            <span class="inline-block px-2.5 py-1 text-xs bg-gray-100 text-gray-600 rounded-md">نو فالو</span>
                         @endif
                     </td>
                     <td class="px-4 py-3">

@@ -7,7 +7,7 @@
     <title>{{ $title  ?? 'نویسینو' }}</title>
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css','resources/js/app.js'])
 
     @livewireStyles
 
@@ -23,6 +23,6 @@
 </div>
 
 <livewire:components.footer />
-
+@livewireScripts
 </body>
 </html>
