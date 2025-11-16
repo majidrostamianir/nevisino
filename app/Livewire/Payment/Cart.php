@@ -36,7 +36,7 @@ class Cart extends Component
                 $this->cart[$key] = [
                     'id' => $item->product_id,
                     'title' => $item->product->title,
-                    'price' => $item->product->price,
+                    'price' => $item->product->discounted_price ?? $item->product->price,
                     'code' => $item->product->code,
                     'quantity' => $item->quantity,
                     'variant' => $item->variant_id,
@@ -58,7 +58,7 @@ class Cart extends Component
             )->with('product','variant')->get();
 
             $this->sum = $cartItems->sum(function($item){
-                $price = $item->variant?->price ?? $item->product->price;
+                $price = $item->product->discounted_price ?? $item->product->price;
                 return $price * $item->quantity;
             });
 

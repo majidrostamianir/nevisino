@@ -478,7 +478,7 @@ class ProductPage extends Component
             'id' => $productId,
             'title' => $this->product->title,
             // اگر واریانت پیدا نشد (حالت بدون واریانت)، از قیمت محصول استفاده می‌شود
-            'price' => $variant->price ?? $this->product->price,
+            'price' => $this->product->discounted_price ?? $this->product->price,
             'code' => $this->product->code,
             'quantity' => $quantity,
             'variant' => $variantId,

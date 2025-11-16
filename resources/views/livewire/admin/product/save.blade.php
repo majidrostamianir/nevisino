@@ -114,19 +114,20 @@
                     @error('variants.' . $i  .'.name')
                     <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                     @enderror
-                    <input type="number" class="rounded-2xl w-1/4 pr-2"
-                           placeholder="قیمت (اختیاری)"
-                           wire:model="variants.{{ $i }}.price">
-                    @error('variants.' . $i  .'.price')
-                    <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-                    @enderror
+{{--                    <input type="number" class="rounded-2xl w-1/4 pr-2"--}}
+{{--                           placeholder="قیمت (اختیاری)"--}}
+{{--                           wire:model="variants.{{ $i }}.price">--}}
+{{--                    @error('variants.' . $i  .'.price')--}}
+{{--                    <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>--}}
+{{--                    @enderror--}}
                     <input type="number" class="rounded-2xl w-1/4 pr-2"
                            placeholder="موجودی"
                            wire:model="variants.{{ $i }}.stock">
                     @error('variants.' . $i  .'.stock')
                     <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                     @enderror
-                    <button type="button" class="text-red-500 font-bold px-2" wire:click="removeVariant({{ $i }})">x
+                    <button type="button" class="text-red-500 font-bold px-2 cursor-pointer" wire:click="removeVariant({{ $i }})">
+                        حذف
                     </button>
                 </div>
             @endforeach

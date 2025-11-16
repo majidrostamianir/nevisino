@@ -12,7 +12,7 @@ use Livewire\Component;
 class Save extends Component
 {
     public Product $product;
-    public int|null $categoryId = null, $stock = null ,$discounted_price = null;
+    public int|null $categoryId = null, $stock = null, $discounted_price = null;
     public int $size, $price, $weight;
     public string $title = '', $query = '';
     public string|null $variant = null, $code = null;
@@ -27,14 +27,16 @@ class Save extends Component
         $this->variants[] = [
             'id' => null,
             'name' => null,
-            'price' => null,
+//            'price' => null,
             'stock' => 0,
         ];
     }
 
     public function updatedVariant()
     {
-        $this->addVariant();
+        if ($this->variants == []) {
+            $this->addVariant();
+        }
     }
 
     public function removeVariant($index): void
@@ -90,7 +92,7 @@ class Save extends Component
                 return [
                     'id' => $v->id,
                     'name' => $v->name,
-                    'price' => $v->price,
+//                    'price' => $v->price,
                     'stock' => $v->stock,
                 ];
             })->toArray();
@@ -158,7 +160,7 @@ class Save extends Component
             'variant' => ['nullable', 'string', 'min:2', 'max:255'],
             'variants' => ['nullable', 'array', 'required_with:variant', 'prohibited_if:variant,null|required_with:variant|array'],
             'variants.*.name' => ['required_with:variant', 'string', 'min:2', 'max:255'],
-            'variants.*.price' => ['nullable', 'int',],
+//            'variants.*.price' => ['nullable', 'int',],
             'variants.*.stock' => ['required_with:variant', 'int', 'min:0'],
             'selectedUrls' => 'required|array|min:1',
             'categoryId' => 'required',
@@ -199,23 +201,24 @@ class Save extends Component
         $this->product->stock = $this->stock;
         $this->product->code = $this->code;
         $this->product->save();
-
         $this->product->urls()->sync(array_keys($this->selectedUrls));
 
-//        $this->product->variants()->delete(); // پاک کردن ورینت‌های قبلی در حالت ویرایش
-
-        foreach ($this->variants as $key => $variant) {
-            $this->product->variants()->updateOrCreate(
-                ['id' => $variant['id'] ?? null], // شرط: اگر id وجود داشت رکورد آپدیت میشه
+        $keptIds = [];
+        foreach ($this->variants as $variant) {
+            $v = $this->product->variants()->updateOrCreate(
+                ['id' => $variant['id'] ?? null],
                 [
                     'name' => $variant['name'],
-                    'price' => $variant['price'] ?: null,
                     'stock' => $variant['stock'] ?? 0,
                 ]
             );
-
+            $keptIds[] = $v->id; // آی‌دی‌هایی که باید نگه داشته شوند
         }
 
+// حالا هر چیزی که جزو آی‌دی‌های جدید نیست حذف می‌کنیم          
+        $this->product->variants()
+            ->whereNotIn('id', $keptIds)
+            ->delete();
 
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }

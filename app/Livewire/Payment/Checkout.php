@@ -113,7 +113,7 @@ class Checkout extends Component
         )->with('product', 'variant')->get();
 
         $this->sum = $cartItems->sum(function ($item) {
-            $price = $item->variant?->price ?? $item->product->price;
+            $price = $item->product->discounted_price ?? $item->product->price;
             return $price * $item->quantity;
         });
 
