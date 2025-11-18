@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
 
-    <title>نویسینو، خرید اینترنتی لوازم تحریر و نوشت افزار</title>
+    <title>فروشگاه اینترنتی لوازم تحریر و نوشت افزار | نویسینو</title>
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
 
     @vite(['resources/css/app.css','resources/js/app.js'])
