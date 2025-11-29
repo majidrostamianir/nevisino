@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('urls', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('dashed_title');
-            $table->text('description')->default(null);
+            $table->string('title_tag');
+            $table->string('dashed_url');
+            $table->string('title_h1')->default(null);
+            $table->text('meta_description')->default(null);
             $table->text('article')->default(null);
+            $table->text('mini_article')->default(null);
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
             $table->boolean('in_menu')->default(false);

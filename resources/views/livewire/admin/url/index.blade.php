@@ -24,44 +24,67 @@
 <div class="h-[86vh] w-full bg-pars-100 rounded-2xl shadow-md overflow-y-auto">
     <div class="flex flex-wrap gap-4 mb-6 p-4 bg-pars-100 rounded-2xl">
         <div class="flex flex-wrap w-full gap-4">
-            <div class="flex-1 min-w-[220px] flex flex-col">
+            <div class="flex-1 min-w-[400px] flex flex-col">
+                <small class="mr-2">تگ عنوان</small>
                 <input
                     type="text"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400"
                     placeholder="عنوان"
-                    wire:model="title">
-                @error('title')
+                    wire:model="title_tag">
+                @error('title_tag')
                 <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
                 @enderror
             </div>
-
-            <div class="flex-1 min-w-[220px] flex flex-col">
+            <div class="flex-1 min-w-[400px] flex flex-col">
+                <small class="mr-2">آدرس</small>
                 <input
                     type="text"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400"
                     placeholder="آدرس"
-                    wire:model="dashed_title">
-                @error('dashed_title')
+                    wire:model="dashed_url">
+                @error('dashed_url')
                 <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
                 @enderror
             </div>
-            <div class="flex-1 min-w-[220px] flex flex-col">
+            <div class="flex-1 min-w-[400px] flex flex-col">
+                <small class="mr-2">عنوان h1</small>
+                <input
+                    type="text"
+                    class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400"
+                    placeholder="عنوان h1"
+                    wire:model="title_h1">
+                @error('title_h1')
+                <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="flex-1 min-w-[400px] flex flex-col">
+                <small class="mr-2">متا دیسکریپشن</small>
                 <input
                     type="text"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400"
                     placeholder="متا دیسکریپشن"
-                    wire:model="description">
-                @error('description')
+                    wire:model="meta_description">
+                @error('meta_description')
                 <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
                 @enderror
             </div>
         </div>
         <div class="w-full flex flex-wrap gap-4 items-start">
             <div class="flex-1 w-3/4 flex flex-col" wire:ignore>
+                <small class="mr-2">مقاله بلند - پایین</small>
                 <div id="editor">
                    {!! english_to_persian_num($article) !!}
                 </div>
                 @error('article')
+                <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="flex-1 w-3/4 flex flex-col" wire:ignore>
+                <small class="mr-2">مقاله کوتاه - بالا</small>
+                <div id="editor2">
+                    {!! english_to_persian_num($mini_article) !!}
+                </div>
+                @error('mini_article')
                 <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
                 @enderror
             </div>
@@ -107,8 +130,8 @@
                     <td class="px-4 py-3 text-gray-600">{{ $index + 1 }}</td>
                     <td class="px-4 py-3 font-medium cursor-pointer
                             @if($value->in_menu) text-pars-900 @else text-pars-500 @endif">
-                        <span wire:click.prevent="setUrl({{ $value->id }})">{{ $value->title }}</span>
-                        <a target="_blank" href="{{ route('category-page' , ['dashed' => $value->dashed_title]) }}" class="text-xs text-yellow-500">
+                        <span wire:click.prevent="setUrl({{ $value->id }})">{{ $value->title_tag }}</span>
+                        <a target="_blank" href="{{ route('category-page' , ['dashed' => $value->dashed_url]) }}" class="text-xs text-yellow-500">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24"
@@ -164,7 +187,7 @@
                 direction: 'rtl',
                 modules: {
                     toolbar: [
-                        [{ 'header': [1, 2, 3, false] }],
+                        [{ 'header': [ 2, 3, false] }],
                         ['bold', 'italic', 'underline'],
                         ['link'],
                         [{ 'list': 'ordered'}, { 'list': 'bullet' }],
@@ -187,6 +210,44 @@
             Livewire.on('articleUpdated', (content) => {
                 if (quill.root.innerHTML !== content) {
                     quill.root.innerHTML = content;
+                }
+            });
+
+
+
+            const quill2 = new Quill('#editor2', {
+                theme: 'snow',
+                direction: 'rtl',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [ 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        ['link'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                    ]
+                }
+            });
+
+            // مقداردهی اولیه ادیتور با محتوای موجود
+            quill2.root.innerHTML = `{!! $mini_article !!}`;
+
+            // ارسال تغییرات به لایووایر
+            quill2.on('text-change', function() {
+                const content = quill2.root.innerHTML;
+                @this.set('mini_article', content);
+            });
+
+            // گوش دادن به تغییرات از سمت لایووایر
+            Livewire.on('articleUpdated', (content) => {
+                if (quill.root.innerHTML !== content) {
+                    quill.root.innerHTML = content;
+                }
+            });
+            Livewire.on('miniArticleUpdated', (content) => {
+                if (quill2.root.innerHTML !== content) {
+                    quill2.root.innerHTML = content;
                 }
             });
         });

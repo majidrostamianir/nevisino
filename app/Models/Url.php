@@ -19,7 +19,7 @@ class Url extends Model
         $results = collect();
 
         // اول: fulltext
-        $fulltextResults = self::select('id', 'title', 'dashed_title')
+        $fulltextResults = self::select('id', 'title', 'dashed_url')
             ->selectRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance", [$q])
             ->whereRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$q])
             ->orderByDesc('relevance')
@@ -30,7 +30,7 @@ class Url extends Model
 
         // اگر کلمه کوتاه/عدد بود → LIKE هم بزن
         if ($hasShort) {
-            $query = self::select('id', 'title', 'dashed_title');
+            $query = self::select('id', 'title', 'dashed_url');
             foreach ($keywords as $word) {
                 $query->where('title', 'LIKE', "%{$word}%");
             }

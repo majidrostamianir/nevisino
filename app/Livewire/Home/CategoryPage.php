@@ -13,10 +13,27 @@ class CategoryPage extends Component
 
     public function mount(): void
     {
-        $this->url =  Url::query()->where('dashed_title',  $this->dashed)->firstOrFail();
+        $this->url =  Url::query()->where('dashed_url',  $this->dashed)->firstOrFail();
     }
     public function render()
     {
+        $rawProducts = \App\Models\Product::query()
+            ->whereNotNull('discounted_price')
+            ->inRandomOrder()
+            ->limit(8)
+            ->get(['id', 'title', 'dashed_title', 'price', 'discounted_price']);
+
+        $discounted_products = $rawProducts->map(function ($p) {
+            return [
+                'image' => asset('storage/products/' . $p->id . '/small/1.webp'),
+                'name' => $p->title ?? 'بدون نام',
+                'discounted_price' => (int)$p->discounted_price,
+                'price' => (int)$p->price,
+                'link' => route('product-page', ['title' => $p->dashed_title ?? 'unknown'])
+            ];
+        })->values()->toArray();
+
+
         $products = $this->url->products()
             ->select([
                 'products.*',
@@ -37,6 +54,6 @@ class CategoryPage extends Component
             ->orderBy('title', 'asc')
             ->get();
 
-        return view('livewire.home.category-page',compact('products'))->layout('components.layouts.category')->title($this->url->title);
+        return view('livewire.home.category-page',compact('products' , 'discounted_products'))->layout('components.layouts.category')->title($this->url->title_tag);
     }
 }

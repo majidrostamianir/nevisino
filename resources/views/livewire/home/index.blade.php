@@ -1,7 +1,7 @@
 <div>
     <div class="flex gap-4">
         <!-- باکس سفید: سبد تخفیف -->
-        <div class="w-3/12 ml-2 hidden sm:flex bg-yellow-300 shadow-md overflow-hidden rounded-xl text-center flex-col">
+        <div class="w-3/12 aspect-[2.5] hidden lg:flex bg-yellow-300 shadow-md overflow-hidden rounded-xl text-center flex-col">
             <div class="w-full py-4 font-bold ">
                 سبد تخفیف
             </div>
@@ -33,7 +33,7 @@
                             style="cursor: pointer;"
                         >
                             <!-- عکس محصول — بزرگتر -->
-                            <div class="block w-[80%] h-fit mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl">
+                            <div class="block w-[80%] h-auto mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl">
                                 <img :src="product.image" alt="" class="w-full h-full rounded-2xl border border-gray-300">
                             </div>
 
@@ -52,10 +52,9 @@
                 </div>
             </div>
         </div>
-
         <!-- کاروسل اصلی -->
-        <div class="w-full sm:w-9/12 relative flex-1 min-h-[30vh] sm:min-h-[50vh]">
-            <div x-data="carousel()" class="relative w-full h-full overflow-hidden rounded-2xl shadow">
+        <div class="w-full lg:w-9/12 relative ">
+            <div x-data="carousel()" class="relative w-full aspect-[2.5] overflow-hidden rounded-2xl shadow">
                 <!-- اسلایدها -->
                 <div class="relative h-full">
                     <template x-for="(slide, index) in slides" :key="index">
@@ -79,7 +78,7 @@
 
                 <!-- دکمه قبلی -->
                 <button @click="prev()"
-                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 sm:p-2 rounded-full shadow-xl transition-all hover:scale-110 z-10">
+                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 z-10">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
                     </svg>
@@ -87,7 +86,7 @@
 
                 <!-- دکمه بعدی -->
                 <button @click="next()"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 sm:p-2 rounded-full shadow-xl transition-all hover:scale-110 z-10">
+                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 z-10">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/>
                     </svg>
@@ -106,36 +105,36 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 px-4 my-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 sm:px-4 my-8">
 
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
-            <img src="{{ asset('images/price.png') }}" class="w-14 h-14 flex-shrink-0" alt="">
+            <img src="{{ asset('images/price.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
-                <strong class="block text-sm sm:text-base text-black">بهترین قیمت بازار</strong>
+                <strong class="block text-sm lg:text-base text-black">بهترین قیمت بازار</strong>
                 <span class="block text-xs text-gray-600">قیمت پایین در کنار حفظ کیفیت</span>
             </div>
         </div>
 
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
-            <img src="{{ asset('images/guarantee.png') }}" class="w-14 h-14 flex-shrink-0" alt="">
+            <img src="{{ asset('images/guarantee.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
-                <strong class="block text-sm sm:text-base text-black">ضمانت مرجوعی</strong>
+                <strong class="block text-sm lg:text-base text-black">ضمانت مرجوعی</strong>
                 <span class="block text-xs text-gray-600">امکان مرجوعی کالا تا ۴۸ ساعت</span>
             </div>
         </div>
 
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
-            <img src="{{ asset('images/delivery.png') }}" class="w-14 h-14 flex-shrink-0" alt="">
+            <img src="{{ asset('images/delivery.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
-                <strong class="block text-sm sm:text-base text-black">ارسال فوری</strong>
+                <strong class="block text-sm lg:text-base text-black">ارسال فوری</strong>
                 <span class="block text-xs text-gray-600">تحویل به پست بصورت روزانه</span>
             </div>
         </div>
 
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
-            <img src="{{ asset('images/support.png') }}" class="w-14 h-14 flex-shrink-0" alt="">
+            <img src="{{ asset('images/support.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
-                <strong class="block text-sm sm:text-base text-black">پشتیبانی قوی</strong>
+                <strong class="block text-sm lg:text-base text-black">پشتیبانی قوی</strong>
                 <span class="block text-xs text-gray-600">پاسخ دهی در کوتاه‌ترین زمان</span>
             </div>
         </div>
@@ -219,7 +218,7 @@
         </div>
     </div>
 
-{{--    <div class="grid grid-cols-2 gap-4 px-4 my-8 sm:grid-cols-4">--}}
+{{--    <div class="grid grid-cols-2 gap-4 px-4 my-8 lg:grid-cols-4">--}}
 {{--        <a href="" class="rounded-2xl overflow-hidden shadow-md">--}}
 {{--            <img src="{{ asset('images/test001.jpg') }}" class="hover:scale-105 transition w-full" alt="">--}}
 {{--        </a>--}}
@@ -313,7 +312,7 @@
         </div>
     </div>
 
-{{--    <div class="grid grid-cols-2 gap-4 px-4 my-8 sm:grid-cols-4">--}}
+{{--    <div class="grid grid-cols-2 gap-4 px-4 my-8 lg:grid-cols-4">--}}
 {{--        <a href="" class="rounded-2xl overflow-hidden shadow-md">--}}
 {{--            <img src="{{ asset('images/test33.png') }}" class="hover:scale-105 transition w-full" alt="">--}}
 {{--        </a>--}}
@@ -406,9 +405,9 @@
         </div>
     </div>
 
-{{--    <div class="sm:flex gap-2">--}}
-{{--        <img class="sm:w-1/2 rounded-2xl shadow shadow-black" src="{{ asset('images/test-1.webp') }}" alt="">--}}
-{{--        <img class="sm:w-1/2 rounded-2xl shadow shadow-black" src="{{ asset('images/test-2.webp') }}" alt="">--}}
+{{--    <div class="lg:flex gap-2">--}}
+{{--        <img class="lg:w-1/2 rounded-2xl shadow shadow-black" src="{{ asset('images/test-1.webp') }}" alt="">--}}
+{{--        <img class="lg:w-1/2 rounded-2xl shadow shadow-black" src="{{ asset('images/test-2.webp') }}" alt="">--}}
 {{--    </div>--}}
 
     <script>

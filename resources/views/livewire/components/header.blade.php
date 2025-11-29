@@ -1,6 +1,6 @@
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
     <div class="w-full fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
-        <div class="flex flex-col sm:hidden">
+        <div class="flex flex-col lg:hidden">
             <div class="flex justify-between items-center mb-2">
                 <a href="{{ route('home') }}" class="self-center" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
@@ -9,7 +9,7 @@
                     <a class="flex relative bg-pars-500 hover:bg-pars-600 text-white rounded-md items-center px-2 ml-2"
                        href="{{ route('cart') }}" wire:navigate>
                         <img src="{{ asset('images/cart.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-xs sm:text-sm py-2.5">سبد خرید</span>
+                        <span class="text-xs lg:text-sm py-2.5">سبد خرید</span>
                         @if($cartCount > 0)
                             <span
                                 class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
@@ -19,13 +19,13 @@
                         <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                            href="{{ route('dashboard') }}" wire:navigate>
                             <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                            <span class="text-xs sm:text-sm py-2.5">پیش‌خوان</span>
+                            <span class="text-xs lg:text-sm py-2.5">پیش‌خوان</span>
                         </a>
                     @else
                         <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                            href="{{ route('register') }}" wire:navigate>
                             <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                            <span class="text-xs sm:text-sm py-2.5">ورود به حساب</span>
+                            <span class="text-xs lg:text-sm py-2.5">ورود به حساب</span>
                         </a>
                     @endif
                 </div>
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="hidden sm:flex justify-between items-center">
+        <div class="hidden lg:flex justify-between items-center">
             <div class="flex items-center w-2/5">
                 <a href="{{ route('home') }}" class="w-fit" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
@@ -60,7 +60,7 @@
                 <a class="flex relative bg-pars-500 hover:bg-pars-600 text-white rounded-md items-center px-2 ml-2"
                    href="{{ route('cart') }}" wire:navigate>
                     <img src="{{ asset('images/cart.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                    <span class="text-xs sm:text-sm py-2.5">سبد خرید</span>
+                    <span class="text-xs lg:text-sm py-2.5">سبد خرید</span>
                     @if($cartCount > 0)
                         <span
                             class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
@@ -71,13 +71,13 @@
                     <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                        href="{{ route('dashboard') }}" wire:navigate>
                         <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-xs sm:text-sm py-2.5">پیش‌خوان</span>
+                        <span class="text-xs lg:text-sm py-2.5">پیش‌خوان</span>
                     </a>
                 @else
                     <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
                        href="{{ route('register') }}" wire:navigate>
                         <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-xs sm:text-sm py-2.5">ورود به حساب کاربری</span>
+                        <span class="text-xs lg:text-sm py-2.5">ورود به حساب کاربری</span>
                     </a>
                 @endif
 
@@ -88,13 +88,13 @@
         x-show="sidebarOpen && window.innerWidth < 640"
         x-transition.opacity
         @click="sidebarOpen = false; activeDropdown = null"
-        class="fixed inset-0  z-30 sm:hidden"
+        class="fixed bg-pars-500/30 inset-0  z-30 lg:hidden"
     ></div>
     <aside
         x-cloak
-        class="fixed top-10 sm:top-0 right-0 group z-40 pt-16 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
+        class="fixed top-10 lg:top-0 right-0 group z-40 pt-16 w-64 lg:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
-        :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'"
+        :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
         @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
         @mouseleave="if(window.innerWidth>=640) sidebarOpen=false; activeDropdown=null">
 
@@ -107,7 +107,7 @@
                                 class="flex cursor-pointer items-center w-full p-2 text-base  transition duration-75 rounded-lg group hover:bg-pars-400 hover:text-pars-500 ">
                             <img src="{{ asset('images/icon/'.$key +1 .'.png') }}" width="30">
                             <span
-                                class="flex-1 ms-3 sm:hidden group-hover:block text-right rtl:text-right whitespace-nowrap">{{ $value->title }}</span>
+                                class="flex-1 ms-3 lg:hidden group-hover:block text-right rtl:text-right whitespace-nowrap">{{ $value->title }}</span>
                             <svg class="w-3 h-3 ml-auto transition-transform duration-300"
                                  :class="activeDropdown === {{ $key }} ? 'rotate-180' : 'rotate-0'"
                                  fill="none" viewBox="0 0 10 6">
@@ -137,7 +137,7 @@
                      <a href="#"
                         class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
                          <img src="{{ asset('images/insta.png') }}" width="35">
-                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">قالب اینستاگرام</span>
+                         <span class="flex-1 ms-3 lg:hidden group-hover:block whitespace-nowrap">قالب اینستاگرام</span>
                      </a>
                  </li>--}}
 
