@@ -177,7 +177,7 @@ class Save extends Component
     {
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
         $this->variant = trim(preg_replace('/\s+/', ' ', $this->variant));
-        $dashed_title = trim(preg_replace('/\s+/', '-', $this->title));
+        $dashed_url = trim(preg_replace('/\s+/', '-', $this->title));
 
         if ($this->variant == null || $this->variant == '') {
             $this->variant = null;
@@ -191,7 +191,7 @@ class Save extends Component
 
         $this->validate();
         $this->product->title = $this->title;
-        $this->product->dashed_title = $dashed_title;
+        $this->product->dashed_url = $dashed_url;
         $this->product->variant = $this->variant;
         $this->product->category_id = $this->categoryId;
         $this->product->size = "0";          ////////  change it
@@ -215,7 +215,7 @@ class Save extends Component
             $keptIds[] = $v->id; // آی‌دی‌هایی که باید نگه داشته شوند
         }
 
-// حالا هر چیزی که جزو آی‌دی‌های جدید نیست حذف می‌کنیم          
+// حالا هر چیزی که جزو آی‌دی‌های جدید نیست حذف می‌کنیم
         $this->product->variants()
             ->whereNotIn('id', $keptIds)
             ->delete();

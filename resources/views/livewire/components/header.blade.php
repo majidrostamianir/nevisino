@@ -123,7 +123,7 @@
                         >
                         @foreach(\App\Models\Category::query()->where('parent_id',$value->id)->get() as $value )
                                 <li>
-                                    <a href="{{ route('category-page', ['dashed' => $value->dashed_title] ) }}"
+                                    <a href="{{ route('category-page', ['dashed' => $value->dashed_url] ) }}"
                                        wire:navigate
                                        class="flex items-center w-full p-2  transition duration-75 rounded-lg pl-11 group hover:bg-pars-400 hover:text-pars-500  text-xs text-nowrap">{{ $value->title }}</a>
                                 </li>

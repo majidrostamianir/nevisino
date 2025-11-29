@@ -3,7 +3,6 @@
 namespace App\Livewire\Home;
 
 
-use App\Models\Category;
 use App\Models\Product;
 use Livewire\Component;
 
@@ -15,7 +14,7 @@ class Index extends Component
             ->whereNotNull('discounted_price')
             ->inRandomOrder()
             ->limit(10)
-            ->get(['id', 'title', 'dashed_title', 'price', 'discounted_price']);
+            ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
 
         $productsForJs = $rawProducts->map(function ($p) {
             return [
@@ -23,7 +22,7 @@ class Index extends Component
                 'name' => $p->title ?? 'بدون نام',
                 'discounted_price' => (int)$p->discounted_price,
                 'price' => (int)$p->price,
-                'link' => route('product-page', ['title' => $p->dashed_title ?? 'unknown'])
+                'link' => route('product-page', ['title' => $p->dashed_url ?? 'unknown'])
             ];
         })->values()->toArray();
 

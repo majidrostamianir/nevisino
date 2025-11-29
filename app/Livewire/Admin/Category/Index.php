@@ -33,7 +33,7 @@ class Index extends Component
         $this->validate();
 
         $this->category->title = $this->title;
-        $this->category->dashed_title = $dashedTitle;
+        $this->category->dashed_url = $dashedTitle;
         $this->category->order = $this->order;
         $this->category->parent_id = $this->parent_id ?: null;
 

@@ -17,45 +17,59 @@ class Product extends Model
     }
     public static function search($q, $limit = 10)
     {
-        $q = self::normalize($q);
         $keywords = explode(' ', $q);
 
-        // بررسی وجود کلمات کوتاه یا عدد
-        $hasShort = collect($keywords)->contains(fn($w) => is_numeric($w) || mb_strlen($w) < 4);
+        // --- Search in products.title_tag ---
+        $productQuery = Product::select('id', 'title_h1', 'dashed_url')
+            ->selectRaw("(
+            " . implode(' + ', array_map(fn($w) => "IF(title_tag LIKE '%{$w}%',1,0)", $keywords)) . "
+        ) as relevance");
 
-        $results = collect();
-
-        // حالت fulltext
-        $fulltextResults = self::select('id', 'title', 'dashed_title')
-            ->selectRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance", [$q])
-            ->whereRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$q])
-            ->orderByDesc('relevance')
-            ->limit($limit)
-            ->get();
-
-        $results = $results->merge($fulltextResults);
-
-        // اگر کلمه کوتاه/عدد وجود داشت → LIKE هم بزن
-        if ($hasShort) {
-            $query = self::select('id', 'title', 'dashed_title');
-
-            foreach ($keywords as $word) {
-                $query->where('title', 'LIKE', "%{$word}%");
-            }
-
-            $query->selectRaw("
-                (
-                    " . implode(' + ', array_map(fn($w) => "IF(title LIKE '%{$w}%',1,0)", $keywords)) . "
-                ) as relevance
-            ");
-
-            $likeResults = $query->orderByDesc('relevance')->limit($limit)->get();
-
-            $results = $results->merge($likeResults);
+        foreach ($keywords as $word) {
+            $productQuery->where('title_tag', 'LIKE', "%{$word}%");
         }
 
-        // حذف رکوردهای تکراری و محدود کردن به n نتیجه
-        return $results->unique('id')->sortByDesc('relevance')->take($limit)->values();
+        $productResults = $productQuery
+            ->orderByDesc('relevance')
+            ->limit($limit)
+            ->get()
+            ->map(fn($r) => [
+                'type' => 'product',
+                'id' => $r->id,
+                'title' => $r->title_tag,
+                'dashed_url' => $r->dashed_url,
+                'relevance' => $r->relevance
+            ]);
+
+        // --- Search in categories.title ---
+        $categoryQuery = Category::select('id', 'title_h1')
+            ->selectRaw("(
+            " . implode(' + ', array_map(fn($w) => "IF(title_tag LIKE '%{$w}%',1,0)", $keywords)) . "
+        ) as relevance");
+
+        foreach ($keywords as $word) {
+            $categoryQuery->where('title_tag', 'LIKE', "%{$word}%");
+        }
+
+        $categoryResults = $categoryQuery
+            ->orderByDesc('relevance')
+            ->limit($limit)
+            ->get()
+            ->map(fn($r) => [
+                'type' => 'category',
+                'id' => $r->id,
+                'title' => $r->title_tag,
+                'dashed_url' => null,
+                'relevance' => $r->relevance
+            ]);
+
+        // --- Merge + sort + limit ---
+        return collect()
+            ->merge($productResults)
+            ->merge($categoryResults)
+            ->sortByDesc('relevance')
+            ->take($limit)
+            ->values();
     }
 
     public static function normalize($query)

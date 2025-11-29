@@ -1,5 +1,5 @@
 <div>
-    <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}" wire:navigate
+    <a href="{{ route('product-page' , ['title' => $product->dashed_url]) }}" wire:navigate
        class="flex flex-col p-1.5 items-center bg-white rounded shadow hover:shadow-lg cursor-pointer h-full">
 
         <!-- عکس -->

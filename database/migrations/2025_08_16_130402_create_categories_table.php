@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained('categories')
                 ->onDelete('cascade');
             $table->string('title');
-            $table->string('dashed_title')->unique();
+            $table->string('dashed_url')->unique();
             $table->integer('order')->default(0);
             $table->boolean('status')->default(true);
             $table->timestamps();

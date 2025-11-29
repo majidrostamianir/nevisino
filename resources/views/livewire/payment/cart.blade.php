@@ -9,13 +9,13 @@
                     <tr wire:key="{{$key}}" class="border-b border-b-gray-200 last:border-0">
                         <td class="px-4 py-2">
                             @if($product['variant'])
-                                <a wire:navigate href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_title]) }}">
+                                <a wire:navigate href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url]) }}">
                                     <img class="w-24 rounded"
                                          src="{{ asset('storage/products/' . $product['id'] . '/small/'. $product['variant'] .'.webp') }}"
                                          alt="">
                                 </a>
                             @else
-                                <a wire:navigate href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_title]) }}">
+                                <a wire:navigate href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url]) }}">
                                     <img class="w-24 rounded"
                                          src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}"
                                          alt="">

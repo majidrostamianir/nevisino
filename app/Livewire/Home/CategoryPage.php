@@ -21,7 +21,7 @@ class CategoryPage extends Component
             ->whereNotNull('discounted_price')
             ->inRandomOrder()
             ->limit(8)
-            ->get(['id', 'title', 'dashed_title', 'price', 'discounted_price']);
+            ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
 
         $discounted_products = $rawProducts->map(function ($p) {
             return [
@@ -29,7 +29,7 @@ class CategoryPage extends Component
                 'name' => $p->title ?? 'بدون نام',
                 'discounted_price' => (int)$p->discounted_price,
                 'price' => (int)$p->price,
-                'link' => route('product-page', ['title' => $p->dashed_title ?? 'unknown'])
+                'link' => route('product-page', ['title' => $p->dashed_url ?? 'unknown'])
             ];
         })->values()->toArray();
 

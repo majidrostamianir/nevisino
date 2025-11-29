@@ -23,7 +23,7 @@ class ProductPage extends Component
 
     public function mount(): void
     {
-        $this->product = Product::query()->where('dashed_title', '=', $this->title)->firstOrFail();
+        $this->product = Product::query()->where('dashed_url', '=', $this->title)->firstOrFail();
 
         $path = 'products/' . $this->product->id . '/large';
         $this->images = collect(Storage::disk('public')->files($path))

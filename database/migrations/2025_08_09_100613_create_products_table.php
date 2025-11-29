@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->nullable();
             $table->string('title');
-            $table->string('dashed_title');
+            $table->string('dashed_url');
             $table->string('variant')->nullable()->default(null);
             $table->unsignedBigInteger('price');
             $table->unsignedBigInteger('discounted_price');
@@ -27,7 +27,6 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
 
-            $table->fullText('title');
 
         });
 

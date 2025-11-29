@@ -11,8 +11,8 @@ class SiteMap extends Component
 {
     public function siteMap()
     {
-        $categories = Url::all()->pluck('dashed_title');
-        $products   = Product::all()->pluck('dashed_title');
+        $categories = Url::all()->pluck('dashed_url');
+        $products   = Product::all()->pluck('dashed_url');
 
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;

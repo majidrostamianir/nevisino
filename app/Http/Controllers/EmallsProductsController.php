@@ -28,7 +28,7 @@ class EmallsProductsController extends Controller
                 "color"        =>  null,
                 "guarantee"    => null,
                 "is_available" => ($product->stock > 0) || ($product->variants()->sum('stock') > 0),
-                "url"          => url("/product/{$product->dashed_title}"),
+                "url"          => url("/product/{$product->dashed_url}"),
             ];
         });
 

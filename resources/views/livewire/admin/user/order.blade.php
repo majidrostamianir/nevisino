@@ -206,7 +206,7 @@
                                         $product = \App\Models\Product::query()->find($item->product_id)
                                         ?>
                                     <div class="w-48 ml-2 mb-2">
-                                        <a href="{{ route('product-page' , ['title' => $product->dashed_title]) }}"
+                                        <a href="{{ route('product-page' , ['title' => $product->dashed_url]) }}"
                                            class="flex flex-row sm:flex-col items-center bg-white rounded shadow hover:shadow-lg cursor-pointer h-full">
                                             <div
                                                 class="w-24 sm:w-full  overflow-hidden rounded-r-sm sm:rounded-t-sm sm:rounded-b-none">

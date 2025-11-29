@@ -41,11 +41,11 @@
                     <a href="{{ route('home') }}">نویسینو</a>
 
                     @if($parent)
-                        / <a href="{{ '/category/' . $parent->dashed_title }}">{{ $parent->title }}</a>
+                        / <a href="{{ '/category/' . $parent->dashed_url }}">{{ $parent->title }}</a>
                     @endif
 
                     @if($category)
-                        / <a href="{{ '/category/' . $category->dashed_title }}">{{ $category->title }}</a>
+                        / <a href="{{ '/category/' . $category->dashed_url }}">{{ $category->title }}</a>
                     @endif
 
                 </h4>
@@ -54,7 +54,7 @@
                             class="font-bold">کد محصول:</span> {{ english_to_persian_num($product->code) }}</h4>
                 @endif
                 <h4 class="bg-pars-200 shadow rounded mb-3 p-1"><span class="font-bold">دسته بندی: </span><a
-                        href="{{ '/category/' . \App\Models\Category::query()->find($product->category_id)->dashed_title }}">{{ \App\Models\Category::query()->find($product->category_id)->title }}</a>
+                        href="{{ '/category/' . \App\Models\Category::query()->find($product->category_id)->dashed_url }}">{{ \App\Models\Category::query()->find($product->category_id)->title }}</a>
                 </h4>
                 <h4 class="bg-pars-200 shadow rounded mb-3 p-1">
                     <span>محصول ارسالی دقیقا مشابه تصاویر می باشد.</span>
@@ -225,11 +225,11 @@
                     <a href="{{ route('home') }}">نویسینو</a>
 
                     @if($parent)
-                        / <a href="{{ '/category/' . $parent->dashed_title }}">{{ $parent->title }}</a>
+                        / <a href="{{ '/category/' . $parent->dashed_url }}">{{ $parent->title }}</a>
                     @endif
 
                     @if($category)
-                        / <a href="{{ '/category/' . $category->dashed_title }}">{{ $category->title }}</a>
+                        / <a href="{{ '/category/' . $category->dashed_url }}">{{ $category->title }}</a>
                     @endif
 
                 </h4>
@@ -238,7 +238,7 @@
                             class="font-bold">کد محصول:</span> {{ english_to_persian_num($product->code) }}</h4>
                 @endif
                 <h4 class="bg-pars-200 shadow rounded mb-3 p-1"><span class="font-bold">دسته بندی: </span><a
-                        href="{{ '/category/' . \App\Models\Category::query()->find($product->category_id)->dashed_title }}">{{ \App\Models\Category::query()->find($product->category_id)->title }}</a>
+                        href="{{ '/category/' . \App\Models\Category::query()->find($product->category_id)->dashed_url }}">{{ \App\Models\Category::query()->find($product->category_id)->title }}</a>
                 </h4>
                 <h4 class="bg-pars-200 shadow rounded mb-3 p-1">
                     <span>محصول ارسالی دقیقا مشابه تصاویر می باشد.</span>

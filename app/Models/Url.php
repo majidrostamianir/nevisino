@@ -16,37 +16,30 @@ class Url extends Model
         // بررسی وجود کلمه کوتاه یا عدد
         $hasShort = collect($keywords)->contains(fn($w) => is_numeric($w) || mb_strlen($w) < 4);
 
-        $results = collect();
+        // کوئری پایه روی title_tag
+        $query = self::select('id', 'title_tag as title', 'dashed_url');
 
-        // اول: fulltext
-        $fulltextResults = self::select('id', 'title', 'dashed_url')
-            ->selectRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance", [$q])
-            ->whereRaw("MATCH(title) AGAINST(? IN NATURAL LANGUAGE MODE)", [$q])
-            ->orderByDesc('relevance')
-            ->limit($limit)
-            ->get();
-
-        $results = $results->merge($fulltextResults);
-
-        // اگر کلمه کوتاه/عدد بود → LIKE هم بزن
-        if ($hasShort) {
-            $query = self::select('id', 'title', 'dashed_url');
-            foreach ($keywords as $word) {
-                $query->where('title', 'LIKE', "%{$word}%");
-            }
-
-            $query->selectRaw("
-                (
-                    " . implode(' + ', array_map(fn($w) => "IF(title LIKE '%{$w}%',1,0)", $keywords)) . "
-                ) as relevance
-            ");
-
-            $likeResults = $query->orderByDesc('relevance')->limit($limit)->get();
-            $results = $results->merge($likeResults);
+        // شرط‌های LIKE برای هر کلمه
+        foreach ($keywords as $word) {
+            $query->where('title_tag', 'LIKE', "%{$word}%");
         }
 
-        return $results->unique('id')->sortByDesc('relevance')->take($limit)->values();
+        // محاسبه relevance بر اساس تعداد match
+        $query->selectRaw("
+        (
+            " . implode(' + ', array_map(fn($w) => "IF(title_tag LIKE '%{$w}%',1,0)", $keywords)) . "
+        ) as relevance
+    ");
+
+        // اگر کلمه کوتاه/عدد نبود، همین یک سرچ کافیه
+        if (!$hasShort) {
+            return $query->orderByDesc('relevance')->limit($limit)->get()->values();
+        }
+
+        // اگر کلمه کوتاه بود هم همین کوئری جواب میده
+        return $query->orderByDesc('relevance')->limit($limit)->get()->values();
     }
+
     public function products()
     {
         return $this->belongsToMany(Product::class);

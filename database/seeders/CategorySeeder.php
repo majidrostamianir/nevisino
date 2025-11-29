@@ -18,149 +18,149 @@ class CategorySeeder extends Seeder
 
         $mainCategory = Category::create([
             'title' => 'نوشت افزار',
-            'dashed_title' => 'نوشت-افزار',
+            'dashed_url' => 'نوشت-افزار',
             'order' => 1
         ]);
         Category::create([
             'title' => 'مداد',
-            'dashed_title' => 'مداد',
+            'dashed_url' => 'مداد',
             'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
         Category::create([
             'title' => 'خودکار و روان نویس',
-            'dashed_title' => 'خودکار-روان-نویس',
+            'dashed_url' => 'خودکار-روان-نویس',
             'parent_id' => $mainCategory->id,
             'order' => 2
         ]);
         Category::create([
             'title' => 'پاک کن',
-            'dashed_title' => 'پاک-کن',
+            'dashed_url' => 'پاک-کن',
             'parent_id' => $mainCategory->id,
             'order' => 3
         ]);
         Category::create([
             'title' => 'مداد تراش',
-            'dashed_title' => 'مداد-تراش',
+            'dashed_url' => 'مداد-تراش',
             'parent_id' => $mainCategory->id,
             'order' => 4
         ]);
         Category::create([
             'title' => 'اتود و مغزی اتود',
-            'dashed_title' => 'اتود-مغزی',
+            'dashed_url' => 'اتود-مغزی',
             'parent_id' => $mainCategory->id,
             'order' => 5
         ]);
         Category::create([
             'title' => 'لاک غلط گیر',
-            'dashed_title' => 'لاک-غلط-گیر',
+            'dashed_url' => 'لاک-غلط-گیر',
             'parent_id' => $mainCategory->id,
             'order' => 6
         ]);
         Category::create([
             'title' => 'خط کش، گونیا، نقاله',
-            'dashed_title' => 'خط-کش-گونیا-نقاله',
+            'dashed_url' => 'خط-کش-گونیا-نقاله',
             'parent_id' => $mainCategory->id,
             'order' => 7
         ]);
 
         $mainCategory = Category::create([
             'title' => 'لوازم نقاشی و رنگ آمیزی',
-            'dashed_title' => 'لوازم-نقاشی-رنگ آمیزی',
+            'dashed_url' => 'لوازم-نقاشی-رنگ آمیزی',
             'order' => 2
         ]);
         Category::create([
             'title' => 'مداد رنگی',
-            'dashed_title' => 'مداد-رنگی',
+            'dashed_url' => 'مداد-رنگی',
             'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
         Category::create([
             'title' => 'پاستل و مداد شمعی',
-            'dashed_title' => 'پاستل-مداد-شمعی',
+            'dashed_url' => 'پاستل-مداد-شمعی',
             'parent_id' => $mainCategory->id,
             'order' => 2
         ]);
         Category::create([
             'title' => 'گواش و آبرنگ',
-            'dashed_title' => 'گواش-آبرنگ',
+            'dashed_url' => 'گواش-آبرنگ',
             'parent_id' => $mainCategory->id,
             'order' => 3
         ]);
         Category::create([
             'title' => 'ماژیک',
-            'dashed_title' => 'ماژیک',
+            'dashed_url' => 'ماژیک',
             'parent_id' => $mainCategory->id,
             'order' => 4
         ]);
 
         $mainCategory = Category::create([
             'title' => 'لوازم اداری',
-            'dashed_title' => 'لوازم-اداری',
+            'dashed_url' => 'لوازم-اداری',
             'order' => 3
         ]);
         Category::create([
             'title' => 'چسب',
-            'dashed_title' => 'چسب',
+            'dashed_url' => 'چسب',
             'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
         Category::create([
             'title' => 'ماشین حساب',
-            'dashed_title' => 'ماشین-حساب',
+            'dashed_url' => 'ماشین-حساب',
             'parent_id' => $mainCategory->id,
             'order' => 2
         ]);
         Category::create([
             'title' => 'منگنه',
-            'dashed_title' => 'منگنه',
+            'dashed_url' => 'منگنه',
             'parent_id' => $mainCategory->id,
             'order' => 3
         ]);
         Category::create([
             'title' => 'قیچی',
-            'dashed_title' => 'قیچی',
+            'dashed_url' => 'قیچی',
             'parent_id' => $mainCategory->id,
             'order' => 4
         ]);
 
         $mainCategory = Category::create([
             'title' => 'دفتر و دفترچه',
-            'dashed_title' => 'دفتر-دفترچه',
+            'dashed_url' => 'دفتر-دفترچه',
             'order' => 4
         ]);
         Category::create([
             'title' => 'دفتر مشق',
-            'dashed_title' => 'دفتر-مشق',
+            'dashed_url' => 'دفتر-مشق',
             'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
         Category::create([
             'title' => 'دفتر نقاشی',
-            'dashed_title' => 'دفتر-نقاشی',
+            'dashed_url' => 'دفتر-نقاشی',
             'parent_id' => $mainCategory->id,
             'order' => 2
         ]);
         Category::create([
             'title' => 'دفتر یادداشت',
-            'dashed_title' => 'دفتر-یادداشت',
+            'dashed_url' => 'دفتر-یادداشت',
             'parent_id' => $mainCategory->id,
             'order' => 3
         ]);
         $mainCategory = Category::create([
             'title' => 'هدیه و سرگرمی',
-            'dashed_title' => 'هدیه-سرگرمی',
+            'dashed_url' => 'هدیه-سرگرمی',
             'order' => 5
         ]);
         Category::create([
             'title' => 'خمیر بازی',
-            'dashed_title' => 'خمیر-بازی',
+            'dashed_url' => 'خمیر-بازی',
             'parent_id' => $mainCategory->id,
             'order' => 1
         ]);
         Category::create([
             'title' => 'دستمال مرطوب',
-            'dashed_title' => 'دستمال-مرطوب',
+            'dashed_url' => 'دستمال-مرطوب',
             'parent_id' => $mainCategory->id,
             'order' => 2
         ]);

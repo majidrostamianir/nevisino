@@ -19,15 +19,12 @@ class Cart extends Model
         return $this->hasMany(CartItem::class);
     }
 
-    public function convertToOrder($province_id , $city_id ,$recipient_name , $recipient_mobile , $postal_address , $zipcode ,$description = null)
+    public function convertToOrder($province_id, $city_id, $recipient_name, $recipient_mobile, $postal_address, $zipcode, $description = null)
     {
         return DB::transaction(function () use ($city_id, $province_id, $zipcode, $postal_address, $recipient_mobile, $recipient_name, $description) {
 
             $totalPrice = $this->items->sum(function ($item) {
-                if ($item->variant_id && $item->variant) {
-                    return ($item->variant->price ?? $item->product->price) * $item->quantity;
-                }
-                return $item->product->price * $item->quantity;
+                return ($item->product->discounted_price ?? $item->product->price) * $item->quantity;
             });
 
             $lastOrderNumber = \App\Models\Order::max('order_number');
@@ -49,13 +46,11 @@ class Cart extends Model
                 'province' => Province::find($province_id)->name,
                 'city' => City::find($city_id)->name,
                 'description' => $description,
-                'expires_at' => now()->addMinutes( config('shop.expire_order_time_minutes') ),
+                'expires_at' => now()->addMinutes(config('shop.expire_order_time_minutes')),
             ]);
 
             foreach ($this->items as $item) {
-                $priceSnapshot = $item->variant_id
-                    ? ($item->variant->price ?? $item->product->price)
-                    : $item->product->price;
+                $priceSnapshot =$item->product->discounted_price ?? $item->product->price;
 
                 $order->items()->create([
                     'product_id' => $item->product_id,

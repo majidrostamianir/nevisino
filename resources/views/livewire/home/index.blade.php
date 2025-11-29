@@ -180,7 +180,7 @@
                 :style="`transform: translateX(${current * itemWidth}px)`">
                 @foreach($paintProducts as $index => $product)
                     <div x-ref="item{{ $index }}" class="min-w-[180px] md:min-w-[230px]">
-                        <a href="{{ route('product-page', ['title' => $product->dashed_title]) }}"
+                        <a href="{{ route('product-page', ['title' => $product->dashed_url]) }}"
                            wire:navigate
                            class="flex flex-col items-center bg-white rounded-xl border border-red-500  cursor-pointer h-full overflow-hidden">
                             <div class="w-full relative overflow-hidden rounded-t-xl ">
@@ -273,7 +273,7 @@
                 :style="`transform: translateX(${current * itemWidth}px)`">
                 @foreach($topProducts as $index => $product)
                     <div x-ref="item{{ $index }}" class="min-w-[180px] md:min-w-[230px]">
-                        <a href="{{ route('product-page', ['title' => $product->dashed_title]) }}"
+                        <a href="{{ route('product-page', ['title' => $product->dashed_url]) }}"
                            wire:navigate
                            class="flex flex-col items-center bg-white rounded-xl cursor-pointer h-full overflow-hidden">
                             <div class="w-full relative overflow-hidden rounded-t-xl">
@@ -366,7 +366,7 @@
                 :style="`transform: translateX(${current * itemWidth}px)`">
                 @foreach($officeProducts as $index => $product)
                     <div x-ref="item{{ $index }}" class="min-w-[180px] md:min-w-[230px]">
-                        <a href="{{ route('product-page', ['title' => $product->dashed_title]) }}"
+                        <a href="{{ route('product-page', ['title' => $product->dashed_url]) }}"
                            wire:navigate
                            class="flex flex-col items-center bg-white rounded-xl cursor-pointer h-full overflow-hidden">
                             <div class="w-full relative overflow-hidden rounded-t-xl">

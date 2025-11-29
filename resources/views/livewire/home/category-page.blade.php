@@ -27,7 +27,7 @@
     <div class="w-full lg:w-9/12">
         @if($url->title_h1)
             <div class="bg-white rounded shadow-md py-2 px-4 mb-4">
-                <h1 class="font-bold text-gray-700">
+                <h1 class="text-gray-700">
                     {{ $url->title_h1 }}
                 </h1>
                 <div class="p-4">
