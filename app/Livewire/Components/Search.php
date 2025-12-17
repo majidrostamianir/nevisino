@@ -5,6 +5,7 @@ namespace App\Livewire\Components;
 use App\Models\Product;
 use App\Models\SearchQuery;
 use App\Models\Url;
+use App\Services\SearchNormalizer;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -33,9 +34,23 @@ class Search extends Component
 
     public function updatedQuery(): void
     {
+        $queries = SearchNormalizer::expand($this->query);
 
-        $this->products = Product::search($this->query, 3);
-        $this->urls = Url::search($this->query, 3);
+        $this->products = collect();
+        $this->urls = collect();
+
+        foreach ($queries as $q) {
+            $this->products = $this->products->merge(
+                Product::search($q)->get()
+            );
+
+            $this->urls = $this->urls->merge(
+                Url::search($q)->get()
+            );
+        }
+
+        $this->products = $this->products->unique('id')->take(3)->values();
+        $this->urls = $this->urls->unique('id')->take(3)->values();
 
         $this->validate(['query' => 'string']);
 
@@ -45,6 +60,7 @@ class Search extends Component
             'user_id' => auth()->id() ?? null,
         ]);
     }
+
 
     public function clearSearch()
     {

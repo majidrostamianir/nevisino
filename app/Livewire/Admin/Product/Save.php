@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Url;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -220,6 +221,12 @@ class Save extends Component
             ->whereNotIn('id', $keptIds)
             ->delete();
 
+        Artisan::call('scout:flush', [
+            'model' => Product::class
+        ]);
+        Artisan::call('scout:import', [
+            'model' => Product::class
+        ]);
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
 

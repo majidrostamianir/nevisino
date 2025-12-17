@@ -15,7 +15,7 @@
     <meta name="availability" content="{{ $totalStock > 0 ? 'instock' : 'outofstock' }}">
     <meta name="product_name" content="{{ $product->title }}">
     <meta property="og:image" content="{{ $src }}">
-    <meta name="guarantee" content="{{ $product->guarantee ?? 'گارانتی اصالت و سلامت فیزیکی کالا' }}">
+    <meta name="guarantee" content="{{ $product->guarantee ?? '7 روز تضمین بازگشت کالا' }}">
 @endpush
 <div class="w-full"
      x-data="{

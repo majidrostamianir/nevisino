@@ -3,45 +3,42 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Url extends Model
 {
+    use Searchable;
 
-    protected $fillable = ['indexing' , 'description' , 'following'];
-    public static function search($q, $limit = 3)
-    {
-        $q = Product::normalize($q);
-        $keywords = explode(' ', $q);
+    protected $fillable = ['indexing', 'description', 'following'];
 
-        // بررسی وجود کلمه کوتاه یا عدد
-        $hasShort = collect($keywords)->contains(fn($w) => is_numeric($w) || mb_strlen($w) < 4);
-
-        // کوئری پایه روی title_tag
-        $query = self::select('id', 'title_tag as title', 'dashed_url');
-
-        // شرط‌های LIKE برای هر کلمه
-        foreach ($keywords as $word) {
-            $query->where('title_tag', 'LIKE', "%{$word}%");
-        }
-
-        // محاسبه relevance بر اساس تعداد match
-        $query->selectRaw("
-        (
-            " . implode(' + ', array_map(fn($w) => "IF(title_tag LIKE '%{$w}%',1,0)", $keywords)) . "
-        ) as relevance
-    ");
-
-        // اگر کلمه کوتاه/عدد نبود، همین یک سرچ کافیه
-        if (!$hasShort) {
-            return $query->orderByDesc('relevance')->limit($limit)->get()->values();
-        }
-
-        // اگر کلمه کوتاه بود هم همین کوئری جواب میده
-        return $query->orderByDesc('relevance')->limit($limit)->get()->values();
-    }
 
     public function products()
     {
         return $this->belongsToMany(Product::class);
     }
+
+    public function toSearchableArray()
+    {
+        return [
+            'id' => $this->id,
+            'type' => 'url',
+            'title' => self::normalize($this->title_tag),
+        ];
+    }
+
+    public static function normalize($query)
+    {
+        if (!$query) return '';
+
+        $query = trim($query);
+
+        $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        $english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        $query = str_replace($persian, $english, $query);
+
+        $query = str_replace(['آ', 'ي', 'ك'], ['ا', 'ی', 'ک'], $query);
+
+        return $query;
+    }
+
 }

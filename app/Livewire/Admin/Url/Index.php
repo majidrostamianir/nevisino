@@ -3,8 +3,10 @@
 namespace App\Livewire\Admin\Url;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Url;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
@@ -80,6 +82,13 @@ class Index extends Component
         $this->article = '';
         $this->mini_article = '';
         $this->categoryId = 0;
+
+        Artisan::call('scout:flush', [
+            'model' => Url::class
+        ]);
+        Artisan::call('scout:import', [
+            'model' => Url::class
+        ]);
     }
 
     public function setUrl($id): void

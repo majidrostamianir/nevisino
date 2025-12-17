@@ -80,17 +80,24 @@
     [x-cloak] {
         display: none !important;
     }
-    h1{
+    .article h1{
         font-size: 1.6rem;
         font-weight: bolder;
     }
-    h2{
+    .article h2{
         font-size: 1.3rem;
         font-weight: bold;
     }
-    h3{
+    .article h3{
         font-size: 1.1rem;
         font-weight: bold;
+    }
+    .article a{
+        color: #00c8ff;
+    }
+    .article a:hover{
+        color: #04b6e7;
+
     }
 
 }
