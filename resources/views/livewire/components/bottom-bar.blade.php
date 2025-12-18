@@ -9,13 +9,13 @@
 
         <span class="text-xs">دسته بندی</span>
     </button>
-    <div class="relative w-full text-center">
+   {{-- <div class="relative w-full text-center">
         <a
             href="{{ route('cart') }}"
             wire:navigate
             class="flex flex-col items-center justify-center gap-1 px-2 rounded-md">
             <img src="{{ asset('images/cart-black.png') }}" class="w-4 h-4" alt="">
-            <span class="text-xs lg:text-sm">سبد خرید</span>
+            <span class="text-xs lg:text-sm">پشتیبانی</span>
             @if($cartCount > 0)
                 <span
                     class="absolute top-0 left-[20%] bg-red-500 text-white px-2 text-xs border-2 border-pars-100 rounded-full">
@@ -23,7 +23,7 @@
                 </span>
             @endif
         </a>
-    </div>
+    </div>--}}
     <div class="relative w-full text-center">
         <a
             href="{{ route('home') }}"

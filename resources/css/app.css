@@ -7,7 +7,7 @@
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 @theme {
     --color-pars-100: #F5F8FEFF;
@@ -69,35 +69,52 @@
     ::-webkit-scrollbar-thumb:hover {
         background: rgba(57, 74, 90, .38)
     }
+
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
     }
-    #zibal-trust-badge img{
-        height: 7.7rem!important;
+
+    #zibal-trust-badge img {
+        height: 7.7rem !important;
     }
+
     [x-cloak] {
         display: none !important;
     }
-    .article h1{
+
+    .article h1 {
         font-size: 1.6rem;
         font-weight: bolder;
     }
-    .article h2{
+
+    .article h2 {
         font-size: 1.3rem;
         font-weight: bold;
     }
-    .article h3{
+
+    .article h3 {
         font-size: 1.1rem;
         font-weight: bold;
     }
-    .article a{
+
+    .article a {
         color: #00c8ff;
     }
-    .article a:hover{
+
+    .article a:hover {
         color: #04b6e7;
 
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 
 }

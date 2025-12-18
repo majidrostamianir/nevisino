@@ -1,4 +1,6 @@
 <div>
+    <livewire:components.story />
+
     <div class="flex gap-4">
         <!-- باکس سفید: سبد تخفیف -->
         <div class="w-3/12 aspect-[2.5] hidden lg:flex bg-yellow-300 shadow-md overflow-hidden rounded-xl text-center flex-col">
