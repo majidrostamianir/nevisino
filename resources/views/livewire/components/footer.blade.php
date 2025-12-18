@@ -1,4 +1,4 @@
-<div class="mt-10 py-8 bg-pars-100 shadow-sm lg:pr-16">
+<div class="mt-10 py-8 bg-pars-100 shadow-sm lg:pr-16 pb-16 lg:pb-8">
     <div class="w-fit mx-auto">
         <div class="w-full py-8">
             <div class="flex justify-center text-center">

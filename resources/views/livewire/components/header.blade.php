@@ -1,46 +1,10 @@
-<div x-data="{ sidebarOpen: false, activeDropdown: null }">
-    <div class="w-full fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
+<div>
+    <div class="w-full lg:fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
         <div class="flex flex-col lg:hidden">
-            <div class="flex justify-between items-center mb-2">
-                <a href="{{ route('home') }}" class="self-center" wire:navigate>
+            <div class="flex justify-between items-center ">
+                <a href="{{ route('home') }}" class="self-center mt-1" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
                 </a>
-                <div class="flex">
-                    <a class="flex relative bg-pars-500 hover:bg-pars-600 text-white rounded-md items-center px-2 ml-2"
-                       href="{{ route('cart') }}" wire:navigate>
-                        <img src="{{ asset('images/cart.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                        <span class="text-xs lg:text-sm py-2.5">سبد خرید</span>
-                        @if($cartCount > 0)
-                            <span
-                                class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
-                        @endif
-                    </a>
-                    @if(Auth::check())
-                        <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
-                           href="{{ route('dashboard') }}" wire:navigate>
-                            <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                            <span class="text-xs lg:text-sm py-2.5">پیش‌خوان</span>
-                        </a>
-                    @else
-                        <a class="flex bg-pars-700 hover:bg-pars-800 text-white rounded-md items-center px-2"
-                           href="{{ route('register') }}" wire:navigate>
-                            <img src="{{ asset('images/user.png') }}" class="w-[16px] h-[16px] ml-1" alt="">
-                            <span class="text-xs lg:text-sm py-2.5">ورود به حساب</span>
-                        </a>
-                    @endif
-                </div>
-            </div>
-            <div class="flex justify-between items-center">
-                <button  @click="sidebarOpen = !sidebarOpen; if(!sidebarOpen) activeDropdown=null"
-                         type="button"
-                         class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                         xmlns="http://www.w3.org/2000/svg">
-                        <path clip-rule="evenodd" fill-rule="evenodd"
-                              d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
-                    </svg>
-                </button>
-
                 <div class="w-full pl-4">
                     <livewire:components.search/>
                 </div>
@@ -49,7 +13,7 @@
         <div class="hidden lg:flex justify-between items-center">
             <div class="flex items-center w-2/5">
                 <a href="{{ route('home') }}" class="w-fit" wire:navigate>
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12 mt-1">
                 </a>
                 <div class="w-full">
                     <livewire:components.search/>
@@ -88,11 +52,11 @@
         x-show="sidebarOpen && window.innerWidth < 640"
         x-transition.opacity
         @click="sidebarOpen = false; activeDropdown = null"
-        class="fixed bg-pars-500/30 inset-0  z-30 lg:hidden"
+        class="fixed bg-black/30 inset-0  z-30 lg:hidden"
     ></div>
     <aside
         x-cloak
-        class="fixed top-10 lg:top-0 right-0 group z-40 pt-16 w-64 lg:w-16 hover:w-64 shadow-sm h-screen
+        class="fixed top-0 lg:top-0 right-0 group z-40 lg:pt-16 w-64 lg:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
         :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
         @mouseover="if(window.innerWidth>=640) sidebarOpen=true"

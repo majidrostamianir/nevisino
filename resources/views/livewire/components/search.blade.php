@@ -29,5 +29,9 @@
                    class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ english_to_persian_num($url->title_h1 ?? $url->title_tag) }}</a>
             @endforeach
         </div>
-    @endif
+    @elseif($isFocused && strlen($query)>2 && $urls->isEmpty() && $products->isEmpty())
+        <span class="absolute top-10 rounded text-center right-3 w-full bg-white p-4 z-10 shadow" wire:ignore.self>
+            چیزی پیدا نشد!
+        </span>
+        @endif
 </div>

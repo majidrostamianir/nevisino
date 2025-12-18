@@ -78,7 +78,7 @@
 
                 <!-- دکمه قبلی -->
                 <button @click="prev()"
-                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 z-10">
+                        class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 ">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
                     </svg>
@@ -86,7 +86,7 @@
 
                 <!-- دکمه بعدی -->
                 <button @click="next()"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 z-10">
+                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 ">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/>
                     </svg>

@@ -28,7 +28,7 @@
             isLoading = true;
             imageLoaded = false;
         });">
-    <div class="sm:flex flex-row-reverse w-full p-4 pb-8  sm:p-8 rounded-2xl mx-auto mt-10 bg-pars-100 shadow">
+    <div class="sm:flex flex-row-reverse w-full p-4 pb-8  sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow">
         <div class="w-full sm:w-7/12 sm:mr-2">
             <div class="sm:hidden">
                 <h1 class=" font-bold text-xl mb-6">{{ english_to_persian_num($product->title) }}</h1>
