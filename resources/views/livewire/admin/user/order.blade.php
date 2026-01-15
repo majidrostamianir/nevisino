@@ -136,7 +136,7 @@
 
                                                 <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
                                                         class="bg-pars-700 hover:bg-pars-800 px-3 py-1 rounded-2xl text-white cursor-pointer ml-2">
-                                                    ذخیره
+                                                    دخیره و ارسال پیامک
                                                 </button>
                                             </div>
                                         </div>

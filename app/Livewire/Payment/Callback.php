@@ -44,9 +44,7 @@ class Callback extends Component
                         $item->product->decrement('stock', $item->quantity);
                     }
                 }
-
-//                $this->sendVerifyOrderSms($this->data['order_number']);
-
+                $this->sendVerifyOrderSms($this->data['order_number']);
             } else {
                 abort(402, 'تراکنش نامعتبر');
             }
@@ -64,7 +62,7 @@ class Callback extends Component
         $password = 'Faraz@1920115072';
         $from = '3000505';
         $pattern_code = 'yhvz50h4nox3dq4';
-        $to = array('98' . substr($this->user->mobile, 1));
+        $to = array('98' . substr(\Auth::user()->mobile, 1));
         $input_data = array('order' => $order);
 
         $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .

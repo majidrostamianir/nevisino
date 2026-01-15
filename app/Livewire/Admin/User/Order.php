@@ -52,7 +52,7 @@ class Order extends Component
 
         $order->tracking_code = $this->trackingCodes[$orderId];
         $order->save();
-//        $this->sendTrackingSms($this->trackingCodes[$orderId]);
+        $this->sendTrackingSms($this->trackingCodes[$orderId]);
         $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد');
     }
 
@@ -64,12 +64,13 @@ class Order extends Component
         $from = '3000505';
         $pattern_code = 'kvuck8sq6r7mwgd';
         $to = array('98' . substr($this->user->mobile, 1));
-        $input_data = array('order' => $link);
+        $input_data = array('tracking' => $link);
 
         $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
             urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
             "&pattern_code=$pattern_code";
         $handler = curl_init($url);
+
         curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($handler, CURLOPT_POSTFIELDS, $input_data);
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);

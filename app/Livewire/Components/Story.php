@@ -25,9 +25,9 @@ class Story extends Component
                 return [
                     'id' => $category->id,
                     'title' => $category->title,
-                    'cover' => asset("storage/products/{$firstProduct->id}/large/1.webp"),
+                    'cover' => asset("storage/products/{$firstProduct->id}/small/1.webp"),
                     'items' => $category->products->map(fn($product) => [
-                        'image' => asset("storage/products/{$product->id}/large/1.webp"),
+                        'image' => asset("storage/products/{$product->id}/small/1.webp"),
                         'link' => route('product-page', ['title' => $product->dashed_url]),
                         'product_name' => $product->title ?? 'محصول',
                     ])->values()->toArray(),

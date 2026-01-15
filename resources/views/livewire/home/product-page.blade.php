@@ -1,12 +1,6 @@
 @push('torob-meta-tags')
     <meta name="product_id" content="{{ $product->id }}">
-    @php
-        $variantPrice = $product->variant === null ? null : $product->variants->min('price');
-        $finalPrice = ($product->variant === null || $variantPrice == 0 || $variantPrice === null)
-            ? $product->price
-            : $variantPrice;
-    @endphp
-    <meta name="product_price" content="{{ $finalPrice }}">
+    <meta name="product_price" content="{{ $product->discounted_price ?? $product->price }}">
     @php
         $totalStock = $product->variant === null
             ? $product->stock
