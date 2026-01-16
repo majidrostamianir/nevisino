@@ -313,9 +313,13 @@
                             </path>
                         </svg>
                         @if($stock == 0)
-                            <span class="absolute -bottom-6 right-8 text-xs text-red-500">ناموجود</span>
+                            <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">ناموجود</span>
                         @elseif(persian_to_english_num( $this->quantity)  >=  $stock)
-                            <span class="absolute -bottom-6 right-8 text-xs text-red-500">حداکثر {{ english_to_persian_num($stock) }} عدد</span>
+                            @if($product->variant === null || $selectedVariant === 1 )
+                                <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی انبار {{ english_to_persian_num($stock) }} عدد است</span>
+                            @else
+                                <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی {{ $product->variant }} {{ \App\Models\ProductVariant::find($selectedVariant)->name }} {{ english_to_persian_num($stock) }} عدد است</span>
+                            @endif
                         @endif
 
                         <div wire:click.prevent="increase()"
@@ -352,4 +356,5 @@
         </div>
 
     </div>
+    <div class="sm:flex w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">ss</div>
 </div>

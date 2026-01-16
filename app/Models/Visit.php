@@ -12,18 +12,20 @@ class Visit extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public static function ipSearch($q, $limit = 1000)
+    public static function ipSearch($q, $limit = 2000)
     {
         $q = self::normalize($q);
         return Visit::query()->where('ip', 'LIKE', '%' . $q . '%')->orderBy('created_at', 'desc')->limit($limit)->get();
     }
-    public static function userSearch($q, $limit = 1000)
+    public static function userSearch($q, $limit = 2000)
     {
         $q = self::normalize($q);
 
         return Visit::query()
             ->whereHas('user', function($query) use ($q) {
                 $query->where('name', 'LIKE', '%' . $q . '%');
+            })->orwhereHas('user', function($query) use ($q) {
+                $query->where('mobile', 'LIKE', '%' . $q . '%');
             })
             ->orderBy('created_at', 'desc')
             ->limit($limit)

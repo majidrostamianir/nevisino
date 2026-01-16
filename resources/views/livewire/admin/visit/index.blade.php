@@ -11,8 +11,6 @@
                 </th>
                 <th class="px-4 py-2 ">صفحه</th>
                 <th class="px-4 py-2 ">رفرر</th>
-                <th class="px-4 py-2 ">باته؟</th>
-                <th class="px-4 py-2 ">ایجنت</th>
                 <th class="px-4 py-2 ">زمان</th>
             </tr>
             </thead>
@@ -23,8 +21,6 @@
                     <td class="px-4 py-2 ">{{ \App\Models\User::find($item->user_id)->name ?? \App\Models\User::find($item->user_id)->mobile ?? null }}</td>
                     <td class="px-4 py-2 ">{{ \App\Models\Url::find($item->url_id)->title ?? $item->url }}</td>
                     <td class="px-4 py-2 ">{{ $item->referrer }}</td>
-                    <td class="px-4 py-2 ">{{ $item->is_bot }}</td>
-                    <td class="px-4 py-2 ">{{ $item->user_agent }}</td>
                     <td class="px-4 py-2 ">{{ english_to_persian_num(verta($item->created_at)) }}</td>
                 </tr>
             @endforeach

@@ -25,18 +25,19 @@
                 <a href="https://wa.me/+989169889759" target="_blank">{{ english_to_persian_num('09169889759') }}</a>
             </div>
         </div>
-        <div class="flex w-full">
-            <script src="https://zibal.ir/trust/scripts/zibal-trust-v4.js" defer type="text/javascript"></script>
-            <a referrerpolicy='origin' target='_blank'
-               href='https://trustseal.enamad.ir/?id=587399&Code=sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'><img
-                    referrerpolicy='origin' src='{{ asset('images/enamad.png') }}' alt=''
-                    style='cursor:pointer;height: 7.7rem!important;'
-                    code='sL7dGvZ8XFDxVUPC0JRx0EccCQdZsPot'></a>
-            <div class="mx-1"></div>
-
-            <img referrerpolicy='origin' id='rgvjjzpeoeukjxlzwlaoesgt' style='cursor:pointer;height: 7.7rem!important;'
-                 onclick='window.open("https://logo.samandehi.ir/Verify.aspx?id=378140&p=xlaojyoemcsirfthaodsobpd", "Popup","toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30")'
-                 alt='logo-samandehi' src='{{ asset('images/samandehi.png') }}'/>
+        <div class="flex w-full justify-around">
+            <a href="{{ route('trust') }}" wire:navigate>
+                <img src="{{ asset('images/samandehi.png') }}"
+                     class="w-fit h-28 mx-2 hover:scale-105 transition-all cursor-pointer">
+            </a>
+            <a href="{{ route('trust') }}" wire:navigate>
+                <img src="{{ asset('images/enamad.png') }}"
+                     class="w-fit h-28 mx-2 hover:scale-105 transition-all cursor-pointer">
+            </a>
+            <a href="{{ route('trust') }}" wire:navigate>
+                <img src="{{ asset('images/zibal.png') }}"
+                     class="w-fit h-28 mx-4 hover:scale-105 transition-all cursor-pointer">
+            </a>
         </div>
     </div>
 </div>

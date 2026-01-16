@@ -3,24 +3,24 @@
 use App\Http\Controllers\BasalamTestController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['middleware' => [\App\Http\Middleware\visitTracker::class]], function () {
+
+
+
+Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker::class]], function () {
     Route::get('/', \App\Livewire\Home\Index::class)->name('home');
     Route::get('/shop', \App\Livewire\Home\Shop::class)->name('shop');
-});
-
-
-Route::group(['middleware' => ['throttle:60', \App\Http\Middleware\getReferrer::class , \App\Http\Middleware\visitTracker::class]], function () {
     Route::get('/category/{dashed}', \App\Livewire\Home\CategoryPage::class)->name('category-page');
     Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
+    Route::get('/trust', \App\Livewire\Home\Trust::class)->name('trust');
 });
-Route::group(['middleware' => ['throttle:60', 'guest', \App\Http\Middleware\getReferrer::class,\App\Http\Middleware\visitTracker::class]], function () {
+
+Route::group(['middleware' => ['throttle:60', 'guest',\App\Http\Middleware\visitTracker::class]], function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
     Route::redirect('/login', '/register' , 301)->name('login');
     Route::get('/verify-mobile', \App\Livewire\Auth\VerifyMobile::class)->name('verify-mobile');
 
 });
-
 
 Route::group(['middleware' => ['throttle:60', 'auth' , \App\Http\Middleware\visitTracker::class]], function () {
     Route::get('/dashboard/{page?}', App\Livewire\Dashboard\Index::class)
