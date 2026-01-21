@@ -896,6 +896,18 @@ function distributeQuantityToVariants(\Illuminate\Support\Collection $availableV
     public
     function render(): \Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
     {
-        return view('livewire.home.product-page')->layout('components.layouts.product');
+        $relatedProducts = Product::where('category_id', $this->product->category_id)
+            ->where('id', '!=', $this->product->id)
+            ->where(function ($query) {
+                // محصول خودش موجودی داره
+                $query->where('stock', '>', 0)
+                    // یا حداقل یکی از واریانت‌ها موجود باشه
+                    ->orWhereHas('variants', function ($q) {
+                        $q->where('stock', '>', 0);
+                    });
+            })
+            ->limit(8)
+            ->get();
+        return view('livewire.home.product-page' , compact('relatedProducts'))->layout('components.layouts.product');
     }
 }

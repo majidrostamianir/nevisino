@@ -56,8 +56,10 @@
                 <h4 class="bg-pars-200 shadow rounded mb-8 p-1">
                     <span class="font-bold">قیمت:</span>
                     @if($product->discounted_price)
-                        <span class="line-through text-gray-400 text-sm">{{ english_to_persian_num(number_format($product->price)) }}</span>
-                        <span class="font-bold">{{ english_to_persian_num(number_format($product->discounted_price)) }}</span>
+                        <span
+                            class="line-through text-gray-400 text-sm">{{ english_to_persian_num(number_format($product->price)) }}</span>
+                        <span
+                            class="font-bold">{{ english_to_persian_num(number_format($product->discounted_price)) }}</span>
                     @else
                         <span>{{ english_to_persian_num(number_format($product->price)) }}</span>
                     @endif
@@ -146,17 +148,17 @@
                         }
                     }"
 
-                    @mouseenter="handleMouseEnter()"
-                    @mousemove="handleMouseMove($event)"
-                    @mouseleave="handleMouseLeave()"
+                 @mouseenter="handleMouseEnter()"
+                 @mousemove="handleMouseMove($event)"
+                 @mouseleave="handleMouseLeave()"
 
-                    @click="handleMobileAction($event)"
+                 @click="handleMobileAction($event)"
 
-                    :class="{
+                 :class="{
                     'cursor-zoom-in': zoomOnHover && !isZoomed,
                     'cursor-pointer': !zoomOnHover
                     }"
-                     style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
+                 style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;">
 
                 <img src="{{ $src }}"
                      x-bind:src="$wire.src"
@@ -240,8 +242,10 @@
                 <h4 class="bg-pars-200 shadow rounded mb-8 p-1">
                     <span class="font-bold">قیمت:</span>
                     @if($product->discounted_price)
-                        <span class="line-through text-gray-400 text-sm">{{ english_to_persian_num(number_format($product->price)) }}</span>
-                        <span class="font-bold">{{ english_to_persian_num(number_format($product->discounted_price)) }}</span>
+                        <span
+                            class="line-through text-gray-400 text-sm">{{ english_to_persian_num(number_format($product->price)) }}</span>
+                        <span
+                            class="font-bold">{{ english_to_persian_num(number_format($product->discounted_price)) }}</span>
                     @else
                         <span>{{ english_to_persian_num(number_format($product->price)) }}</span>
                     @endif
@@ -318,7 +322,8 @@
                             @if($product->variant === null || $selectedVariant === 1 )
                                 <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی انبار {{ english_to_persian_num($stock) }} عدد است</span>
                             @else
-                                <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی {{ $product->variant }} {{ \App\Models\ProductVariant::find($selectedVariant)->name }} {{ english_to_persian_num($stock) }} عدد است</span>
+                                <span
+                                    class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی {{ $product->variant }} {{ \App\Models\ProductVariant::find($selectedVariant)->name }} {{ english_to_persian_num($stock) }} عدد است</span>
                             @endif
                         @endif
 
@@ -356,5 +361,35 @@
         </div>
 
     </div>
-    <div class="sm:flex w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">ss</div>
+    @if($product->description)
+        <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">
+            <div class="font-bold mb-4">معرفی</div>
+            <div class="text-justify">
+                {{ $product->description }}
+            </div>
+        </div>
+    @endif
+    @if($product->attrs()->exists())
+        <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">
+            <div class="font-bold mb-4">ویژگی ها</div>
+            @foreach($product->attrs as $attr)
+                <div class="w-full md:w-1/3 flex text-sm">
+                    <div
+                        class="text-gray-800 w-1/3 p-2 pr-4 border-b border-b-gray-200 bg-gray-100">{{ $attr->title }}</div>
+                    <div
+                        class="text-gray-800 w-2/3 p-2 pr-4 border-b border-b-gray-200 bg-white">{{ $attr-> value }}</div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+    @if($relatedProducts->isNotEmpty())
+        <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">
+            <div class="font-bold mb-4">کالاهای مرتبط</div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                @foreach($relatedProducts as $relate)
+                    <livewire:components.product-card :product="$relate"/>
+                @endforeach
+            </div>
+        </div>
+    @endif
 </div>

@@ -24,6 +24,10 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+    public function attrs()
+    {
+        return $this->belongsToMany(Attr::class)->withTimestamps();
+    }
     public function toSearchableArray()
     {
         return [

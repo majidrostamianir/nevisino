@@ -43,6 +43,7 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
     Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
+    Route::get('/admin/attr',\App\Livewire\Admin\Product\Attr::class)->name('admin.product.attr');
     /*
      *
      * Use For Basalam

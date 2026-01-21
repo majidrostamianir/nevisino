@@ -2,13 +2,9 @@
 
 namespace App\Livewire\Admin\Url;
 
-use App\Models\Category;
-use App\Models\Product;
 use App\Models\Url;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
-use Livewire\Attributes\Reactive;
 use Livewire\Component;
 
 class Index extends Component
