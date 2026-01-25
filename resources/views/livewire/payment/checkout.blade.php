@@ -29,9 +29,9 @@
                     >
                         <img class="w-6 h-fit" src="{{ asset('images/location.png') }}" alt="">
                         <div class="mr-4">
-                            <p class="mb-2  mt-1 text-pars-500">{{ $value['postal_address'] }}</p>
+                            <p class="mb-2  mt-1 text-pars-500">{{ english_to_persian_num($value['postal_address']) }}</p>
                             <p class="mb-2">کد پستی: {{ english_to_persian_num($value['zipcode']) }}</p>
-                            <p class="mb-2">تحویل گیرنده: {{ $value['recipient_name'] }}
+                            <p class="mb-2">تحویل گیرنده: {{ english_to_persian_num($value['recipient_name']) }}
                                 | {{ english_to_persian_num($value['recipient_mobile']) }}</p>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                         <img class="w-12" src="{{ asset('images/post.png') }}" alt="">
                         <div class="w-full px-2">
                             <p class="mb-2 text-pars-500">ارسال به آدرس:</p>
-                            <strong>{{ $selectedAddress->postal_address }}</strong>
+                            <strong>{{ english_to_persian_num($selectedAddress->postal_address) }}</strong>
                         </div>
                         <div class="text-nowrap">
                             <span class="cursor-pointer text-sm text-pars-500">تغییر آدرس ></span>
@@ -61,20 +61,23 @@
                     </div>
                 </div>
                 <div class="mt-6 pr-4">
-                    <p class="mb-2">نام و نام خانوادگی گیرنده: <strong>{{ $selectedAddress->recipient_name }}</strong>
+                    <p class="mb-2">نام و نام خانوادگی گیرنده: <strong>{{ english_to_persian_num($selectedAddress->recipient_name) }}</strong>
                     </p>
                     <p class="mb-2">شماره موبایل گیرنده:
                         <strong>{{ english_to_persian_num( $selectedAddress->recipient_mobile)  }}</strong></p>
                     <p class="mb-2">استان: <strong>{{ $selectedAddress->province->name }}</strong></p>
                     <p class="mb-2">شهر: <strong>{{ $selectedAddress->city->name }}</strong></p>
-                    <p class="mb-2">آدرس دقیق پستی: <strong>{{ $selectedAddress->postal_address }}</strong></p>
+                    <p class="mb-2">آدرس دقیق پستی: <strong>{{ english_to_persian_num($selectedAddress->postal_address) }}</strong></p>
                     <p class="mb-2">کد پستی: <strong>{{ english_to_persian_num($selectedAddress->zipcode) }}</strong>
                     </p>
                     <div class="mt-4">
                         <label class="mr-4 text-sm">توضیحات اختیاری در مورد این سفارش:</label>
-                        <textarea wire:model="description"
+                        <textarea
+                                  x-data="faNumber('description' , false)"
+                                  x-model="value"
+                                  @input="onInput"
                                   class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
-                        @error('description') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                        @error('description') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -84,12 +87,16 @@
                 <div class="mt-4">
                     <label class="mr-4 text-sm">نام و نام خانوادگی: <strong class="text-red-500">*</strong></label>
                     <input wire:model="recipient_name" class="mt-1 w-full rounded-full px-4">
-                    @error('recipient_name') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    @error('recipient_name') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">شماره موبایل:<strong class="text-red-500">*</strong></label>
-                    <input wire:model="recipient_mobile" class="mt-1 w-full rounded-full px-4">
-                    @error('recipient_mobile') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    <input x-data="faNumber('recipient_mobile' , true)"
+                           x-model="value"
+                           @input="onInput"
+                           inputmode="numeric"
+                           class="mt-1 w-full rounded-full px-4">
+                    @error('recipient_mobile') <p class="text-red-500 text-xs">{{ english_to_persian_num(english_to_persian_num($message)) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">استان:<strong class="text-red-500">*</strong></label>
@@ -100,7 +107,7 @@
                             <option value="{{ $province->id }}">{{ $province->name }}</option>
                         @endforeach
                     </select>
-                    @error('province_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    @error('province_id') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">شهر:<strong class="text-red-500">*</strong></label>
@@ -111,24 +118,32 @@
                             <option value="{{ $city->id }}">{{ $city->name }}</option>
                         @endforeach
                     </select>
-                    @error('city_id') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    @error('city_id') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">آدرس دقیق پستی:<strong class="text-red-500">*</strong></label>
-                    <textarea wire:model="postal_address"
+                    <textarea x-data="faNumber('postal_address' , false)"
+                              x-model="value"
+                              @input="onInput"
                               class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
-                    @error('postal_address') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    @error('postal_address') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">کد پستی:<strong class="text-red-500">*</strong></label>
-                    <input wire:model="zipcode" class="mt-1 w-full rounded-full px-4">
-                    @error('zipcode') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    <input  x-data="faNumber('zipcode' , true)"
+                            x-model="value"
+                            @input="onInput"
+                            inputmode="numeric"
+                            class="mt-1 w-full rounded-full px-4">
+                    @error('zipcode') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">توضیحات اختیاری در مورد این سفارش:</label>
-                    <textarea wire:model="description"
+                    <textarea  x-data="faNumber('description' , false)"
+                               x-model="value"
+                               @input="onInput"
                               class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
-                    @error('description') <p class="text-red-500 text-xs">{{ $message }}</p> @enderror
+                    @error('description') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
             </div>
 
@@ -185,7 +200,7 @@
                     <div class="mt-3 bg-red-100 text-red-500 rounded-xl p-2 text-sm">
                         <ul class="list-disc list-inside">
                             @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
+                                <li>{{ english_to_persian_num($error) }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -193,4 +208,46 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('faNumber', (wireModel, numericOnly = true) => ({
+                value: '',
+                enValue: '',
+
+                init() {
+                    this.enValue = this.$wire.get(wireModel) ?? '';
+                    this.value = this.toFa(this.enValue);
+                },
+
+                toFa(val) {
+                    const fa = {'0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹'};
+                    return val.toString().replace(/[0-9]/g, d => fa[d]);
+                },
+
+                toEn(val) {
+                    const en = {
+                        '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9',
+                        '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'
+                    };
+                    return val.toString().replace(/[۰-۹٠-٩]/g, d => en[d]);
+                },
+
+                onInput(e) {
+                    let val = e.target.value;
+
+                    // 🔥 فقط اگر عددی بود، حروف رو حذف کن
+                    if (numericOnly) {
+                        val = val.replace(/[^0-9۰-۹٠-٩]/g, '');
+                    }
+
+                    const en = this.toEn(val);
+                    this.value = this.toFa(en);
+                    this.$wire.set(wireModel, en);
+                }
+            }))
+        })
+    </script>
+
+
 </div>
