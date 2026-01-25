@@ -81,7 +81,7 @@ class Checkout extends Component
         if (!$cart || $cart->items->isEmpty()) {
             return $this->redirect('/cart', navigate: true);
         }
-        $order = $cart->convertToOrder($this->selectedAddress->province->id , $this->selectedAddress->city->id ,$this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
+        $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
 
 
         $invoice = (new Invoice)->amount($this->amount);

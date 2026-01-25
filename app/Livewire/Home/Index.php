@@ -13,7 +13,7 @@ class Index extends Component
         $rawProducts = \App\Models\Product::query()
             ->whereNotNull('discounted_price')
             ->inRandomOrder()
-            ->limit(10)
+            ->limit(15)
             ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
 
         $productsForJs = $rawProducts->map(function ($p) {
@@ -73,7 +73,7 @@ class Index extends Component
                     });
             })
             ->orderByDesc('stock')
-            ->limit(10)->get();
+            ->get();
 
         $officeProducts = Product::query()
             ->whereIn('category_id', [15,16,17,18])
@@ -95,7 +95,7 @@ class Index extends Component
                     });
             })
             ->orderByDesc('stock')
-            ->limit(10)->get();
+            ->get();
 
         return view('livewire.home.index', compact('rawProducts', 'productsForJs', 'topProducts', 'paintProducts','officeProducts'));
     }

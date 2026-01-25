@@ -10,7 +10,7 @@
 
                     <div class="w-[72px] h-[72px] rounded-full bg-pars-200 flex items-center justify-center">
 
-                        <div class="w-[68px] h-[68px] rounded-full overflow-hidden border border-white">
+                        <div class="w-[70px] h-[70px] rounded-full overflow-hidden border border-white">
                             <img
                                 src="{{ $story['cover'] }}"
                                 alt="{{ $story['title'] }}"

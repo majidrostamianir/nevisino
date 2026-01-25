@@ -159,7 +159,8 @@
             if (this.current > 0) this.current--;
         }
     }">
-        <p class="text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">ابزار نقاشی و رنگ آمیزی</p>
+        <p class="text-lg md:text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">لوازم نقاشی و رنگ آمیزی
+            <a href="{{ route('category-page' , ['dashed' => 'لوازم-نقاشی-رنگ-آمیزی']) }}"><small>(مشاهده همه)</small></a></p>
         <div class="overflow-hidden relative">
             <button
                 @click="prev()"
@@ -252,7 +253,7 @@
             if (this.current > 0) this.current--;
         }
     }">
-        <p class="text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">پرفروش های هفته</p>
+        <p class="text-lg md:text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">پرفروش های هفته</p>
         <div class="overflow-hidden relative">
             <button
                 @click="prev()"
@@ -345,7 +346,7 @@
             if (this.current > 0) this.current--;
         }
     }">
-        <p class="text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">لوازم اداری</p>
+        <p class="text-lg md:text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">لوازم اداری</p>
         <div class="overflow-hidden relative">
             <button
                 @click="prev()"
