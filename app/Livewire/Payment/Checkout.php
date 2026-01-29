@@ -23,13 +23,13 @@ class Checkout extends Component
     public $cities = [];
     public int $shipping = 0, $amount = 0, $sum = 0;
     public $recipient_name, $recipient_mobile, $province_id, $city_id, $postal_address, $zipcode, $description;
+    public $showPopup = false;
 
     public function mount()
     {
         $this->user = Auth::user();
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
-        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
         $this->calculateAmount();
     }
 
@@ -129,6 +129,7 @@ class Checkout extends Component
 
     public function render()
     {
+        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
         return view('livewire.payment.checkout');
     }
 }

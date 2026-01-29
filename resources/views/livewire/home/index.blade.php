@@ -21,7 +21,7 @@
                 <!-- محتوای محصول — کل آیتم قابل کلیک -->
                 <div class="relative w-[90%] h-[90%] mx-auto flex items-center justify-center ">
                     <template x-for="(product, index) in products" :key="index">
-                        <div
+                        <a
                             x-show="currentIndex === index"
                             x-transition:enter="transition duration-500"
                             x-transition:enter-start="opacity-0"
@@ -29,10 +29,9 @@
                             x-transition:leave="transition duration-300"
                             x-transition:leave-start="opacity-100"
                             x-transition:leave-end="opacity-0"
-                            class="absolute inset-0 flex flex-col items-center justify-center px-4"
-                            @click="window.location.href = product.link"
+                            class="absolute inset-0 flex flex-col items-center justify-center px-4 cursor-pointer"
+                            :href="product.link"
                             wire:navigate
-                            style="cursor: pointer;"
                         >
                             <!-- عکس محصول — بزرگتر -->
                             <div class="block w-[80%] h-auto mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl">
@@ -49,14 +48,19 @@
                             <!-- قیمت تخفیفی -->
                             <div class="text-lg font-bold text-green-600"
                                  x-text="formatPrice(product.discounted_price)"></div>
-                        </div>
+                        </a>
                     </template>
                 </div>
             </div>
         </div>
         <!-- کاروسل اصلی -->
         <div class="w-full lg:w-9/12 relative ">
-            <div x-data="carousel()" class="relative w-full aspect-[2.5] overflow-hidden rounded-2xl shadow">
+            <div x-data="carousel()"
+                 x-init="slides = [
+        ['{{ asset('images/banner1.webp') }}', '/category/دفتر-دفترچه'],
+        ['{{ asset('images/banner2.webp') }}', '/category/مداد-رنگی']
+    ]"
+                 class="relative w-full aspect-[2.5] overflow-hidden rounded-2xl shadow">
                 <!-- اسلایدها -->
                 <div class="relative h-full">
                     <template x-for="(slide, index) in slides" :key="index">
@@ -144,21 +148,7 @@
     </div>
 
     <div class="bg-[radial-gradient(circle_at_center,_#ff7b00_0%,_#ff4500_40%,_#e11d48_100%)] my-8 px-6 py-6 rounded-2xl shadow-2xl relative"
-         x-data="{
-        current: 0,
-        itemWidth: 0,
-        init() {
-            this.$nextTick(() => {
-                this.itemWidth = this.$refs.item0.offsetWidth + 16; // فاصله gap
-            });
-        },
-        next(total) {
-            if (this.current < total - 1) this.current++;
-        },
-        prev() {
-            if (this.current > 0) this.current--;
-        }
-    }">
+         x-data="horizontalSlider()">
         <p class="text-lg md:text-2xl text-white font-bold mb-4 text-right text-shadow-sm text-shadow-black">لوازم نقاشی و رنگ آمیزی
             <a href="{{ route('category-page' , ['dashed' => 'لوازم-نقاشی-رنگ-آمیزی']) }}"><small>(مشاهده همه)</small></a></p>
         <div class="overflow-hidden relative">
@@ -412,91 +402,4 @@
 {{--        <img class="lg:w-1/2 rounded-2xl shadow shadow-black" src="{{ asset('images/test-1.webp') }}" alt="">--}}
 {{--        <img class="lg:w-1/2 rounded-2xl shadow shadow-black" src="{{ asset('images/test-2.webp') }}" alt="">--}}
 {{--    </div>--}}
-
-    <script>
-        function carousel() {
-            return {
-                slides: [
-                    ["{{ asset('images/banner1.webp') }}" , '/category/دفتر-دفترچه'],
-                    ["{{ asset('images/banner2.webp') }}", '/category/مداد-رنگی'],
-                ],
-                currentIndex: 0,
-                interval: null,
-
-                next() {
-                    this.currentIndex = (this.currentIndex + 1) % this.slides.length
-                    this.resetInterval()
-                },
-                prev() {
-                    this.currentIndex = this.currentIndex === 0
-                        ? this.slides.length - 1
-                        : this.currentIndex - 1
-                    this.resetInterval()
-                },
-                resetInterval() {
-                    clearInterval(this.interval)
-                    this.startAutoPlay()
-                },
-                startAutoPlay() {
-                    this.interval = setInterval(() => this.next(), 4500)
-                },
-                init() {
-                    this.startAutoPlay()
-                }
-            }
-        }
-
-        function productCarousel(initialProducts = []) {
-            return {
-                products: Array.isArray(initialProducts) ? initialProducts : [],
-                currentIndex: 0,
-                progressInterval: null,
-                progressWidth: 'width: 0%',
-
-                next() {
-                    if (this.products.length === 0) return
-                    this.currentIndex = (this.currentIndex + 1) % this.products.length
-                    this.resetProgress()
-                },
-
-                resetProgress() {
-                    this.progressWidth = 'width: 0%'
-                    cancelAnimationFrame(this.progressInterval)
-                    this.startProgress()
-                },
-
-                startProgress() {
-                    if (this.products.length === 0) return
-                    const duration = 4000
-                    const startTime = performance.now()
-
-                    const step = (currentTime) => {
-                        const elapsed = currentTime - startTime
-                        const progress = Math.min(elapsed / duration, 1)
-                        const width = progress * 100
-
-                        this.progressWidth = `width: ${width}%`
-
-                        if (progress < 1) {
-                            this.progressInterval = requestAnimationFrame(step)
-                        } else {
-                            this.next()
-                        }
-                    }
-
-                    this.progressInterval = requestAnimationFrame(step)
-                },
-
-                formatPrice(price) {
-                    return Number(price).toLocaleString('fa-IR') + ' تومان'
-                },
-
-                init() {
-                    if (this.products.length > 0) {
-                        this.startProgress()
-                    }
-                }
-            }
-        }
-    </script>
 </div>
