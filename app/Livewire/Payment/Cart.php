@@ -4,9 +4,13 @@ namespace App\Livewire\Payment;
 
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Shetabit\Multipay\Invoice;
+use Shetabit\Payment\Facade\Payment;
 
 class Cart extends Component
 {
@@ -17,10 +21,17 @@ class Cart extends Component
     public int $total = 0;
 
     protected $listeners = ['cart-updated' => 'updateCart'];
+    protected User $user;
+    public $orders ;
 
     public function mount()
     {
         $this->updateCart();
+        $this->user = Auth::user();
+        $this->orders = $this->user->orders()
+            ->where('status' , 'pending')
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function updateCart()
@@ -189,7 +200,24 @@ class Cart extends Component
         $this->dispatch('cart-updated');
         $this->sumPriceProducts();
     }
-
+    public function payAgain($orderId)
+    {
+        $order = \App\Models\Order::query()
+            ->where('id', $orderId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+        $invoice = (new Invoice)->amount($order->amount);
+        $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
+            Transaction::query()->create([
+                'order_id' => $order->id,
+                'amount' => $order->amount,
+                'status' => 'pending',
+                'payment_gateway' => 'zibal',
+                'authority' => (string)$transactionId,
+            ]);
+        });
+        return redirect()->away($payment->pay()->getAction());
+    }
 
     public function render()
     {

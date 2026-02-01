@@ -9,21 +9,21 @@
 
         <span class="text-xs">دسته بندی</span>
     </button>
-   {{-- <div class="relative w-full text-center">
-        <a
-            href="{{ route('cart') }}"
-            wire:navigate
-            class="flex flex-col items-center justify-center gap-1 px-2 rounded-md">
-            <img src="{{ asset('images/cart-black.png') }}" class="w-4 h-4" alt="">
-            <span class="text-xs lg:text-sm">پشتیبانی</span>
-            @if($cartCount > 0)
-                <span
-                    class="absolute top-0 left-[20%] bg-red-500 text-white px-2 text-xs border-2 border-pars-100 rounded-full">
-                    {{ english_to_persian_num($cartCount) }}
-                </span>
-            @endif
-        </a>
-    </div>--}}
+    {{-- <div class="relative w-full text-center">
+         <a
+             href="{{ route('cart') }}"
+             wire:navigate
+             class="flex flex-col items-center justify-center gap-1 px-2 rounded-md">
+             <img src="{{ asset('images/cart-black.png') }}" class="w-4 h-4" alt="">
+             <span class="text-xs lg:text-sm">پشتیبانی</span>
+             @if($cartCount > 0)
+                 <span
+                     class="absolute top-0 left-[20%] bg-red-500 text-white px-2 text-xs border-2 border-pars-100 rounded-full">
+                     {{ english_to_persian_num($cartCount) }}
+                 </span>
+             @endif
+         </a>
+     </div>--}}
     <div class="relative w-full text-center">
         <a
             href="{{ route('home') }}"
@@ -42,9 +42,10 @@
             <span class="text-xs lg:text-sm">سبد خرید</span>
             @if($cartCount > 0)
                 <span
-                    class="absolute top-0 left-[20%] bg-red-500 text-white px-2 text-xs border-2 border-pars-100 rounded-full">
-                    {{ english_to_persian_num($cartCount) }}
-                </span>
+                    class="absolute top-0 left-[20%] bg-red-500 text-white w-6 h-6 flex items-center justify-center text-xs border-2 border-pars-100 rounded-full">
+                        {{ english_to_persian_num($cartCount) }}
+                    </span>
+
             @endif
         </a>
     </div>

@@ -1,27 +1,67 @@
-<div x-data="{ openOrderId: null }">
+<div
+    x-data="{
+        openOrderNumber: null,
+
+        init() {
+            const params = new URLSearchParams(window.location.search)
+            const openNumber = params.get('open')
+
+            if (openNumber) {
+                this.openOrderNumber = openNumber
+
+                this.$nextTick(() => {
+                    const el = document.getElementById('order-' + openNumber)
+                    if (!el) return
+
+                    // فقط لپ‌تاپ به بالا
+                    const isDesktop = window.innerWidth >= 1024
+                    const offset = isDesktop ? 80 : 0
+
+                    const top =
+                        el.getBoundingClientRect().top +
+                        window.pageYOffset -
+                        offset
+
+                    window.scrollTo({
+                        top,
+                        behavior: 'smooth'
+                    })
+                })
+            }
+        }
+    }"
+>
+
+
     @foreach($orders as $order)
         <div
-             wire:key="{{ $order->order_number }}"
-             class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
+            id="order-{{ $order->order_number }}"
+            wire:key="{{ $order->order_number }}"
+            class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
 
-            <div @click="openOrderId = (openOrderId === '{{ $order->id }}' ? null : '{{ $order->id }}')"
+            <div @click="openOrderNumber = (openOrderNumber === '{{ $order->order_number }}' ? null
+                    : '{{ $order->order_number }}')"
                  class="toggle-btn flex justify-between items-center cursor-pointer">
                 <div>
                     @switch($order->status)
                         @case('pending')
                             <div class="flex mb-4">
                                 <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
-                                <button wire:click.prevent="payAgain('{{$order->id}}')"
-                                        wire:loading.attr="disabled"
-                                        wire:target="payAgain"
-                                        class="w-fix px-4 mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 cursor-pointer">
-                                    <span wire:loading.remove wire:target="payAgain">
+                                <button
+                                    wire:click.prevent.stop="payAgain({{ $order->id }})"
+                                    wire:target="payAgain({{ $order->id }})"
+                                    class="min-w-[120px] cursor-pointer px-4 mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 flex items-center justify-center relative">
+                                    <span wire:loading.remove wire:target="payAgain({{ $order->id }})">
                                         پرداخت
                                     </span>
-                                    <span wire:loading wire:target="payAgain">
-                                        در حال انتقال به درگاه...
+                                    <span wire:loading wire:target="payAgain({{ $order->id }})" class="flex items-center justify-center">
+                                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                        </svg>
                                     </span>
                                 </button>
+
                             </div>
                             @break
                         @case('paid')
@@ -42,16 +82,32 @@
                     </div>
                 </div>
 
-                <button class="flex items-center cursor-pointer">
-                    <svg x-bind:class="{'rotate-180': openOrderId === '{{ $order->id }}'}"
-                         class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                <button
+                    class="flex items-center justify-center
+                     h-8 px-2 sm:px-2 lg:px-0 lg:w-8
+                     rounded-full lg:rounded-full
+                     bg-pars-500 text-white
+                     hover:bg-pars-600
+                     transition-all duration-200
+                     cursor-pointer">
+                    <svg
+                        x-bind:class="{'rotate-180': openOrderNumber === '{{ $order->order_number }}'}"
+                        class="w-4 h-4 transition-transform duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 9l-7 7-7-7"
+                        />
                     </svg>
                 </button>
+
             </div>
 
-            <div x-show="openOrderId === '{{ $order->id }}'"
+            <div x-show="openOrderNumber === '{{ $order->order_number }}'"
                  x-collapse
                  class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
                 <div class="mt-8">

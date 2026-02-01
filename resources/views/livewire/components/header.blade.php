@@ -27,7 +27,9 @@
                     <span class="text-xs lg:text-sm py-2.5">سبد خرید</span>
                     @if($cartCount > 0)
                         <span
-                            class="absolute -bottom-2 -right-4 bg-pars-800 px-2 border-2 border-pars-100  rounded-full">{{ english_to_persian_num($cartCount) }}</span>
+                            class="absolute -bottom-2 -right-4 bg-red-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
+                                {{ english_to_persian_num($cartCount) }}
+                            </span>
                     @endif
                 </a>
 

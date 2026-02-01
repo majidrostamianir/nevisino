@@ -1,6 +1,56 @@
 <div class="flex flex-col lg:flex-row gap-2">
     <!-- جدول -->
     <div class="w-full lg:w-2/3 overflow-x-auto">
+        @if($orders->isNotEmpty())
+            <div class="bg-pars-100 rounded-2xl mb-4 p-4">
+                <strong class="block mb-3 text-sm sm:text-base">
+                    شما {{ english_to_persian_num(count($orders)) }} سفارش در انتظار پرداخت دارید
+                </strong>
+
+                @foreach($orders as $order)
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between
+                    border border-gray-300 w-full p-4 my-2 rounded-lg">
+
+                        <!-- اطلاعات سفارش -->
+                        <div class="text-sm">
+                            {{ english_to_persian_num($order->order_number) }}
+                            <span class="mx-2 text-pars-400 hidden sm:inline">&#9679;</span>
+                            قابل پرداخت:
+                            {{ english_to_persian_num(number_format($order->amount)) }}
+                            تومان
+                        </div>
+
+                        <!-- هشدار -->
+                        <div class="flex items-center gap-2 text-xs text-gray-700">
+                            <svg width="18" height="18" viewBox="0 0 64 64" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg" class="shrink-0">
+                                <circle cx="32" cy="32" r="30" fill="#FF9800"/>
+                                <path d="M32 18C30.9 18 30 18.9 30 20V36C30 37.1 30.9 38 32 38C33.1 38 34 37.1 34 36V20C34 18.9 33.1 18 32 18Z"
+                                      fill="white"/>
+                                <circle cx="32" cy="45" r="2.5" fill="white"/>
+                            </svg>
+                            <span>در صورت عدم پرداخت، این سفارش بزودی لغو خواهد شد.</span>
+                        </div>
+
+                        <!-- دکمه‌ها -->
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                            <a href="/dashboard/order?open={{ $order->order_number }}"
+                               class="text-xs sm:text-sm border border-gray-500 rounded px-4 py-1 text-center"
+                               wire:navigate>
+                                جزئیات سفارش
+                            </a>
+
+                            <a wire:click="payAgain('{{ $order->id }}')"
+                               class="cursor-pointer text-xs sm:text-sm bg-pars-500 text-white rounded px-4 py-1 text-center"
+                               wire:navigate>
+                                پرداخت
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+        @endif
         @if($cart)
             <table class=" w-full text-right bg-pars-100 rounded-2xl">
                 <tbody>

@@ -14,7 +14,6 @@ class Order extends Component
 {
     protected User $user;
     public $orders ;
-//    public $receipt = 'kk';
     public $openOrderId = null;
 
     public function toggleOrder($orderId)
@@ -48,7 +47,10 @@ class Order extends Component
 
     public function payAgain($orderId)
     {
-        $order = \App\Models\Order::query()->find($orderId);
+        $order = \App\Models\Order::query()
+            ->where('id', $orderId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
         $invoice = (new Invoice)->amount($order->amount);
         $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
             Transaction::query()->create([

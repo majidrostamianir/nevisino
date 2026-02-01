@@ -319,7 +319,7 @@
                         @if($stock == 0)
                             <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">ناموجود</span>
                         @elseif(persian_to_english_num( $this->quantity)  >=  $stock)
-                            @if($product->variant === null || $selectedVariant === 1 )
+                            @if($product->variant === null || $selectedVariant < 1000 )
                                 <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی انبار {{ english_to_persian_num($stock) }} عدد است</span>
                             @else
                                 <span

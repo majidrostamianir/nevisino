@@ -26,6 +26,7 @@ Route::group(['middleware' => ['throttle:60', 'auth' , \App\Http\Middleware\visi
     Route::get('/dashboard/{page?}', App\Livewire\Dashboard\Index::class)
         ->whereAlpha('page')
         ->name('dashboard');
+    Route::get('/dashboard/order', App\Livewire\Dashboard\Order::class)->name('dashboard.order');
     Route::get('/checkout', \App\Livewire\Payment\Checkout::class)->name('checkout');
     Route::get('/payment/callback', \App\Livewire\Payment\Callback::class)->name('payment.callback');
 });

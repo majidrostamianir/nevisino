@@ -185,18 +185,22 @@
             </div>
 
             <div class="w-full">
-                <button wire:click.prevent="pay"
-                        wire:loading.attr="disabled"
-                        wire:target="pay"
-                        class="w-full text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 cursor-pointer">
+                <button
+                    wire:click.prevent="pay"
+                    wire:target="pay"
+                    class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 flex items-center justify-center relative">
                     <span wire:loading.remove wire:target="pay">
                         پرداخت
                     </span>
-                    <span wire:loading wire:target="pay">
-                        در حال انتقال به درگاه...
+                    <span wire:loading wire:target="pay" class="flex items-center justify-center">
+                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
                     </span>
                 </button>
-                @if ($errors->any())
+
+            @if ($errors->any())
                     <div class="mt-3 bg-red-100 text-red-500 rounded-xl p-2 text-sm">
                         <ul class="list-disc list-inside">
                             @foreach ($errors->all() as $error)
