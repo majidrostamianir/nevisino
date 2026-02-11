@@ -375,9 +375,9 @@
             @foreach($product->attrs as $attr)
                 <div class="w-full md:w-1/3 flex text-sm">
                     <div
-                        class="text-gray-800 w-1/3 p-2 pr-4 border-b border-b-gray-200 bg-gray-100">{{ $attr->title }}</div>
+                        class="text-gray-800 w-1/3 p-2 pr-4 border-b border-b-gray-200 bg-gray-100">{{ english_to_persian_num($attr->title) }}</div>
                     <div
-                        class="text-gray-800 w-2/3 p-2 pr-4 border-b border-b-gray-200 bg-white">{{ $attr-> value }}</div>
+                        class="text-gray-800 w-2/3 p-2 pr-4 border-b border-b-gray-200 bg-white">{{ english_to_persian_num($attr-> value) }}</div>
                 </div>
             @endforeach
         </div>

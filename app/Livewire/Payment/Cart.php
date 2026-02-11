@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -21,18 +22,24 @@ class Cart extends Component
     public int $total = 0;
 
     protected $listeners = ['cart-updated' => 'updateCart'];
-    protected User $user;
-    public $orders ;
+    public ?User $user = null;
+    public Collection $orders;
 
     public function mount()
     {
+        $this->orders = collect();
+
+        if (Auth::check()) {
+            $this->user = Auth::user();
+
+            $this->orders = $this->user->orders()
+                ->where('status', 'pending')
+                ->latest()
+                ->get();
+        }
         $this->updateCart();
-        $this->user = Auth::user();
-        $this->orders = $this->user->orders()
-            ->where('status' , 'pending')
-            ->orderByDesc('created_at')
-            ->get();
     }
+
 
     public function updateCart()
     {

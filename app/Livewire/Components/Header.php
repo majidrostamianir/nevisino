@@ -7,11 +7,12 @@ use Livewire\Component;
 
 class Header extends Component
 {
-    public int $cartCount = 0;
+    public $cartCount ;
     protected $listeners = ['cart-updated' => 'updateCartCount'];
 
     public function mount()
     {
+        $this->cartCount = 0 ;
         $this->updateCartCount();
     }
 
@@ -23,7 +24,6 @@ class Header extends Component
         } else {
             $this->cartCount = collect(session()->get('cart', []))->sum('quantity');
         }
-
     }
 
     public function render()

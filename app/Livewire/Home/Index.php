@@ -26,21 +26,16 @@ class Index extends Component
             ];
         })->values()->toArray();
 
-        $topProducts = \App\Models\Product::select('products.*')
-            ->join('order_items', 'order_items.product_id', '=', 'products.id')
-            ->join('orders', 'order_items.order_id', '=', 'orders.id') // اضافه شد
-            ->where('orders.status', 'paid') // فقط سفارش‌های پرداخت‌شده
-            ->selectRaw('SUM(order_items.quantity) as total_sold')
-            ->groupBy('products.id')
+        $topProducts = \App\Models\Product::join('order_items', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.status', 'paid')
             ->where(function ($q) {
                 // محصولات بدون واریانت → فقط اگر stock > 0 باشند
                 $q->where(function ($noVar) {
                     $noVar->where(function ($c) {
                         $c->whereNull('variant')->orWhere('variant', '');
-                    })
-                        ->where('stock', '>', 0);
+                    })->where('stock', '>', 0);
                 })
-
                     // محصولات دارای واریانت → حداقل یک واریانت موجود
                     ->orWhere(function ($hasVar) {
                         $hasVar->whereNotNull('variant')
@@ -49,9 +44,13 @@ class Index extends Component
                             });
                     });
             })
+            ->select('products.id', 'products.title', 'products.dashed_url', 'products.price', 'products.discounted_price')
+            ->selectRaw('SUM(order_items.quantity) as total_sold')
+            ->groupBy('products.id', 'products.title', 'products.dashed_url', 'products.price', 'products.discounted_price')
             ->orderByDesc('total_sold')
-            ->take(10) // حالا ۱۰ تا می‌گیریم چون کاروسل ۶ تاییه و ۱۰ تا داریم
+            ->take(10)
             ->get();
+
 
         $paintProducts = Product::query()
             ->whereIn('category_id', [10, 11, 12])

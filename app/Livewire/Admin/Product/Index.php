@@ -15,12 +15,10 @@ class Index extends Component
 
     public function mount()
     {
-        $this->products = Product::query()->latest()->get();
-
+        $this->products = Product::query()->orderBy('title')->get();
     }
     public function updatedQuery()
     {
-//        $this->products = Product::search($this->query, 3);
         $queries = SearchNormalizer::expand($this->query);
 
         $this->products = collect();
@@ -32,7 +30,7 @@ class Index extends Component
 
         }
 
-        $this->products = $this->products->unique('id')->take(3)->values();
+        $this->products = $this->products->unique('id')->values();
     }
     public function render()
     {

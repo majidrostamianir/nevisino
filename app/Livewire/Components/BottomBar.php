@@ -7,10 +7,11 @@ use Livewire\Component;
 
 class BottomBar extends Component
 {
-    public int $cartCount = 0;
+    public  $cartCount ;
     protected $listeners = ['cart-updated' => 'updateCartCount'];
     public function mount()
     {
+        $this->cartCount =0;
         $this->updateCartCount();
     }
 
