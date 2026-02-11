@@ -26,16 +26,13 @@
             </div>
         @endforeach
     </div>
-    @if($activeStory)
-        @php
-            $activeData = collect($this->stories)->firstWhere('id', $activeStory);
-        @endphp
-
+    @if($activeData)
         <div
             class="fixed inset-0 z-50 bg-black/80"
             wire:click="closeStory"
             wire:ignore.self
             wire:key="story-slider"
+            x-init="init()"
             x-data="storySlider(@entangle('currentIndex'))"
             x-on:keydown.left.window="$wire.prevItem()"
             x-on:keydown.right.window="$wire.nextItem()"
@@ -120,16 +117,10 @@
 
                 init() {
                     this.startTimer();
-
-                    // گوش دادن به تغییرات ایندکس از سمت لایووایر
                     this.$watch('currentIndex', (value) => {
                         this.startTimer();
                     });
                 },
-
-                destroy() {
-                    if (this.interval) clearInterval(this.interval);
-                }
             }
         }
     </script>

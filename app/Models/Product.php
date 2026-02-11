@@ -52,7 +52,10 @@ class Product extends Model
         return $query;
     }
 
-
+    public function getStoryImageAttribute()
+    {
+        return asset("storage/products/{$this->id}/small/1.webp");
+    }
 
 
 }
