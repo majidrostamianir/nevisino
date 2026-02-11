@@ -55,13 +55,22 @@
                 >&times;
                 </button>
                 <div class="absolute top-8 right-4 text-white font-semibold">
-                    {{ $activeData['items'][$currentIndex]['product_name']}}
+                    {{ $activeData['items'][$currentIndex]['product_name'] ?? '' }}
                 </div>
                 <div class="relative text-center">
+                    <div
+                        x-show="loading"
+                        class="absolute bg-gray-900/30 inset-0 flex items-center justify-center z-20"
+                    >
+                        <div class="w-12 h-12 border-4 border-white/40 border-t-white rounded-full animate-spin"></div>
+                    </div>
                     <img
+                        :key="currentIndex"
                         src="{{ $activeData['items'][$currentIndex]['image'] ?? '' }}"
-                        alt=""
-                        class="lg:h-screen object-contain select-none pointer-events-none">
+                        @load="imageLoaded"
+                        x-on:error="imageLoaded"
+                        class="relative lg:h-screen object-contain select-none pointer-events-none z-10"
+                        alt="">
 
                     <div class="absolute justify-between inset-0 flex">
                         <div class="w-5/12 h-full" wire:click.stop="prevItem"></div>
@@ -88,40 +97,4 @@
             </div>
         </div>
     @endif
-
-    <script>
-        function storySlider(initialIndex) {
-            return {
-                currentIndex: initialIndex,
-                progress: 0,
-                interval: null, // این همان تایمر شماست
-                duration: 3500,
-
-                startTimer() {
-                    this.progress = 0;
-                    if (this.interval) clearInterval(this.interval);
-
-                    let startTime = Date.now();
-
-                    this.interval = setInterval(() => {
-                        let elapsedTime = Date.now() - startTime;
-                        this.progress = (elapsedTime / this.duration) * 100;
-
-                        if (this.progress >= 100) {
-                            this.progress = 100;
-                            clearInterval(this.interval);
-                            this.$wire.nextItem();
-                        }
-                    }, 30);
-                },
-
-                init() {
-                    this.startTimer();
-                    this.$watch('currentIndex', (value) => {
-                        this.startTimer();
-                    });
-                },
-            }
-        }
-    </script>
 </div>

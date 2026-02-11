@@ -6,3 +6,4 @@ import horizontalSlider from './horizontalSlider'
 Alpine.data('carousel', carousel)
 Alpine.data('productCarousel', productCarousel)
 Alpine.data('horizontalSlider', horizontalSlider)
+import './storySlider.js'
