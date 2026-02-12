@@ -39,7 +39,7 @@
             x-on:keydown.escape.window="$wire.closeStory()"
         >
             <div class="relative w-full h-full flex items-center justify-center" wire:click.stop>
-                <div class="absolute top-0 left-0 right-0 flex gap-1 p-4 z-10">
+                <div class="absolute top-0 left-0 right-0 flex gap-1 p-4 z-30">
                     @foreach($activeData['items'] as $index => $item)
                         <div class="flex-1 h-1 bg-gray-600 rounded-full overflow-hidden">
                             <div
@@ -51,10 +51,10 @@
             </div>
                 <button
                     wire:click.stop="closeStory"
-                    class="absolute cursor-pointer top-8 font-semibold left-4 text-white text-3xl hover:text-gray-300"
+                    class="absolute cursor-pointer z-20 top-8 font-semibold left-4 text-white text-3xl hover:text-gray-300"
                 >&times;
                 </button>
-                <div class="absolute top-8 right-4 text-white font-semibold">
+                <div class="absolute top-8 right-4 z-20 text-white font-semibold">
                     {{ $activeData['items'][$currentIndex]['product_name'] ?? '' }}
                 </div>
                 <div class="relative text-center">

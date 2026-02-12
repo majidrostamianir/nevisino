@@ -4,6 +4,7 @@ namespace App\Livewire\Components;
 
 use App\Models\Category;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Story extends Component
@@ -51,6 +52,7 @@ class Story extends Component
         $this->dispatch('story-index-changed');
     }
 
+    #[On('next-story-item')]
     public function nextItem()
     {
         if ($this->activeData && $this->currentIndex < count($this->activeData['items']) - 1) {

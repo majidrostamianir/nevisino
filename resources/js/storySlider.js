@@ -17,7 +17,7 @@ window.storySlider = function (initialIndex) {
 
                 if (this.progress >= 100) {
                     clearInterval(this.interval);
-                    this.$wire.nextItem();
+                    window.Livewire.dispatch('next-story-item');
                     return;
                 }
             }, 30);
