@@ -142,21 +142,6 @@ class Save extends Component
             ->whereNotIn('id', $keptIds)
             ->delete();
 
-        try {
-            // flush و import با همان دستور ترمینال
-            $outputFlush = shell_exec('php artisan scout:flush "App\Models\Product"');
-            $outputImport = shell_exec('php artisan scout:import "App\Models\Product"');
-
-            // نمایش خروجی روی Livewire (اختیاری)
-            $this->dispatch('notify', [
-                'message' => $outputFlush . PHP_EOL . $outputImport
-            ]);
-
-        } catch (\Exception $e) {
-            $this->addError('artisan', $e->getMessage());
-            \Log::error('Artisan shell error: '.$e->getMessage());
-        }
-
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
     public function addVariant(): void
@@ -164,7 +149,6 @@ class Save extends Component
         $this->variants[] = [
             'id' => null,
             'name' => null,
-//            'price' => null,
             'stock' => 0,
         ];
     }
