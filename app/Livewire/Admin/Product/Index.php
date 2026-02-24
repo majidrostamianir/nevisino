@@ -15,7 +15,7 @@ class Index extends Component
 
     public function mount()
     {
-        $this->products = Product::query()->orderBy('title')->get();
+        $this->products = Product::latest()->get();
     }
     public function updatedQuery()
     {
@@ -27,10 +27,12 @@ class Index extends Component
             $this->products = $this->products->merge(
                 Product::search($q)->get()
             );
-
         }
 
-        $this->products = $this->products->unique('id')->values();
+        $this->products = $this->products
+            ->unique('id')
+            ->sortByDesc('created_at')
+            ->values();
     }
     public function render()
     {

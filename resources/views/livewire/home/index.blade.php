@@ -57,7 +57,7 @@
         <div class="w-full lg:w-9/12 relative ">
             <div x-data="carousel()"
                  x-init="slides = [
-        ['{{ asset('images/banner1.webp') }}', '/category/دفتر-دفترچه'],
+        ['{{ asset('images/banner1.webp') }}', '/category/دفتر'],
         ['{{ asset('images/banner2.webp') }}', '/category/مداد-رنگی']
     ]"
                  class="relative w-full aspect-[2.5] overflow-hidden rounded-2xl shadow">
