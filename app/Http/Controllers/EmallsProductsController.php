@@ -19,9 +19,9 @@ class EmallsProductsController extends Controller
 
         $items = $products->map(function ($product) {
             return [
-                "id"           => (string)( $product->id),
+                "id"           => (string)($product->id),
                 "title"        => $product->title,
-                "price"        => (int) $product->price,
+                "price"        => $product->discounted_price ?? $product->price,
                 "old_price"    => null,
                 "category"     => $product->category->title ?? "نامشخص",
                 "image" => asset('storage/products/' . $product->id . '/large/1.webp'),

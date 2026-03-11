@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Admin\User;
 
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Transaction;
 use App\Models\User;
 use Livewire\Component;
@@ -78,15 +80,28 @@ class Order extends Component
         curl_close($handler);
     }
 
-    public function verifyTransaction($authority)
+    public function verifyTransaction($id)
     {
-        $transaction = Transaction::query()->where('authority', $authority)->first();
+
+        $transaction = Transaction::query()->findOrFail($id);
+        $order = $transaction->order;
+
+        foreach ($order->items as $item) {
+            if ($item->variant_id && $item->variant) {
+                if ($item->variant->stock < $item->quantity) {
+                    abort('403' , 'موجودی ' . Product::query()->find($item->product_id)->title . '-' . ProductVariant::query()->find($item->variant_id)->title . ' کمتر از این سفارش است.');
+                }
+            }else{
+                if(Product::query()->find($item->product_id)->stock < $item->quantity){
+                    abort('403' ,'موجودی ' . Product::query()->find($item->product_id)->title . ' کمتر از این سفارش است.');
+                }
+            }
+        }
 
         if ($transaction->status == 'pending') {
             $transaction->status = 'success';
             $transaction->save();
 
-            $order = $transaction->order;
             $order->status = 'paid';
             $order->shipping_status = 'processing';
             $order->save();
@@ -104,8 +119,23 @@ class Order extends Component
         } else {
             $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید هستند');
         }
+    }
 
+    public function failedTransaction($id)
+    {
+        $transaction = Transaction::query()->findOrFail($id);
+        if ($transaction->status == 'pending') {
+            $transaction->status = 'failed';
+            $transaction->save();
 
+            $order = $transaction->order;
+            $order->status = 'canceled';
+            $order->save();
+            $this->dispatch('showNotification', message: 'تراکنش تایید نشد');
+
+        } else {
+            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید یا لغو هستند');
+        }
     }
 
     public function render()

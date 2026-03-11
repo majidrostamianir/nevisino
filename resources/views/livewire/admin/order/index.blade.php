@@ -7,8 +7,7 @@
                 <th class="px-4 py-2">نام</th>
                 <th class="px-4 py-2">شماره موبایل</th>
                 <th class="px-4 py-2">تاریخ ثبت سفارش</th>
-                <th class="px-4 py-2">وضعیت سفارش</th>
-                <th class="px-4 py-2">وضعیت حمل</th>
+                <th class="px-4 py-2">وضعیت</th>
                 <th class="px-4 py-2">مبلغ</th>
                 <th class="px-4 py-2">مشاهده</th>
             </tr>
@@ -23,35 +22,37 @@
                     <td class="px-4 py-2">
                         @switch($order->status)
                             @case('pending')
-                                <span class="text-orange-300">در انتظار پرداخت</span>
+                                @if($order->transactions()->where('payment_gateway', 'card')->where('status','pending')->exists())
+                                <span class="text-blue-500">در انتظار تایید</span>
+                                @else
+                                    <span class="text-orange-300">در انتظار پرداخت</span>
+                                @endif
                                 @break
                             @case('paid')
-                                <span class="text-green-500 font-bold">پرداخت شده</span>
+                                <span class="text-green-500 font-bold">پرداخت شده - </span>
+                                @switch($order->shipping_status)
+                                    @case('pending')
+                                        <span class="text-orange-300">در انتظار پرداخت</span>
+                                        @break
+                                    @case('processing')
+                                        <span class="text-orange-400">در حال پردازش سفارش</span>
+                                        @break
+                                    @case('preparing')
+                                        <span class="text-orange-500">در حال بسته بندی</span>
+                                        @break
+                                    @case('shipped')
+                                        <span class="text-green-400">تحویل پست شده</span>
+                                        @break
+                                    @case('delivered')
+                                        <span class="text-green-500 font-bold">تحویل مشتری شده</span>
+                                        @break
+                                    @case('returned')
+                                        <span class="text-red-500">عودت شده</span>
+                                        @break
+                                @endswitch
                                 @break
                             @case('canceled')
-                                <span class="text-red-500">لغو شده</span>
-                                @break
-                        @endswitch
-                    </td>
-                    <td class="px-4 py-2">
-                        @switch($order->shipping_status)
-                            @case('pending')
-                                <span class="text-orange-300">در انتظار پرداخت</span>
-                                @break
-                            @case('processing')
-                                <span class="text-green-200">در حال پردازش سفارش</span>
-                                @break
-                            @case('preparing')
-                                <span class="text-green-300">در حال بسته بندی</span>
-                                @break
-                            @case('shipped')
-                                <span class="text-green-400">تحویل پست شده</span>
-                                @break
-                            @case('delivered')
-                                <span class="text-green-500 font-bold">تحویل مشتری شده</span>
-                                @break
-                            @case('returned')
-                                <span class="text-red-500">عودت شده</span>
+                                <span>لغو شده</span>
                                 @break
                         @endswitch
                     </td>

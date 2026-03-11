@@ -1,13 +1,56 @@
-<div>
+<div
+    x-data="{
+        openOrderNumber: null,
+
+        init() {
+            const params = new URLSearchParams(window.location.search)
+            const openNumber = params.get('open')
+
+            if (openNumber) {
+                this.openOrderNumber = openNumber
+
+                this.$nextTick(() => {
+                    const el = document.getElementById('order-' + openNumber)
+                    if (!el) return
+
+                    // فقط لپ‌تاپ به بالا
+                    const isDesktop = window.innerWidth >= 1024
+                    const offset = isDesktop ? 80 : 0
+
+                    const top =
+                        el.getBoundingClientRect().top +
+                        window.pageYOffset -
+                        offset
+
+                    window.scrollTo({
+                        top,
+                        behavior: 'smooth'
+                    })
+                })
+            }
+        }
+    }"
+>
     @foreach($orders as $order)
-        <div class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
-            <div class="toggle-btn flex justify-between items-center cursor-pointer">
+        <div id="order-{{ $order->order_number }}"
+             wire:key="{{ $order->order_number }}"
+             class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
+            <div @click="openOrderNumber = (openOrderNumber === '{{ $order->order_number }}' ? null
+                    : '{{ $order->order_number }}')"
+                 class="toggle-btn flex justify-between items-center cursor-pointer">
                 <div>
                     @switch($order->status)
                         @case('pending')
-                            <div class="flex mb-4">
-                                <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
-                            </div>
+                            @if($order->transactions()->where('payment_gateway', 'card')->where('status','pending')->exists())
+                                <div class="flex mb-4">
+                                    <p class="text-blue-600 font-bold pt-1">در انتظار تایید ...</p>
+                                </div>
+                            @else
+                                <div class="flex mb-4">
+                                    <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
+                                </div>
+                            @endif
+
                             @break
                         @case('paid')
                             <p class="text-green-500 font-bold mb-2">پرداخت شده</p>
@@ -27,15 +70,33 @@
                     </div>
                 </div>
 
-                <button class=" flex items-center cursor-pointer">
-                    <svg class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                <button
+                    class="flex items-center justify-center
+                     h-8 px-2 sm:px-2 lg:px-0 lg:w-8
+                     rounded-full lg:rounded-full
+                     bg-pars-300 text-black
+                     transition-all duration-200
+                     cursor-pointer">
+                    <svg
+                        x-bind:class="{'rotate-180': openOrderNumber === '{{ $order->order_number }}'}"
+                        class="w-4 h-4 transition-transform duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 9l-7 7-7-7"
+                        />
                     </svg>
                 </button>
             </div>
 
-            <div class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
+
+            <div x-show="openOrderNumber === '{{ $order->order_number }}'"
+                 x-collapse
+                 class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
                 <div class="mt-8">
                     <div class="w-full sm:flex">
                         <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
@@ -160,9 +221,9 @@
                     <div class="mt-8">
                         <div class="mb-2">
                             <div class="text-gray-400">تراکنش ها</div>
-                            <div class=" p-2 border-pars-400 rounded mb-4 bg-pars-200">
+                            <div class="p-2 border-pars-400 mb-8 rounded bg-pars-200">
                                 @foreach($order->transactions->sortByDesc('created_at') as $key => $value)
-                                    <div class="flex flex-wrap items-center">
+                                    <div class="pb-2 last:pb-0 flex flex-wrap items-center">
                                         @switch($value->status)
                                             @case('pending')
                                                 <span><span
@@ -188,14 +249,17 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
                                         </div>
-                                        <div class="mb-2">
+                                        <div >
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
                                         </div>
-                                        <div class="mb-2">
+                                        <div >
                                             <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span wire:click.prevent="verifyTransaction('{{$value->authority}}')"
-                                                  class="cursor-pointer text-sm">تایید دستی</span>
+                                            <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
+                                                    class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">چک کردن موجودی و تایید تراکنش و کاهش موجودی</button>
+
+                                            <button wire:click.prevent="failedTransaction('{{$value->id}}')"
+                                                    class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">عدم تایید تراکنش</button>
                                         </div>
                                     </div>
                                 @endforeach
@@ -229,7 +293,7 @@
                                                     تومان
                                                 </h5>
                                                 <h5 class="text-xs sm:text-sm mt-2">
-                                                    تعداد {{ english_to_persian_num($item->quantity) }} عدد
+                                                     {{ english_to_persian_num($item->quantity) }} عدد
                                                 </h5>
                                                 @if($item->variant_id)
                                                     <h5 class="text-xs sm:text-sm mt-2">
@@ -249,36 +313,5 @@
         </div>
     @endforeach
 
-    <script>
-        const toggleButtons = document.querySelectorAll('.toggle-btn');
 
-        toggleButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const card = btn.closest('.order-card');
-                const details = card.querySelector('.order-details');
-                const arrow = btn.querySelector('svg');
-
-                // بستن سایر کارت‌ها
-                document.querySelectorAll('.order-card .order-details').forEach(d => {
-                    if (d !== details) {
-                        d.style.height = '0px';
-                        d.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
-                    }
-                });
-
-                // باز/بسته کردن کارت جاری با ارتفاع اتوماتیک
-                if (details.style.height && details.style.height !== '0px') {
-                    details.style.height = '0px';
-                    arrow.classList.remove('rotate-180');
-                } else {
-                    details.style.height = details.scrollHeight + 'px';
-                    arrow.classList.add('rotate-180');
-                }
-            });
-        });
-
-        // تنظیم اولیه همه کارت‌ها
-        document.querySelectorAll('.order-card .order-details').forEach(d => d.style.height = '0px');
-    </script>
 </div>

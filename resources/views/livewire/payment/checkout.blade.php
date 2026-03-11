@@ -61,23 +61,26 @@
                     </div>
                 </div>
                 <div class="mt-6 pr-4">
-                    <p class="mb-2">نام و نام خانوادگی گیرنده: <strong>{{ english_to_persian_num($selectedAddress->recipient_name) }}</strong>
+                    <p class="mb-2">نام و نام خانوادگی گیرنده:
+                        <strong>{{ english_to_persian_num($selectedAddress->recipient_name) }}</strong>
                     </p>
                     <p class="mb-2">شماره موبایل گیرنده:
                         <strong>{{ english_to_persian_num( $selectedAddress->recipient_mobile)  }}</strong></p>
                     <p class="mb-2">استان: <strong>{{ $selectedAddress->province->name }}</strong></p>
                     <p class="mb-2">شهر: <strong>{{ $selectedAddress->city->name }}</strong></p>
-                    <p class="mb-2">آدرس دقیق پستی: <strong>{{ english_to_persian_num($selectedAddress->postal_address) }}</strong></p>
+                    <p class="mb-2">آدرس دقیق پستی:
+                        <strong>{{ english_to_persian_num($selectedAddress->postal_address) }}</strong></p>
                     <p class="mb-2">کد پستی: <strong>{{ english_to_persian_num($selectedAddress->zipcode) }}</strong>
                     </p>
                     <div class="mt-4">
                         <label class="mr-4 text-sm">توضیحات اختیاری در مورد این سفارش:</label>
                         <textarea
-                                  x-data="faNumber('description' , false)"
-                                  x-model="value"
-                                  @input="onInput"
-                                  class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
-                        @error('description') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                            x-data="faNumber('description' , false)"
+                            x-model="value"
+                            @input="onInput"
+                            class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
+                        @error('description') <p
+                            class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -87,7 +90,8 @@
                 <div class="mt-4">
                     <label class="mr-4 text-sm">نام و نام خانوادگی: <strong class="text-red-500">*</strong></label>
                     <input wire:model="recipient_name" class="mt-1 w-full rounded-full px-4">
-                    @error('recipient_name') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                    @error('recipient_name') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">شماره موبایل:<strong class="text-red-500">*</strong></label>
@@ -96,7 +100,8 @@
                            @input="onInput"
                            inputmode="numeric"
                            class="mt-1 w-full rounded-full px-4">
-                    @error('recipient_mobile') <p class="text-red-500 text-xs">{{ english_to_persian_num(english_to_persian_num($message)) }}</p> @enderror
+                    @error('recipient_mobile') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num(english_to_persian_num($message)) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">استان:<strong class="text-red-500">*</strong></label>
@@ -107,7 +112,8 @@
                             <option value="{{ $province->id }}">{{ $province->name }}</option>
                         @endforeach
                     </select>
-                    @error('province_id') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                    @error('province_id') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">شهر:<strong class="text-red-500">*</strong></label>
@@ -118,7 +124,8 @@
                             <option value="{{ $city->id }}">{{ $city->name }}</option>
                         @endforeach
                     </select>
-                    @error('city_id') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                    @error('city_id') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">آدرس دقیق پستی:<strong class="text-red-500">*</strong></label>
@@ -126,24 +133,27 @@
                               x-model="value"
                               @input="onInput"
                               class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
-                    @error('postal_address') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                    @error('postal_address') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">کد پستی:<strong class="text-red-500">*</strong></label>
-                    <input  x-data="faNumber('zipcode' , true)"
-                            x-model="value"
-                            @input="onInput"
-                            inputmode="numeric"
-                            class="mt-1 w-full rounded-full px-4">
-                    @error('zipcode') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                    <input x-data="faNumber('zipcode' , true)"
+                           x-model="value"
+                           @input="onInput"
+                           inputmode="numeric"
+                           class="mt-1 w-full rounded-full px-4">
+                    @error('zipcode') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">توضیحات اختیاری در مورد این سفارش:</label>
-                    <textarea  x-data="faNumber('description' , false)"
-                               x-model="value"
-                               @input="onInput"
+                    <textarea x-data="faNumber('description' , false)"
+                              x-model="value"
+                              @input="onInput"
                               class="mt-1 bg-white min-h-24 w-full rounded-2xl outline-none px-4"></textarea>
-                    @error('description') <p class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
+                    @error('description') <p
+                        class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
             </div>
 
@@ -183,24 +193,114 @@
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
                 <div class=" text-left"><span>{{ english_to_persian_num(number_format($amount)) }} تومان</span></div>
             </div>
+            <div class="w-full mb-4"
+                 x-data="{
+                    payment_method: @entangle('payment_method').live,
+                    copied:false,
+                    copyCard(){
+                        navigator.clipboard.writeText('5022291533610273');
+                        this.copied=true;
+                        setTimeout(()=>this.copied=false,1500);
+                    }
+                 }">
 
-            <div class="w-full">
+                <div class="flex flex-col gap-3">
+                    <label
+                        class="flex items-center bg-white px-4 py-3 rounded-xl border cursor-pointer transition-all duration-300"
+                        :class="payment_method === 'gateway'
+                        ? 'border-2 border-pars-500 shadow-md'
+                        : 'border-gray-300'">
+
+                        <input type="radio" value="gateway" x-model="payment_method" class="hidden">
+
+                        <span
+                            class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                            :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
+                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                              x-show="payment_method === 'gateway'"></span>
+                    </span>
+                        <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم</span>
+                    </label>
+                    <div
+                        class="bg-white rounded-xl border transition-all duration-300 overflow-hidden"
+                        :class="payment_method === 'card'
+                        ? 'border-2 border-pars-500 shadow-md'
+                        : 'border-gray-300'">
+
+                        <label class="flex items-center px-4 py-3 cursor-pointer">
+                            <input type="radio" value="card" x-model="payment_method" class="hidden">
+                            <span
+                                class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                                :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-400'">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
+                                          x-show="payment_method === 'card'"></span>
+                                    </span>
+                            <span class="text-sm">پرداخت از طریق کارت به کارت</span>
+                        </label>
+
+                        <div
+                            class="transition-all duration-500 ease-in-out overflow-hidden"
+                            :style="payment_method === 'card'
+                            ? 'max-height:500px; opacity:1; padding:12px;'
+                            : 'max-height:0; opacity:0; padding:0 12px;'">
+
+                            <div
+                                class="w-full max-w-xs mx-auto bg-black rounded-2xl relative text-white overflow-visible  border"
+                                style="aspect-ratio:1.7;">
+                                <div x-show="copied"
+                                     x-transition.opacity
+                                     class="absolute top-5 left-5 -translate-x-5 font-bold text-[11px] bg-black text-shadow-white px-3 py-1 rounded-full shadow-md">
+                                    کپی شد ✓
+                                </div>
+
+                                <img src="{{ asset('images/Pasargad.png') }}"
+                                     class="absolute top-3 right-3 w-10 opacity-90">
+                                <div
+                                    class="absolute top-4 left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide">
+                                    بانک پاسارگاد
+                                </div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <button type="button"
+                                            @click.stop="copyCard"
+                                            class="font-mono text-lg tracking-[0.3em] cursor-pointer transition duration-200">
+                                        5022&nbsp;2915&nbsp;3361&nbsp;0273
+                                    </button>
+                                </div>
+                                <div class="absolute top-[60%] right-4 text-xs font-semibold">
+                                    مجید رستمیان
+                                </div>
+                                <div class="absolute bottom-3 right-4 left-4 text-[10px] text-yellow-300 leading-tight">
+                                    لطفاً مبلغ {{ english_to_persian_num(number_format($amount)) }} تومان را به شماره کارت بالا واریز نموده، سپس با استفاده از دکمه زیر سفارش خود را ثبت کنید.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full"
+                 x-data="{ payment_method: @entangle('payment_method').live }">
                 <button
                     wire:click.prevent="pay"
                     wire:target="pay"
-                    class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 flex items-center justify-center relative">
+                    class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-2 flex items-center justify-center relative transition-all duration-300">
+
                     <span wire:loading.remove wire:target="pay">
-                        پرداخت
+                    <span x-text="payment_method === 'card' ? 'ثبت سفارش' : 'پرداخت'"></span>
                     </span>
+
                     <span wire:loading wire:target="pay" class="flex items-center justify-center">
-                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                         </svg>
                     </span>
                 </button>
 
-            @if ($errors->any())
+
+                @if ($errors->any())
                     <div class="mt-3 bg-red-100 text-red-500 rounded-xl p-2 text-sm">
                         <ul class="list-disc list-inside">
                             @foreach ($errors->all() as $error)

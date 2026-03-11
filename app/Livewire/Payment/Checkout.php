@@ -15,7 +15,7 @@ use Shetabit\Payment\Facade\Payment;
 class Checkout extends Component
 {
 
-
+    public string $payment_method = 'gateway';
     public User $user;
     public Address|null $selectedAddress = null;
     public array|null $cart = [];
@@ -81,23 +81,33 @@ class Checkout extends Component
         if (!$cart || $cart->items->isEmpty()) {
             return $this->redirect('/cart', navigate: true);
         }
-        $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
 
+        switch ($this->payment_method) {
+            case 'gateway':
+                $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
+                $invoice = (new Invoice)->amount($this->amount);
+                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
+                    Transaction::query()->create([
+                        'order_id' => $order->id,
+                        'amount' => $this->amount,
+                        'status' => 'pending',
+                        'payment_gateway' => 'zibal',
+                        'authority' => (string)$transactionId,
+                    ]);
+                });
+                return redirect()->away($payment->pay()->getAction());
 
-        $invoice = (new Invoice)->amount($this->amount);
-        $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
-            Transaction::query()->create([
-                'order_id' => $order->id,
-                'amount' => $this->amount,
-                'status' => 'pending',
-                'payment_gateway' => 'zibal',
-                'authority' => (string)$transactionId,
-            ]);
-        });
-
-
-        return redirect()->away($payment->pay()->getAction());
-
+            case 'card':
+                $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
+                Transaction::query()->create([
+                    'order_id' => $order->id,
+                    'amount' => $this->amount,
+                    'status' => 'pending',
+                    'payment_gateway' => 'card',
+                    'authority' => '5022291533610273',
+                ]);
+                return $this->redirect('/dashboard/order?open='.  $order->order_number , navigate: true);
+        }
     }
 
     public function updatedProvinceId($provinceId)

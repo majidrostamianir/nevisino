@@ -31,8 +31,6 @@
         }
     }"
 >
-
-
     @foreach($orders as $order)
         <div
             id="order-{{ $order->order_number }}"
@@ -45,24 +43,49 @@
                 <div>
                     @switch($order->status)
                         @case('pending')
-                            <div class="flex mb-4">
-                                <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
-                                <button
-                                    wire:click.prevent.stop="payAgain({{ $order->id }})"
-                                    wire:target="payAgain({{ $order->id }})"
-                                    class="min-w-[120px] cursor-pointer px-4 mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 flex items-center justify-center relative">
+                            @if($order->transactions()->where('payment_gateway', 'card')->where('status','pending')->exists())
+                                <div class="flex mb-4">
+                                    <p class="text-orange-300 font-bold pt-1">در انتظار تایید پشتیبانی ...</p>
+                                    <button
+                                        wire:click.prevent.stop="dispatch([Goftino.open() , Goftino.sendMessage({text: 'لطفا رسید انتقال وجه را ارسال فرمایید'})])"
+                                        wire:target="payAgain({{ $order->id }})"
+                                        class="cursor-pointer text-nowrap px-2 text-xs mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 flex items-center justify-center relative">
+                                        ارسال رسید تراکنش
+                                        <span wire:loading wire:target="payAgain({{ $order->id }})"
+                                              class="flex items-center justify-center">
+                                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+                                             fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                        </svg>
+                                    </span>
+                                    </button>
+                                </div>
+                            @else
+                                <div class="flex mb-4">
+                                    <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
+                                    <button
+                                        wire:click.prevent.stop="payAgain({{ $order->id }})"
+                                        wire:target="payAgain({{ $order->id }})"
+                                        class="cursor-pointer text-nowrap px-4 text-xs mr-auto md:mr-12 text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-1 flex items-center justify-center relative">
                                     <span wire:loading.remove wire:target="payAgain({{ $order->id }})">
                                         پرداخت
                                     </span>
-                                    <span wire:loading wire:target="payAgain({{ $order->id }})" class="flex items-center justify-center">
-                                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                        <span wire:loading wire:target="payAgain({{ $order->id }})"
+                                              class="flex items-center justify-center">
+                                        <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+                                             fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                         </svg>
                                     </span>
-                                </button>
-
-                            </div>
+                                    </button>
+                                </div>
+                            @endif
                             @break
                         @case('paid')
                             <p class="text-green-500 font-bold mb-2">پرداخت شده</p>
@@ -86,8 +109,7 @@
                     class="flex items-center justify-center
                      h-8 px-2 sm:px-2 lg:px-0 lg:w-8
                      rounded-full lg:rounded-full
-                     bg-pars-500 text-white
-                     hover:bg-pars-600
+                     bg-pars-300 text-black
                      transition-all duration-200
                      cursor-pointer">
                     <svg
@@ -137,7 +159,12 @@
                             @switch($order->shipping_status)
                                 @case('pending')
                                     <div class="flex justify-between">
-                                        <span class="text-sm text-orange-300 font-bold">در انتظار پرداخت</span>
+                                        @if($order->transactions()->where('payment_gateway', 'card')->where('status','pending')->exists())
+                                            <span
+                                                class="text-sm text-orange-300 font-bold">در انتظار تایید پشتیبانی</span>
+                                        @else
+                                            <span class="text-sm text-orange-300 font-bold">در انتظار پرداخت</span>
+                                        @endif
                                         <span class="text-xs">مبلغ: {{ english_to_persian_num(number_format($order->amount)) }} تومان</span>
                                     </div>
                                     <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
@@ -197,29 +224,39 @@
                                     <div class="flex flex-wrap items-center">
                                         @switch($value->status)
                                             @case('pending')
-                                                <span><span class="ml-4  text-orange-500">&#9679;</span>در انتظار پرداخت</span>
+                                                @if($value->payment_gateway == 'card')
+                                                    <span class="text-orange-500"><span class="ml-4  ">&#9679;</span>در انتظار تایید پشتیبانی</span>
+                                                @else
+                                                    <span class="text-orange-500"><span class="ml-4  ">&#9679;</span>در انتظار پرداخت</span>
+                                                @endif
                                                 @break
                                             @case('success')
-                                                <span><span
-                                                        class="ml-4  text-green-500">&#9679;</span>پرداخت موفق</span>
+                                                <span class="text-green-500"><span
+                                                        class="ml-4  ">&#9679;</span>پرداخت موفق</span>
                                                 @break
                                             @case('failed')
-                                                <span><span
-                                                        class="ml-4  text-red-500">&#9679;</span>پرداخت ناموفق</span>
+                                                <span class="text-red-500"><span
+                                                        class="ml-4  ">&#9679;</span>پرداخت ناموفق</span>
                                                 @break
                                             @case('cancel')
-                                                <span><span class="ml-4  text-gray-500">&#9679;</span>لغو شده</span>
+                                                <span class="text-gray-500">
+                                                    <span class="ml-4  ">&#9679;</span>لغو شده</span>
                                                 @break
                                         @endswitch
                                         <div>
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
+                                            @if($value->payment_gateway == 'card')
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>ارسال شده به کارت: {{ english_to_persian_num($value->authority) }}</span>
+                                            @else
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
+                                            @endif
                                         </div>
                                         <div>
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
                                         </div>
-                                        <div class="mb-2">
+                                        <div>
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
                                         </div>

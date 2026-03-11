@@ -12,7 +12,7 @@ use Shetabit\Payment\Facade\Payment;
 class Order extends Component
 {
     protected User $user;
-    public $orders ;
+    public $orders;
     public $openOrderId = null;
 
     public function toggleOrder($orderId)

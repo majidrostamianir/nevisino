@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending', 'success', 'failed' , 'cancel'])->default('pending');
             $table->unsignedBigInteger('amount');
-            $table->string('payment_gateway')->nullable();
+            $table->enum('payment_gateway' , ['zibal' , 'card']);
             $table->string('authority');
             $table->timestamps();
         });
