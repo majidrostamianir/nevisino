@@ -22,7 +22,7 @@
             @foreach($visits as $item)
                 <tr class="odd:bg-white even:bg-gray-100">
                     <td class="px-4 py-2 ">{{ $item->ip }}</td>
-                    <td class="px-4 py-2 ">{{ \App\Models\User::find($item->user_id)->name ?? \App\Models\User::find($item->user_id)->mobile ?? null }}</td>
+                    <td class="px-4 py-2 @if($item->user_id) @if(\App\Models\User::find($item->user_id)->mobile_verified_at) text-green-400 @endif @endif">{{ \App\Models\User::find($item->user_id)->name ?? \App\Models\User::find($item->user_id)->mobile ?? null }}</td>
                     <td class="px-4 py-2 ">{{ \App\Models\Url::find($item->url_id)->title ?? $item->url }}</td>
                     <td class="px-4 py-2 ">{{ $item->is_bot }}</td>
                     <td class="px-4 py-2 w-8">{{ $item->referrer }}</td>

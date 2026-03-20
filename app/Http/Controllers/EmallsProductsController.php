@@ -26,7 +26,7 @@ class EmallsProductsController extends Controller
                 "category"     => $product->category->title ?? "نامشخص",
                 "image" => asset('storage/products/' . $product->id . '/large/1.webp'),
                 "color"        =>  null,
-                "guarantee"    => null,
+                "guarantee"    => 'تصاویر اختصاصی از محصول',
                 "is_available" => ($product->stock > 0) || ($product->variants()->sum('stock') > 0),
                 "url"          => url("/product/{$product->dashed_url}"),
             ];

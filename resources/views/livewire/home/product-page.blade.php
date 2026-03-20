@@ -365,15 +365,15 @@
         <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">
             <div class="font-bold mb-4">معرفی</div>
             <div class="text-justify">
-                {{ $product->description }}
+                {{ english_to_persian_num($product->description) }}
             </div>
         </div>
     @endif
     @if($product->attrs()->exists())
         <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">
             <div class="font-bold mb-4">ویژگی ها</div>
-            @foreach($product->attrs as $attr)
-                <div class="w-full md:w-1/3 flex text-sm">
+            @foreach($product->attrs()->get()->sortBy('title') as $attr)
+                <div class="w-full md:w-1/2 flex text-sm">
                     <div
                         class="text-gray-800 w-1/3 p-2 pr-4 border-b border-b-gray-200 bg-gray-100">{{ english_to_persian_num($attr->title) }}</div>
                     <div

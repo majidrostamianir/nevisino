@@ -22,7 +22,7 @@
                 <tr class="odd:bg-white even:bg-gray-100">
                     <td class="px-4 py-2">{{ $user->id }}</td>
                     <td class="px-4 py-2">{{ $user->name }}</td>
-                    <td class="px-4 py-2">{{ english_to_persian_num($user->mobile) }}</td>
+                    <td class="px-4 py-2 @if($user->mobile_verified_at) text-green-400 @endif">{{ english_to_persian_num($user->mobile) }}</td>
                     <td class="px-4 py-2">{{ english_to_persian_num(verta($user->created_at)) }}</td>
                     <td class="px-4 py-2">{{ $user->referrer }}</td>
                     <td class="px-4 py-2">

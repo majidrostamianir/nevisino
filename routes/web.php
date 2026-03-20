@@ -13,6 +13,7 @@ Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker
     Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
     Route::get('/trust', \App\Livewire\Home\Trust::class)->name('trust');
+
 });
 
 Route::group(['middleware' => ['throttle:60', 'guest',\App\Http\Middleware\visitTracker::class]], function () {
@@ -45,14 +46,6 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
     Route::get('/admin/attr',\App\Livewire\Admin\Product\Attr::class)->name('admin.product.attr');
-    /*
-     *
-     * Use For Basalam
-     * Add Products in Basalam
-     *
-     */
-    Route::get('/basalam/test', [BasalamTestController::class, 'send']);
-
 });
 
 /*
