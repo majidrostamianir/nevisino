@@ -27,7 +27,7 @@
                         @endif
                     </td>
                     <td class="px-4 py-2">
-                        <a href="{{ route('product-page' , ['title' => $product->dashed_url]) }}" target="_blank" >
+                        <a href="{{ route('product-page' , ['title' => $product->dashed_url, 'npi'=>$product->id]) }}" target="_blank" >
                             برو
                         </a>
                     </td>

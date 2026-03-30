@@ -12,6 +12,7 @@ use Livewire\Component;
 class ProductPage extends Component
 {
     public string $title;
+    public int $npi , $nvi;
     public Product $product;
     public string $message = '';
     public string $quantity = "۱";
@@ -22,8 +23,18 @@ class ProductPage extends Component
 
     public function mount(): void
     {
-        $this->product = Product::query()->where('dashed_url', '=', $this->title)->firstOrFail();
+        $this->product = Product::query()->findOrFail($this->npi);
 
+        if (request()->has('nvi')){
+            if (in_array(request()->query('nvi') , $this->product->variants()->pluck('id')->toArray())){
+                $this->selectedVariant = request()->query('nvi');
+            }else{
+                abort(404);
+            }
+        }
+        if($this->product->dashed_url != $this->title){
+            abort(404);
+        }
         $path = 'products/' . $this->product->id . '/large';
         $this->images = collect(Storage::disk('public')->files($path))
             ->map(fn($file) => pathinfo($file, PATHINFO_FILENAME))

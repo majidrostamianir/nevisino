@@ -29,7 +29,7 @@ class CategoryPage extends Component
                 'name' => $p->title ?? 'بدون نام',
                 'discounted_price' => (int)$p->discounted_price,
                 'price' => (int)$p->price,
-                'link' => route('product-page', ['title' => $p->dashed_url ?? 'unknown'])
+                'link' => route('product-page', ['title' => $p->dashed_url ?? 'unknown' , 'npi'=>$p->id])
             ];
         })->values()->toArray();
 

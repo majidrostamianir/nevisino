@@ -33,7 +33,7 @@ class Story extends Component
                         'cover' => asset("storage/products/{$firstProduct->id}/small/1.webp"),
                         'items' => $category->products->map(fn($product) => [
                             'image' =>  $product->story_image,
-                            'link' => route('product-page', ['title' => $product->dashed_url]),
+                            'link' => route('product-page', ['title' => $product->dashed_url , 'npi'=>$product->id]),
                             'product_name' => $product->title ?? 'محصول',
                         ])->values()->toArray(),
                     ];

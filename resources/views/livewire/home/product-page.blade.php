@@ -203,7 +203,7 @@
                                 :class="{
                                  'font-bold text-pars-600': selected == '{{ $image }}'
                              }"
-                                class="text-center mt-1 text-xs transition-all">{{ \App\Models\ProductVariant::query()->find($image)->name }}</div>
+                                class="text-center mt-1 text-xs transition-all">{{ english_to_persian_num(\App\Models\ProductVariant::query()->find($image)->name) }}</div>
                         @endif
                     </div>
                 @endforeach
@@ -286,7 +286,7 @@
                                     'border-gray-400 cursor-pointer hover:border-pars-500': selected != '{{ $value->id }}' && {{ $value->stock }} > 0,
                                     'opacity-50 cursor-not-allowed border-gray-400': {{ $value->stock }} == 0
                                 }">
-                                    <span class="">{{ $value->name }}</span>
+                                    <span class="">{{ english_to_persian_num($value->name) }}</span>
                                     @if($value->stock == 0)
                                         <span class="text-sm text-red-500">ناموجود</span>
                                     @endif

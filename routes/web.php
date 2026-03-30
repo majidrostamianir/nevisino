@@ -10,7 +10,7 @@ Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker
     Route::get('/', \App\Livewire\Home\Index::class)->name('home');
     Route::get('/shop', \App\Livewire\Home\Shop::class)->name('shop');
     Route::get('/category/{dashed}', \App\Livewire\Home\CategoryPage::class)->name('category-page');
-    Route::get('/product/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
+    Route::get('/product/{npi}/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
     Route::get('/trust', \App\Livewire\Home\Trust::class)->name('trust');
 
