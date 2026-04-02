@@ -47,11 +47,3 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
     Route::get('/admin/attr',\App\Livewire\Admin\Product\Attr::class)->name('admin.product.attr');
 });
-
-/*
-     *
-     * Use For Emalls
-     * List Of Products
-     *
-     */
-Route::match(['get', 'post'], '/list', [\App\Http\Controllers\EmallsProductsController::class, 'list']);

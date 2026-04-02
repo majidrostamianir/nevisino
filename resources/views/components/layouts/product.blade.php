@@ -12,7 +12,8 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
 
-    @stack('torob-meta-tags') {{-- متاتگ‌های مخصوص ترب  --}}
+{{--    @stack('torob-meta-tags')--}}
+    @stack('variant')
 
 </head>
 <body>

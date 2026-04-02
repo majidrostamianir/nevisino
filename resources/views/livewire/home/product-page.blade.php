@@ -1,16 +1,19 @@
-@push('torob-meta-tags')
-    <meta name="product_id" content="{{ $product->id }}">
-    <meta name="product_price" content="{{ $product->discounted_price ?? $product->price }}">
-    @php
-        $totalStock = $product->variant === null
-            ? $product->stock
-            : $product->variants->sum('stock');
-    @endphp
-    <meta name="availability" content="{{ $totalStock > 0 ? 'instock' : 'outofstock' }}">
-    <meta name="product_name" content="{{ $product->title }}">
-    <meta property="og:image" content="{{ $src }}">
-    <meta name="guarantee" content="{{ $product->guarantee ?? 'تصاویر اختصاصی از محصول' }}">
+@push('variant')
+    <link rel="canonical" href="https://nevisino.ir/product/{{ $npi }}/{{ $title }}" />
 @endpush
+{{--@push('torob-meta-tags')--}}
+{{--    <meta name="product_id" content="{{ $product->id }}">--}}
+{{--    <meta name="product_price" content="{{ $product->discounted_price ?? $product->price }}">--}}
+{{--    @php--}}
+{{--        $totalStock = $product->variant === null--}}
+{{--            ? $product->stock--}}
+{{--            : $product->variants->sum('stock');--}}
+{{--    @endphp--}}
+{{--    <meta name="availability" content="{{ $totalStock > 0 ? 'instock' : 'outofstock' }}">--}}
+{{--    <meta name="product_name" content="{{ $product->title }}">--}}
+{{--    <meta property="og:image" content="{{ $src }}">--}}
+{{--    <meta name="guarantee" content="{{ $product->guarantee ?? 'تصاویر اختصاصی از محصول' }}">--}}
+{{--@endpush--}}
 <div class="w-full"
      x-data="{
         selected: @entangle('selectedVariant'),
@@ -385,9 +388,9 @@
     @if($relatedProducts->isNotEmpty())
         <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-pars-100 shadow mt-4">
             <div class="font-bold mb-4">کالاهای مرتبط</div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4" wire:ignore>
                 @foreach($relatedProducts as $relate)
-                    <livewire:components.product-card :product="$relate"/>
+                    <livewire:components.product-card  :product="$relate"/>
                 @endforeach
             </div>
         </div>

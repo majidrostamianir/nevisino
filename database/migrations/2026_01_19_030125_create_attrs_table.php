@@ -19,14 +19,14 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('attr_product', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('attr_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
+            Schema::create('attr_product', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+                $table->foreignId('attr_id')->constrained()->cascadeOnDelete();
+                $table->timestamps();
 
-            $table->unique(['product_id', 'attr_id']);
-        });
+                $table->unique(['product_id', 'attr_id']);
+            });
 
     }
 
