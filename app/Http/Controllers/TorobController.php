@@ -65,17 +65,30 @@ class TorobController extends Controller
         foreach ($allProducts as $product) {
 
             // بدون واریانت
-            if (!$product->variant) {
+            if (is_null($product->variant)) {
                 $items->push([
                     'product' => $product,
-                    'variant' => null
+                    'variant' => null,
+                    'stock'   => $product->stock ?? 0
                 ]);
-            } // با واریانت
+            }
+            // با واریانت
             else {
+                // محصول پایه با مجموع موجودی واریانت‌ها
+                $totalStock = $product->variants->sum('stock');
+
+                $items->push([
+                    'product' => $product,
+                    'variant' => null,
+                    'stock'   => $totalStock
+                ]);
+
+                // واریانت‌ها
                 foreach ($product->variants as $variant) {
                     $items->push([
                         'product' => $product,
-                        'variant' => $variant
+                        'variant' => $variant,
+                        'stock'   => $variant->stock ?? 0
                     ]);
                 }
             }
@@ -100,19 +113,31 @@ class TorobController extends Controller
 
         foreach ($products as $product) {
 
-            if (!$product->variant) {
+            if (is_null($product->variant)) {
 
                 $unique = $this->makeUnique($product, null);
 
                 if (in_array($unique, $uniques)) {
                     $items->push([
                         'product' => $product,
-                        'variant' => null
+                        'variant' => null,
+                        'stock'   => $product->stock ?? 0
                     ]);
                 }
 
             } else {
 
+                // محصول پایه
+                $baseUnique = $this->makeUnique($product, null);
+                if (in_array($baseUnique, $uniques)) {
+                    $items->push([
+                        'product' => $product,
+                        'variant' => null,
+                        'stock'   => $product->variants->sum('stock')
+                    ]);
+                }
+
+                // واریانت‌ها
                 foreach ($product->variants as $variant) {
 
                     $unique = $this->makeUnique($product, $variant);
@@ -120,7 +145,8 @@ class TorobController extends Controller
                     if (in_array($unique, $uniques)) {
                         $items->push([
                             'product' => $product,
-                            'variant' => $variant
+                            'variant' => $variant,
+                            'stock'   => $variant->stock ?? 0
                         ]);
                     }
                 }
@@ -140,19 +166,31 @@ class TorobController extends Controller
 
         foreach ($products as $product) {
 
-            if (!$product->variant) {
+            if (is_null($product->variant)) {
 
                 $url = $this->makeUrl($product, null);
 
                 if (in_array($url, $urls)) {
                     $items->push([
                         'product' => $product,
-                        'variant' => null
+                        'variant' => null,
+                        'stock'   => $product->stock ?? 0
                     ]);
                 }
 
             } else {
 
+                // محصول پایه
+                $baseUrl = $this->makeUrl($product, null);
+                if (in_array($baseUrl, $urls)) {
+                    $items->push([
+                        'product' => $product,
+                        'variant' => null,
+                        'stock'   => $product->variants->sum('stock')
+                    ]);
+                }
+
+                // واریانت‌ها
                 foreach ($product->variants as $variant) {
 
                     $url = $this->makeUrl($product, $variant);
@@ -160,7 +198,8 @@ class TorobController extends Controller
                     if (in_array($url, $urls)) {
                         $items->push([
                             'product' => $product,
-                            'variant' => $variant
+                            'variant' => $variant,
+                            'stock'   => $variant->stock ?? 0
                         ]);
                     }
                 }
@@ -180,14 +219,18 @@ class TorobController extends Controller
             'total' => $total,
             'max_pages' => max(1, ceil($total / 100)),
             'products' => $items->map(function ($item) {
-                return $this->transform($item['product'], $item['variant']);
+                return $this->transform(
+                    $item['product'],
+                    $item['variant'],
+                    $item['stock']
+                );
             })
         ]);
     }
 
     // =============================
 
-    private function transform($p, $v = null)
+    private function transform($p, $v = null, $stock = 0)
     {
         if ($v === null) {
             $path = 'products/' . $p->id . '/large';
@@ -204,6 +247,7 @@ class TorobController extends Controller
             $image_address = [asset('storage/products/' . $p->id . '/large/' . $v->id . '.webp')];
             $title = $p->title . ' - ' . $p->variant . ' ' . $v->name;
         }
+
         return [
             'page_unique' => $this->makeUnique($p, $v),
 
@@ -219,9 +263,7 @@ class TorobController extends Controller
 
             'old_price' => null,
 
-            'availability' => $v
-                ? ($v->stock > 0)
-                : (($p->stock ?? 0) > 0),
+            'availability' => $stock > 0,
 
             'category_name' => Category::query()->find($p->category_id)->title,
 
