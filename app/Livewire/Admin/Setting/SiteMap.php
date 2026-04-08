@@ -12,7 +12,7 @@ class SiteMap extends Component
     public function siteMap()
     {
         $categories = Url::all()->pluck('dashed_url');
-        $products   = Product::all()->pluck('dashed_url');
+        $products = Product::all();
 
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
@@ -41,7 +41,7 @@ class SiteMap extends Component
         // محصولات
         foreach ($products as $product) {
             $sitemap .= '    <url>' . PHP_EOL;
-            $sitemap .= '        <loc>' . url('/product/' . $product) . '</loc>' . PHP_EOL;
+            $sitemap .= '        <loc>' . url('/product/' . $product->id . '/' . $product->dashed_url) . '</loc>' . PHP_EOL;
             $sitemap .= '    </url>' . PHP_EOL;
         }
 
