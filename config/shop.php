@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'shipping' => 75000,
+    'shipping' => 135000,
     'expire_order_time_minutes'=>15
 ];

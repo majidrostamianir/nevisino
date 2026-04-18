@@ -253,14 +253,16 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
                                         </div>
-                                        <div >
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
-                                                    class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">چک کردن موجودی و تایید تراکنش و کاهش موجودی</button>
+                                        @if($value->status !== "success")
+                                                <div >
+                                                    <span class="mx-4  text-pars-400">&#9679;</span>
+                                                    <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">چک کردن موجودی و تایید تراکنش و کاهش موجودی</button>
 
-                                            <button wire:click.prevent="failedTransaction('{{$value->id}}')"
-                                                    class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">عدم تایید تراکنش</button>
-                                        </div>
+                                                    <button wire:click.prevent="failedTransaction('{{$value->id}}')"
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">عدم تایید تراکنش</button>
+                                                </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

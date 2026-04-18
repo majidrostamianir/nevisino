@@ -128,9 +128,6 @@ class Order extends Component
             $transaction->status = 'failed';
             $transaction->save();
 
-            $order = $transaction->order;
-            $order->status = 'canceled';
-            $order->save();
             $this->dispatch('showNotification', message: 'تراکنش تایید نشد');
 
         } else {

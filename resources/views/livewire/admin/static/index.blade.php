@@ -1,6 +1,10 @@
 <div>
     <div class="flex flex-wrap w-full justify-between p-4">
         <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+            <h5 class="font-bold text-green-500">مبلغ فروخته شده</h5>
+            <h5 class="mt-2">{{ english_to_persian_num(number_format(\App\Models\Order::query()->where('status' , 'paid')->sum('total_price'))) }}</h5>
+        </div>
+        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
             <h5 class="font-bold">تعداد کاربران</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\User::where('type','client')->count()) }}</h5>
         </div>
@@ -26,7 +30,7 @@
         </div>
     </div>
     <div class="sm:flex">
-        <div class="overflow-hidden rounded-lg shadow sm:w-1/2">
+        <div class="overflow-hidden overflow-x-scroll rounded-lg shadow sm:w-1/2">
             <table class="min-w-full text-right bg-pars-100">
                 <thead class="bg-gray-100">
                 <tr>
@@ -54,7 +58,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="overflow-hidden rounded-lg shadow sm:w-1/2 sm:mr-2">
+        <div class="overflow-hidden overflow-x-scroll rounded-lg shadow sm:w-1/2 sm:mr-2">
             <table class="min-w-full text-right bg-pars-100">
                 <thead class="bg-gray-100">
                 <tr>

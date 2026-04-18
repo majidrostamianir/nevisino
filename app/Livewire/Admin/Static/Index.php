@@ -16,7 +16,7 @@ class Index extends Component
     public function mount()
     {
         $this->queries = SearchQuery::query()->orderBy('created_at', 'desc')
-            ->take(100)
+            ->take(300)
             ->get();
     }
 

@@ -7,6 +7,7 @@ use App\Models\SearchQuery;
 use App\Models\Url;
 use App\Services\SearchNormalizer;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Search extends Component
@@ -54,11 +55,13 @@ class Search extends Component
 
         $this->validate(['query' => 'string']);
 
-        SearchQuery::query()->create([
-            'query' => $this->query,
-            'ip' => request()->ip(),
-            'user_id' => auth()->id() ?? null,
-        ]);
+        if (!(Auth::id() === 1 || Auth::id() === 32)) {
+            SearchQuery::query()->create([
+                'query' => $this->query,
+                'ip' => request()->ip(),
+                'user_id' => auth()->id() ?? null,
+            ]);
+        }
     }
 
 
