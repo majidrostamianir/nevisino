@@ -12,8 +12,9 @@ class Index extends Component
 
     public function mount()
     {
-        $this->visits = Visit::query()->orderBy('created_at', 'desc')
+        $this->visits = Visit::query()
             ->take(500)
+            ->latest()
             ->get();
     }
     public function updatedQueryIp()
