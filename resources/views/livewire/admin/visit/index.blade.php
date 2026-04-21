@@ -37,12 +37,12 @@
                             <span class="text-gray-400">—</span>
                         @endif
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-800">
+                    <td class="px-4 py-3 text-sm text-gray-800" dir="ltr" >
                         <a target="_blank" href="/{{  $item->url }}">{{  $item->url }}</a>
 
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-600 max-w-[200px] overflow-hidden whitespace-nowrap" dir="ltr" title="{{ $item->referrer }}">
-                        {{ $item->referrer ?? '—' }}
+                    <td class="px-4 py-3 text-xs text-gray-600 break-words max-w-[250px]" dir="ltr" title="{{ $item->referrer }}">
+                        <a target="_blank" href="{{ $item->referrer ?? '—' }}">{{ $item->referrer ?? '—' }}</a>
                     </td>
                     <td class="px-4 py-3 text-sm">
                         @if($item->is_bot)
