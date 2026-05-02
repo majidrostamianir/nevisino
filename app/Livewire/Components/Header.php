@@ -7,12 +7,13 @@ use Livewire\Component;
 
 class Header extends Component
 {
-    public $cartCount ;
+    public $cartCount , $orderCount ;
     protected $listeners = ['cart-updated' => 'updateCartCount'];
 
     public function mount()
     {
         $this->cartCount = 0 ;
+        $this->orderCount = 0 ;
         $this->updateCartCount();
     }
 
@@ -21,6 +22,8 @@ class Header extends Component
         if (Auth::check()) {
             $this->cartCount = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
             )->sum('quantity');
+
+           $this->orderCount = Auth::user()->orders()->where('status','pending')->count();
         } else {
             $this->cartCount = collect(session()->get('cart', []))->sum('quantity');
         }
