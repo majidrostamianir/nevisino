@@ -8,14 +8,73 @@ use Livewire\Component;
 
 class Index extends Component
 {
+    public $ariaArtist , $cClass ,$daftarMashq,$medad,$edari ;
+    public function mount()
+    {
+
+
+        $cClassIds = [122 , 123 , 124 , 125];
+
+        $this->cClass = Product::with(['variants' => function($query) {
+            $query->where('stock', '>', 0);
+        }])
+            ->whereIn('id', $cClassIds)
+            ->orderByRaw("FIELD(id, " . implode(',', $cClassIds) . ")")
+            ->get();
+
+
+        $ariaArtistIds = [75, 2, 1, 3, 5];
+
+        $this->ariaArtist = Product::with(['variants' => function($query) {
+            $query->where('stock', '>', 0);
+        }])
+            ->whereIn('id', $ariaArtistIds)
+            ->orderByRaw("FIELD(id, " . implode(',', $ariaArtistIds) . ")")
+            ->get();
+
+        $daftarMashqIds = [60 , 59 , 57 , 64 , 65 , 89 , 131 ,94 , 93];
+
+        $this->daftarMashq  = Product::with(['variants' => function($query) {
+            $query->where('stock', '>', 0);
+        }])
+            ->whereIn('id', $daftarMashqIds)
+            ->orderByRaw("FIELD(id, " . implode(',', $daftarMashqIds) . ")")
+            ->get();
+
+        $medadIds = [60 , 59 , 57 , 64 , 65 , 89 , 131 ,94 , 93];
+
+        $this->medad  = Product::with(['variants' => function($query) {
+            $query->where('stock', '>', 0);
+        }])
+            ->whereIn('id', $medadIds)
+            ->orderByRaw("FIELD(id, " . implode(',', $medadIds) . ")")
+            ->get();
+
+        $edariIds = [126,46,114,121,120,44,35,43,34,29,30,28,55,56];
+
+        $this->edari  = Product::with(['variants' => function($query) {
+            $query->where('stock', '>', 0);
+        }])
+            ->whereIn('id', $edariIds)
+            ->orderByRaw("FIELD(id, " . implode(',', $edariIds) . ")")
+            ->get();
+    }
     public function render()
     {
-        $rawProducts = \App\Models\Product::query()
-            ->whereNotNull('discounted_price')
-            ->inRandomOrder()
-            ->limit(15)
-            ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
+        $availableIds = \App\Models\Product::whereNotNull('discounted_price')
+            ->get()
+            ->filter(fn($p) => $p->hasValidStock())
+            ->pluck('id')
+            ->toArray();
 
+        if (empty($availableIds)) {
+            $rawProducts = collect();
+        } else {
+            $rawProducts = \App\Models\Product::whereIn('id', $availableIds)
+                ->inRandomOrder()
+                ->limit(15)
+                ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
+        }
         $productsForJs = $rawProducts->map(function ($p) {
             return [
                 'image' => asset('storage/products/' . $p->id . '/small/1.webp'),

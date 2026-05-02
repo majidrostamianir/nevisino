@@ -41,7 +41,7 @@ class ProductPage extends Component
             ->sortBy(fn($name) => intval($name))
             ->values();
 
-        $this->src = asset('storage/products/' . $this->product->id . '/large/' . $this->images[0] . '.webp');
+        $this->src = asset('storage/products/' . $this->product->id . '/large/' . $this->selectedVariant . '.webp' ?? $this->images[0] . '.webp');
         $this->stock = $this->stockCheck();
     }
 

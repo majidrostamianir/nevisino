@@ -29,8 +29,7 @@
                 })
             }
         }
-    }"
->
+    }">
     @foreach($orders as $order)
         <div id="order-{{ $order->order_number }}"
              wire:key="{{ $order->order_number }}"
@@ -50,7 +49,7 @@
                                     <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
                                 </div>
                             @endif
-
+                            
                             @break
                         @case('paid')
                             <p class="text-green-500 font-bold mb-2">پرداخت شده</p>
@@ -69,7 +68,7 @@
                         <span>حمل و نقل: {{ english_to_persian_num(number_format($order->shipping_price)) }} تومان</span>
                     </div>
                 </div>
-
+                
                 <button
                     class="flex items-center justify-center
                      h-8 px-2 sm:px-2 lg:px-0 lg:w-8
@@ -92,37 +91,93 @@
                     </svg>
                 </button>
             </div>
-
-
+            
+            
             <div x-show="openOrderNumber === '{{ $order->order_number }}'"
                  x-collapse
                  class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
                 <div class="mt-8">
                     <div class="w-full sm:flex">
-                        <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
-                            <div>
-                             <span class="text-gray-400">تحویل گیرنده <span
-                                     class="text-pars-700">{{ english_to_persian_num($order->recipient_name) }}</span></span>
-                                <span class="mx-4  text-pars-400">&#9679;</span>
-                                <span class="text-gray-400">شماره موبایل <span
-                                        class="text-pars-700">{{ english_to_persian_num($order->recipient_mobile) }}</span></span>
+                        <div class="w-full mb-4"
+                             x-data="{
+                                copiedName: false,
+                                copyName(){
+                                    navigator.clipboard.writeText('{{ english_to_persian_num($order->recipient_name) }}');
+                                    this.copiedName = true;
+                                    setTimeout(()=>this.copiedName = false, 1500);
+                                },
+                                copiedMobile: false,
+                                copyMobile(){
+                                    navigator.clipboard.writeText('{{ english_to_persian_num($order->recipient_mobile) }}');
+                                    this.copiedMobile = true;
+                                    setTimeout(()=>this.copiedMobile = false, 1500);
+                                },
+                                copiedAddress: false,
+                                copyAddress(){
+                                    navigator.clipboard.writeText('{{ $order->province }} - {{ $order->city }} - {{ english_to_persian_num($order->postal_address) }}');
+                                    this.copiedAddress = true;
+                                    setTimeout(()=>this.copiedAddress = false, 1500);
+                                },
+                                copiedZipcode: false,
+                                copyZipcode(){
+                                    navigator.clipboard.writeText('{{ english_to_persian_num($order->zipcode) }}');
+                                    this.copiedZipcode = true;
+                                    setTimeout(()=>this.copiedZipcode = false, 1500);
+                                },
+                                copiedDescription: false,
+                                copyDescription(){
+                                    navigator.clipboard.writeText('{{ $order->description }}');
+                                    this.copiedDescription = true;
+                                    setTimeout(()=>this.copiedDescription = false, 1500);
+                                }
+                             }">
+                            <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
+                                <div>
+                                    <span class="text-gray-400">تحویل گیرنده
+                                        <span @click="copyName()"
+                                              :class="copiedName ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="text-pars-700"
+                                              x-text="copiedName ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_name) }}'">
+                                        </span>
+                                    </span>
+                                    <span class="mx-4 text-pars-400">&#9679;</span>
+                                    <span class="text-gray-400">شماره موبایل
+                                        <span @click="copyMobile()"
+                                              :class="copiedMobile ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="text-pars-700"
+                                              x-text="copiedMobile ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_mobile) }}'">
+                                        </span>
+                                    </span>
+                                </div>
+                                
+                                <div class="w-full sm:w-1/2">
+                                    <span class="text-gray-400">آدرس
+                                        <span @click="copyAddress()"
+                                              :class="copiedAddress ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="text-pars-700"
+                                              x-text="copiedAddress ? 'کپی شد!' : '{{ $order->province }} - {{ $order->city }} - {{ english_to_persian_num($order->postal_address) }}'">
+                                        </span>
+                                    </span>
+                                    <span class="mx-4 text-pars-400">&#9679;</span>
+                                    <span class="text-gray-400">کد پستی
+                                        <span @click="copyZipcode()"
+                                              :class="copiedZipcode ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="text-pars-700"
+                                              x-text="copiedZipcode ? 'کپی شد!' : '{{ english_to_persian_num($order->zipcode) }}'">
+                                        </span>
+                                    </span>
+                                </div>
+                                
+                                <div class="w-full sm:w-1/2">
+                                    <span class="text-gray-400">توضیحات
+                                        <span @click="copyDescription()"
+                                              :class="copiedDescription ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="text-pars-700"
+                                              x-text="copiedDescription ? 'کپی شد!' : '{{ $order->description }}'">
+                                        </span>
+                                    </span>
+                                </div>
                             </div>
-                            <div class="w-full sm:w-1/2">
-                                <span class=" text-gray-400">آدرس <span
-                                        class="text-pars-700">
-                                        {{ $order->province }} -
-                                        {{ $order->city }} -
-                                        {{ english_to_persian_num($order->postal_address) }}
-                                    </span></span>
-                                    <span class="mx-4  text-pars-400">&#9679;</span>
-                                    <span class="text-gray-400">کد پستی <span
-                                            class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
-                            </div>
-                            <div class="w-full sm:w-1/2">
-                                <span class=" text-gray-400">توضیحات <span
-                                        class="text-pars-700">
-                                        {{ $order->description }}
-                                 </div>
                         </div>
                         <div class="w-full sm:w-1/2">
                             @switch($order->shipping_status)
@@ -194,7 +249,7 @@
                                                 @error("trackingCodes.$order->id")
                                                 <span class="text-red-500">{{ $message }}</span>
                                                 @enderror
-
+                                                
                                                 <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
                                                         class="bg-pars-700 hover:bg-pars-800 px-3 py-1 rounded-2xl text-white cursor-pointer ml-2">
                                                     دخیره و ارسال پیامک
@@ -217,7 +272,7 @@
                             @endswitch
                         </div>
                     </div>
-
+                    
                     <div class="mt-8">
                         <div class="mb-2">
                             <div class="text-gray-400">تراکنش ها</div>
@@ -245,24 +300,28 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
                                         </div>
-                                        <div>
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
-                                        </div>
-                                        <div >
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
-                                        </div>
-                                        @if($value->status !== "success")
-                                                <div >
+                                            <div>
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
+                                            </div>
+                                            <div>
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
+                                            </div>
+                                            @if($value->status !== "success")
+                                                <div>
                                                     <span class="mx-4  text-pars-400">&#9679;</span>
                                                     <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">چک کردن موجودی و تایید تراکنش و کاهش موجودی</button>
-
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
+                                                        چک کردن موجودی و تایید تراکنش و کاهش موجودی
+                                                    </button>
+                                                
                                                     <button wire:click.prevent="failedTransaction('{{$value->id}}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">عدم تایید تراکنش</button>
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
+                                                        عدم تایید تراکنش
+                                                    </button>
                                                 </div>
-                                        @endif
+                                            @endif
                                     </div>
                                 @endforeach
                             </div>
@@ -295,7 +354,7 @@
                                                     تومان
                                                 </h5>
                                                 <h5 class="text-xs sm:text-sm mt-2">
-                                                     {{ english_to_persian_num($item->quantity) }} عدد
+                                                    {{ english_to_persian_num($item->quantity) }} عدد
                                                 </h5>
                                                 @if($item->variant_id)
                                                     <h5 class="text-xs sm:text-sm mt-2">
@@ -314,6 +373,4 @@
             </div>
         </div>
     @endforeach
-
-
 </div>

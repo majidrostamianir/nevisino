@@ -8,7 +8,7 @@ use Livewire\Component;
 class Index extends Component
 {
     public $visits;
-    public $queryIp , $queryUser;
+    public $searchQuery;
 
     public function mount()
     {
@@ -17,13 +17,9 @@ class Index extends Component
             ->latest()
             ->get();
     }
-    public function updatedQueryIp()
+    public function updatedSearchQuery()
     {
-        $this->visits = Visit::ipSearch($this->queryIp );
-    }
-    public function updatedQueryUser()
-    {
-        $this->visits = Visit::userSearch($this->queryUser );
+        $this->visits = Visit::search($this->searchQuery );
     }
     public function render()
     {

@@ -30,6 +30,11 @@
                             class="absolute -bottom-2 -right-4 bg-red-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
                                 {{ english_to_persian_num($cartCount) }}
                             </span>
+                    @elseif(Auth::user()->orders()->where('status','pending')->exists())
+                        <span
+                            class="absolute -bottom-2 -right-4 bg-amber-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
+                                {{ english_to_persian_num(Auth::user()->orders()->where('status','pending')->count()) }}
+                            </span>
                     @endif
                 </a>
 

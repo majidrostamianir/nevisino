@@ -1,32 +1,60 @@
 <div>
-    <div class="flex flex-wrap w-full justify-between p-4">
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+        {{-- مبلغ فروخته شده --}}
+        <div class="bg-white shadow rounded p-4 text-center">
             <h5 class="font-bold text-green-500">مبلغ فروخته شده</h5>
             <h5 class="mt-2">{{ english_to_persian_num(number_format(\App\Models\Order::query()->where('status' , 'paid')->sum('total_price'))) }}</h5>
         </div>
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+        
+        {{-- تعداد کاربران --}}
+        <div class="bg-white shadow rounded p-4 text-center">
             <h5 class="font-bold">تعداد کاربران</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\User::where('type','client')->count()) }}</h5>
         </div>
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
-            <h5 class="font-bold text-orange-300">تعداد سفارشات در انتظار <span class="text-xs text-red-400 cursor-pointer" wire:click="cancelOrders()">لغو</span></h5>
+        
+        {{-- تعداد سفارشات در انتظار --}}
+        <div class="bg-white shadow rounded p-4 text-center">
+            <h5 class="font-bold text-orange-300">
+                تعداد سفارشات در انتظار
+                <span class="text-xs text-red-400 cursor-pointer" wire:click="cancelOrders()">لغو</span>
+            </h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('status' , 'pending')->count()) }}</h5>
         </div>
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+        
+        {{-- تعداد سفارشات موفق --}}
+        <div class="bg-white shadow rounded p-4 text-center">
             <h5 class="font-bold text-green-300">تعداد سفارشات موفق</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('status' , 'paid')->count()) }}</h5>
         </div>
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+        
+        {{-- تعداد سفارشات در مسیر --}}
+        <div class="bg-white shadow rounded p-4 text-center">
             <h5 class="font-bold text-green-400">تعداد سفارشات در مسیر</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('shipping_status' , 'shipped')->count()) }}</h5>
         </div>
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+        
+        {{-- تعداد سفارشات تحویل داده شده --}}
+        <div class="bg-white shadow rounded p-4 text-center">
             <h5 class="font-bold text-green-500">تعداد سفارشات تحویل داده شده</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('shipping_status' , 'delivered')->count()) }}</h5>
         </div>
-        <div class="bg-white shadow rounded p-4 text-center w-full sm:w-fit">
+        
+        {{-- تعداد سفارشات لغو شده --}}
+        <div class="bg-white shadow rounded p-4 text-center">
             <h5 class="font-bold text-gray-500">تعداد سفارشات لغو شده</h5>
             <h5 class="mt-2">{{ english_to_persian_num(\App\Models\Order::query()->where('status' , 'canceled')->count()) }}</h5>
+        </div>
+        
+        {{-- تعداد کل اقلام موجود --}}
+        <div class="bg-white shadow rounded p-4 text-center">
+            <h5 class="font-bold text-gray-500">تعداد کل اقلام موجود</h5>
+            <h5 class="mt-2">{{ english_to_persian_num(number_format($total_stock)) }}</h5>
+        </div>
+        
+        {{-- قیمت کل اقلام موجود --}}
+        <div class="bg-white shadow rounded p-4 text-center">
+            <h5 class="font-bold text-gray-500">قیمت کل اقلام موجود</h5>
+            <h5 class="mt-2">{{ english_to_persian_num(number_format($total_value)) }} تومان</h5>
         </div>
     </div>
 

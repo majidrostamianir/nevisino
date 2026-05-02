@@ -44,6 +44,17 @@
         box-shadow: none;
     }
 
+    * {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    *::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+
     body {
         direction: rtl !important;
         font-family: Tanha, serif;
@@ -51,23 +62,6 @@
         background-color: rgb(233 237 247);
         color: rgb(85, 118, 139) !important;
         cursor: default;
-    }
-
-    ::-webkit-scrollbar {
-        width: 5px
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #f5f8fe
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #4a5f7361;
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(57, 74, 90, .38)
     }
 
     input[type="number"]::-webkit-inner-spin-button,
@@ -106,15 +100,6 @@
     .article a:hover {
         color: #04b6e7;
 
-    }
-
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
     }
 
 }

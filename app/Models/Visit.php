@@ -12,26 +12,24 @@ class Visit extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public static function ipSearch($q, $limit = 2000)
-    {
-        $q = self::normalize($q);
-        return Visit::query()->where('ip', 'LIKE', '%' . $q . '%')->orderBy('created_at', 'desc')->limit($limit)->get();
-    }
-    public static function userSearch($q, $limit = 2000)
+    public static function search($q, $limit = 2000)
     {
         $q = self::normalize($q);
 
         return Visit::query()
-            ->whereHas('user', function($query) use ($q) {
-                $query->where('name', 'LIKE', '%' . $q . '%');
-            })->orwhereHas('user', function($query) use ($q) {
-                $query->where('mobile', 'LIKE', '%' . $q . '%');
+            ->where(function($query) use ($q) {
+                // جستجو در IP
+                $query->where('ip', 'LIKE', '%' . $q . '%')
+                    // یا جستجو در کاربر
+                    ->orWhereHas('user', function($userQuery) use ($q) {
+                        $userQuery->where('name', 'LIKE', '%' . $q . '%')
+                            ->orWhere('mobile', 'LIKE', '%' . $q . '%');
+                    });
             })
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get();
     }
-
     public static function normalize($query)
     {
         $query = trim($query);

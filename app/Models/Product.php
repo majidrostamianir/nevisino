@@ -56,6 +56,15 @@ class Product extends Model
     {
         return asset("storage/products/{$this->id}/small/1.webp");
     }
+    public function hasValidStock(): bool
+    {
+        // اگر واریانت دارد
+        if ($this->variants()->exists()) {
+            return $this->variants()->where('stock', '>', 0)->exists();
+        }
 
+        // اگر واریانت ندارد
+        return $this->stock > 0;
+    }
 
 }

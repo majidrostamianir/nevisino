@@ -1,4 +1,4 @@
-<div class="w-full pb-3 overflow-x-auto no-scrollbar">
+<div class="w-full pb-3 overflow-x-auto">
     <div class="flex">
         @foreach($this->stories as $story)
             <div

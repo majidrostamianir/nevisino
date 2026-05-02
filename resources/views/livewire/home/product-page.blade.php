@@ -1,19 +1,6 @@
 @push('variant')
     <link rel="canonical" href="https://nevisino.ir/product/{{ $npi }}/{{ $title }}" />
 @endpush
-{{--@push('torob-meta-tags')--}}
-{{--    <meta name="product_id" content="{{ $product->id }}">--}}
-{{--    <meta name="product_price" content="{{ $product->discounted_price ?? $product->price }}">--}}
-{{--    @php--}}
-{{--        $totalStock = $product->variant === null--}}
-{{--            ? $product->stock--}}
-{{--            : $product->variants->sum('stock');--}}
-{{--    @endphp--}}
-{{--    <meta name="availability" content="{{ $totalStock > 0 ? 'instock' : 'outofstock' }}">--}}
-{{--    <meta name="product_name" content="{{ $product->title }}">--}}
-{{--    <meta property="og:image" content="{{ $src }}">--}}
-{{--    <meta name="guarantee" content="{{ $product->guarantee ?? 'تصاویر اختصاصی از محصول' }}">--}}
-{{--@endpush--}}
 <div class="w-full"
      x-data="{
         selected: @entangle('selectedVariant'),
