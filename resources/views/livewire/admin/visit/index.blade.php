@@ -33,7 +33,7 @@
                                         class="inline-flex text-nowrap items-center px-2 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-700">🤖 بات</span>
                                 @else
                                     <span
-                                        class="inline-flex text-nowrap items-center px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700">👤 مهمان</span>
+                                        class="inline-flex text-nowrap items-center px-2 py-1 rounded-lg text-xs font-medium bg-orange-100 text-orange-500">👤 مهمان</span>
                                 @endif
                             @endif
                         </div>

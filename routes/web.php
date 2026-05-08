@@ -13,6 +13,7 @@ Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker
     Route::get('/product/{npi}/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
     Route::get('/trust', \App\Livewire\Home\Trust::class)->name('trust');
+    Route::get('/about', \App\Livewire\Home\About::class)->name('about');
 
 });
 
