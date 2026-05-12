@@ -6,6 +6,7 @@ namespace App\Livewire\Payment;
 use App\Models\Address;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\TorobPayService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -14,6 +15,10 @@ use Shetabit\Payment\Facade\Payment;
 
 class Checkout extends Component
 {
+
+    public $isTorobpayEligible = false;
+    public $torobpayTitle = '';
+    public $torobpayDescription = '';
 
     public string $payment_method = 'gateway';
     public User $user;
@@ -31,6 +36,29 @@ class Checkout extends Component
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
         $this->calculateAmount();
+        $this->checkTorobpayEligibility();
+    }
+
+    public function checkTorobpayEligibility()
+    {
+        try {
+            $torobpay = new TorobPayService();
+            $result = $torobpay->checkEligibility($this->amount);
+
+            $this->isTorobpayEligible = $result['eligible'] ?? false;
+            $this->torobpayTitle = $result['title_message'] ?? 'پرداخت اقساطی با ترب پی';
+            $this->torobpayDescription = $result['description'] ?? 'پرداخت اقساطی با ترب پی';
+
+        } catch (\Exception $e) {
+            // اگر خطایی بود، گزینه رو نشون نده
+            $this->isTorobpayEligible = false;
+            \Log::error('TorobPay eligibility error: ' . $e->getMessage());
+        }
+    }
+
+    public function payWithTorobpay()
+    {
+        return redirect()->route('torobpay.initiate');
     }
 
     public function selectAddress($value)
@@ -59,6 +87,9 @@ class Checkout extends Component
 
     public function pay()
     {
+        $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
+        $this->postal_address = str_replace(["\r\n", "\r", "\n"], ' ', $this->postal_address);
+
         if ($this->selectedAddress == null) {
             $this->validate();
             $this->selectedAddress = $this->user->addresses()->create([
@@ -106,7 +137,19 @@ class Checkout extends Component
                     'payment_gateway' => 'card',
                     'authority' => '5022291533610273',
                 ]);
-                return $this->redirect('/dashboard/order?open='.  $order->order_number , navigate: true);
+                return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
+            case 'torobpay':
+                $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
+                $transaction = Transaction::query()->create([
+                    'order_id' => $order->id,
+                    'amount' => $this->amount,
+                    'status' => 'pending',
+                    'payment_gateway' => 'torobpay',
+                    'authority' => 'pending_' . $order->id, // مقدار موقتی
+                ]);
+                // 3. ذخیره order_id در سشن تا کنترلر ترب پی بتونه پیدا کنه
+                session(['torobpay_order_id' => $order->id]);
+                return redirect()->route('torobpay.initiate');
         }
     }
 

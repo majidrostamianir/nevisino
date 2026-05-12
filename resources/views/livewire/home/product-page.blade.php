@@ -312,8 +312,8 @@
                             @if($product->variant === null || $selectedVariant < 1000 )
                                 <span class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی انبار {{ english_to_persian_num($stock) }} عدد است</span>
                             @else
-                                <span
-                                    class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">موجودی {{ $product->variant }} {{ \App\Models\ProductVariant::find($selectedVariant)->name }} {{ english_to_persian_num($stock) }} عدد است</span>
+                                    <span
+                                    class="absolute -bottom-6 right-2 text-xs text-red-500 text-nowrap">تنها {{ english_to_persian_num($stock) }} عدد از {{ $product->variant }} {{ english_to_persian_num(\App\Models\ProductVariant::find($selectedVariant)->name) }} باقی مانده است</span>
                             @endif
                         @endif
 

@@ -49,7 +49,6 @@
                                     <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
                                 </div>
                             @endif
-                            
                             @break
                         @case('paid')
                             <p class="text-green-500 font-bold mb-2">پرداخت شده</p>
@@ -270,9 +269,15 @@
                                         <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
                                     </div>
                             @endswitch
+                        
                         </div>
                     </div>
-                    
+                    <div class="mt-8 flex gap-3">
+                            @if($order->isTorobpayOrder())
+                                <livewire:admin.component.torobpay-settle-button :order="$order" />
+                                <livewire:admin.component.torobpay-cancel-buttons :order="$order" />
+                            @endif
+                    </div>
                     <div class="mt-8">
                         <div class="mb-2">
                             <div class="text-gray-400">تراکنش ها</div>
@@ -300,28 +305,28 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
                                         </div>
+                                        <div>
+                                            <span class="mx-4  text-pars-400">&#9679;</span>
+                                            <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
+                                        </div>
+                                        <div>
+                                            <span class="mx-4  text-pars-400">&#9679;</span>
+                                            <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
+                                        </div>
+                                        @if($value->status !== "success")
                                             <div>
                                                 <span class="mx-4  text-pars-400">&#9679;</span>
-                                                <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
-                                            </div>
-                                            <div>
-                                                <span class="mx-4  text-pars-400">&#9679;</span>
-                                                <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
-                                            </div>
-                                            @if($value->status !== "success")
-                                                <div>
-                                                    <span class="mx-4  text-pars-400">&#9679;</span>
-                                                    <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
-                                                        چک کردن موجودی و تایید تراکنش و کاهش موجودی
-                                                    </button>
+                                                <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
+                                                        class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
+                                                    چک کردن موجودی و تایید تراکنش و کاهش موجودی
+                                                </button>
                                                 
-                                                    <button wire:click.prevent="failedTransaction('{{$value->id}}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
-                                                        عدم تایید تراکنش
-                                                    </button>
-                                                </div>
-                                            @endif
+                                                <button wire:click.prevent="failedTransaction('{{$value->id}}')"
+                                                        class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
+                                                    عدم تایید تراکنش
+                                                </button>
+                                            </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

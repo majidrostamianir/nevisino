@@ -152,6 +152,9 @@
                                 <span class="mx-4  text-pars-400">&#9679;</span>
                                 <span class="text-gray-400">کد پستی <span
                                         class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
+                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                <span class="text-gray-400">توضیحات شما <span
+                                        class="text-pars-700">{{ english_to_persian_num($order->description) }}</span></span>
 
                             </div>
                         </div>

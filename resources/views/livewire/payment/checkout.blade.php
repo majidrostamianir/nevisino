@@ -156,9 +156,9 @@
                         class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
             </div>
-
+        
         @endif
-
+        
         <div class="sticky top-20 w-full h-fit sm:w-1/3 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2 p-4">
             <div class="w-full mb-4 flex justify-between">
                 <div class=""><strong>جمع مبلغ سفارش</strong></div>
@@ -187,7 +187,7 @@
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
                 <div class="text-left">{{ english_to_persian_num('بین 3 تا 5 روز') }}</div>
             </div>
-
+            
             <div class="w-full mb-4 flex justify-between">
                 <div class=""><strong>مبلغ قابل پرداخت:</strong></div>
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
@@ -203,16 +203,16 @@
                         setTimeout(()=>this.copied=false,1500);
                     }
                  }">
-
+                
                 <div class="flex flex-col gap-3">
                     <label
-                        class="flex items-center bg-white px-4 py-3 rounded-xl border cursor-pointer transition-all duration-300"
+                        class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
                         :class="payment_method === 'gateway'
                         ? 'border-2 border-pars-500 shadow-md'
                         : 'border-gray-300'">
-
+                        
                         <input type="radio" value="gateway" x-model="payment_method" class="hidden">
-
+                        
                         <span
                             class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
                             :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
@@ -221,12 +221,67 @@
                     </span>
                         <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                     </label>
+                    @if($isTorobpayEligible)
+                        <label
+                            class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                            :class="payment_method === 'torobpay'
+                            ? 'border-2 border-pars-500 shadow-md'
+                            : 'border-gray-300'">
+                            
+                            <input type="radio" value="torobpay" x-model="payment_method" class="hidden">
+                            
+                            <div class="flex items-center">
+                            <span
+                                class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                                :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">
+                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                                      x-show="payment_method === 'torobpay'"></span>
+                            </span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
+                                    <span class="text-xs text-gray-500">۴ قسط {{ english_to_persian_num(number_format($amount/4)) }} تومانی</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-center mr-2">
+                                <img class="w-16 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                <span class="text-xs text-gray-600 mt-1">بدون چک و ضامن</span>
+                            </div>
+                        </label>
+                    @else
+                        <label
+                            class="flex items-center justify-between bg-gray-300 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                            :class="payment_method === 'torobpay'
+                            ? 'border-2 border-pars-500 shadow-md'
+                            : 'border-gray-300'">
+                            
+                            <input type="radio" disabled value="torobpay" x-model="payment_method" class="hidden">
+                            
+                            <div class="flex items-center">
+                            <span
+                                class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                                :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">
+                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                                      x-show="payment_method === 'torobpay'"></span>
+                            </span>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
+                                    <span class="text-xs text-gray-500">برای سفارش های با مبالغ بالاتر از ۲۰۰,۰۰۰ تومان<span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-center mr-2">
+                                <img class="w-16 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                <span class="text-xs text-gray-600 mt-1">بدون چک و ضامن</span>
+                            </div>
+                        </label>
+                    @endif
                     <div
-                        class="bg-white rounded-xl border transition-all duration-300 overflow-hidden"
+                        class="bg-white rounded-xl border-2 transition-all duration-300 overflow-hidden"
                         :class="payment_method === 'card'
                         ? 'border-2 border-pars-500 shadow-md'
                         : 'border-gray-300'">
-
+                        
                         <label class="flex items-center px-4 py-3 cursor-pointer">
                             <input type="radio" value="card" x-model="payment_method" class="hidden">
                             <span
@@ -237,13 +292,13 @@
                                     </span>
                             <span class="text-sm">پرداخت از طریق کارت به کارت</span>
                         </label>
-
+                        
                         <div
                             class="transition-all duration-500 ease-in-out overflow-hidden"
                             :style="payment_method === 'card'
                             ? 'max-height:500px; opacity:1; padding:12px;'
                             : 'max-height:0; opacity:0; padding:0 12px;'">
-
+                            
                             <div
                                 class="w-full max-w-xs mx-auto bg-black rounded-2xl relative text-white overflow-visible  border"
                                 style="aspect-ratio:1.7;">
@@ -252,7 +307,7 @@
                                      class="absolute top-5 left-5 -translate-x-5 font-bold text-[11px] bg-black text-shadow-white px-3 py-1 rounded-full shadow-md">
                                     کپی شد ✓
                                 </div>
-
+                                
                                 <img src="{{ asset('images/Pasargad.png') }}"
                                      class="absolute top-3 right-3 w-10 opacity-90">
                                 <div
@@ -270,11 +325,13 @@
                                     مجید رستمیان
                                 </div>
                                 <div class="absolute bottom-3 right-4 left-4 text-[10px] text-yellow-300 leading-tight">
-                                    لطفاً مبلغ {{ english_to_persian_num(number_format($amount)) }} تومان را به شماره کارت بالا واریز نموده، سپس با استفاده از دکمه زیر سفارش خود را ثبت کنید.
+                                    لطفاً مبلغ {{ english_to_persian_num(number_format($amount)) }} تومان را به شماره
+                                    کارت بالا واریز نموده، سپس با استفاده از دکمه زیر سفارش خود را ثبت کنید.
                                 </div>
                             </div>
                         </div>
                     </div>
+                   
                 </div>
             </div>
             <div class="w-full"
@@ -287,7 +344,7 @@
                     <span wire:loading.remove wire:target="pay">
                     <span x-text="payment_method === 'card' ? 'ثبت سفارش' : 'پرداخت'"></span>
                     </span>
-
+                    
                     <span wire:loading wire:target="pay" class="flex items-center justify-center">
                         <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24">
@@ -298,8 +355,8 @@
                         </svg>
                     </span>
                 </button>
-
-
+                
+                
                 @if ($errors->any())
                     <div class="mt-3 bg-red-100 text-red-500 rounded-xl p-2 text-sm">
                         <ul class="list-disc list-inside">

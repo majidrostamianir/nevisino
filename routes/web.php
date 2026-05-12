@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BasalamTestController;
+use App\Http\Controllers\TorobPayController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -49,3 +50,15 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
     Route::get('/admin/attr',\App\Livewire\Admin\Product\Attr::class)->name('admin.product.attr');
 });
+
+Route::controller(TorobPayController::class)->group(function () {
+    Route::get('/torobpay/initiate', 'initiate')->name('torobpay.initiate');
+    Route::post('/torobpay/callback', 'callback')->name('torobpay.callback');
+});
+Route::get('/torobpay/verify', [TorobPayController::class, 'verify'])->name('torobpay.verify');
+Route::post('/torobpay/settle', [TorobPayController::class, 'settle'])->name('torobpay.settle');
+Route::post('/torobpay/revert', [TorobPayController::class, 'revert'])->name('torobpay.revert');
+Route::post('/torobpay/cancel', [TorobPayController::class, 'cancel'])->name('torobpay.cancel');
+Route::get('/torobpay/status', [TorobPayController::class, 'getStatus'])->name('torobpay.status');
+Route::post('/torobpay/update', [TorobPayController::class, 'update'])->name('torobpay.update');
+
