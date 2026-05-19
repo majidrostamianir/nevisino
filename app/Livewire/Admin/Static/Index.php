@@ -60,7 +60,7 @@ class Index extends Component
     {
         Order::query()
             ->where('status', 'pending')
-            ->where('created_at', '<', now()->subDays(1))
+            ->where('created_at', '<', now()->subMinutes(30))
             ->update([
                 'status' => 'canceled'
             ]);

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('tracking_code')->nullable();
             $table->unsignedBigInteger('total_price')->default(0);
             $table->unsignedBigInteger('shipping_price')->default(0);
+            $table->enum('shipping_method',['post_cod' , 'post_cash' , 'tipax_cod','tipax_cash'])->default('post_cod');
             $table->unsignedBigInteger('amount')->default(0);
             $table->string('recipient_name');
             $table->string('recipient_mobile');

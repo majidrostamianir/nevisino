@@ -1,6 +1,7 @@
 <?php
 
 return [
-    'shipping' => 135000,
-    'expire_order_time_minutes'=>15
+    'post_price' => 170000,
+    'tipax_price' => 190000,
+    'expire_order_time_minutes'=>30
 ];

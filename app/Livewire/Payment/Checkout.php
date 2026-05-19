@@ -6,7 +6,6 @@ namespace App\Livewire\Payment;
 use App\Models\Address;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Services\TorobPayService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -16,9 +15,6 @@ use Shetabit\Payment\Facade\Payment;
 class Checkout extends Component
 {
 
-    public $isTorobpayEligible = false;
-    public $torobpayTitle = '';
-    public $torobpayDescription = '';
 
     public string $payment_method = 'gateway';
     public User $user;
@@ -26,9 +22,10 @@ class Checkout extends Component
     public array|null $cart = [];
     public Collection $addresses;
     public $cities = [];
-    public int $shipping = 0, $amount = 0, $sum = 0;
+    public int $shipping_price = 0, $amount = 0, $sum = 0;
     public $recipient_name, $recipient_mobile, $province_id, $city_id, $postal_address, $zipcode, $description;
     public $showPopup = false;
+    public string $shipping_method = 'post_cod';
 
     public function mount()
     {
@@ -36,29 +33,14 @@ class Checkout extends Component
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
         $this->calculateAmount();
-        $this->checkTorobpayEligibility();
+        $this->shipping_method = 'post_cod';
+        $this->shipping_price = 0;
     }
 
-    public function checkTorobpayEligibility()
+    public function updateShippingMethod($method)
     {
-        try {
-            $torobpay = new TorobPayService();
-            $result = $torobpay->checkEligibility($this->amount);
-
-            $this->isTorobpayEligible = $result['eligible'] ?? false;
-            $this->torobpayTitle = $result['title_message'] ?? 'پرداخت اقساطی با ترب پی';
-            $this->torobpayDescription = $result['description'] ?? 'پرداخت اقساطی با ترب پی';
-
-        } catch (\Exception $e) {
-            // اگر خطایی بود، گزینه رو نشون نده
-            $this->isTorobpayEligible = false;
-            \Log::error('TorobPay eligibility error: ' . $e->getMessage());
-        }
-    }
-
-    public function payWithTorobpay()
-    {
-        return redirect()->route('torobpay.initiate');
+        $this->shipping_method = $method;
+        $this->calculateAmount();
     }
 
     public function selectAddress($value)
@@ -80,9 +62,11 @@ class Checkout extends Component
         'recipient_mobile' => 'required|digits:11|regex:/^09\d{9}$/',
         'province_id' => 'required|string|min:1|max:3',
         'city_id' => 'required|string|min:1|max:5',
-        'postal_address' => 'required|string|min:10|max:1000',
+        'postal_address' => 'required|string|min:10|max:200',
         'zipcode' => 'required|digits:10',
-        'description' => 'nullable|string|max:1000'
+        'description' => 'nullable|string|max:200',
+        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash',
+        'shipping_price' => 'required|integer',
     ];
 
     public function pay()
@@ -113,9 +97,12 @@ class Checkout extends Component
             return $this->redirect('/cart', navigate: true);
         }
 
+        Auth::user()->orders()->where('status', 'pending')->update(['status' => 'canceled']);
+        $orderParams = $this->getOrderParams();
+
         switch ($this->payment_method) {
             case 'gateway':
-                $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
+                $order = $cart->convertToOrder($orderParams);
                 $invoice = (new Invoice)->amount($this->amount);
                 $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
                     Transaction::query()->create([
@@ -129,7 +116,7 @@ class Checkout extends Component
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
-                $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
+                $order = $cart->convertToOrder($orderParams);
                 Transaction::query()->create([
                     'order_id' => $order->id,
                     'amount' => $this->amount,
@@ -139,17 +126,16 @@ class Checkout extends Component
                 ]);
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
             case 'torobpay':
-                $order = $cart->convertToOrder($this->selectedAddress->province->id, $this->selectedAddress->city->id, $this->selectedAddress->recipient_name, $this->selectedAddress->recipient_mobile, $this->selectedAddress->postal_address, $this->selectedAddress->zipcode, $this->description);
-                $transaction = Transaction::query()->create([
-                    'order_id' => $order->id,
-                    'amount' => $this->amount,
-                    'status' => 'pending',
-                    'payment_gateway' => 'torobpay',
-                    'authority' => 'pending_' . $order->id, // مقدار موقتی
-                ]);
-                // 3. ذخیره order_id در سشن تا کنترلر ترب پی بتونه پیدا کنه
-                session(['torobpay_order_id' => $order->id]);
-                return redirect()->route('torobpay.initiate');
+//                $order = $cart->convertToOrder($orderParams);
+//                $transaction = Transaction::query()->create([
+//                    'order_id' => $order->id,
+//                    'amount' => $this->amount,  //به تومان
+//                    'status' => 'pending',
+//                    'payment_gateway' => 'torobpay',
+//                ]);
+
+                return redirect()->route('');
+
         }
     }
 
@@ -171,13 +157,41 @@ class Checkout extends Component
         });
 
 
-        if ($this->sum > 0) {
-            $this->shipping = config('shop.shipping');
-            $this->amount = $this->sum + $this->shipping;
-        } else {
-            $this->shipping = 0;
+        if ($this->sum <= 0) {
+            $this->shipping_price = 0;
             $this->amount = 0;
+            return;
         }
+
+
+        switch ($this->shipping_method) {
+            case 'post_cash':
+                $this->shipping_price = config('shop.post_price');
+                break;
+            case 'tipax_cash':
+                $this->shipping_price = config('shop.tipax_price');
+                break;
+            default:
+                $this->shipping_price = 0;
+                break;
+        }
+
+        $this->amount = $this->sum + $this->shipping_price;
+    }
+
+    private function getOrderParams(): array
+    {
+        return [
+            'province_id' => $this->selectedAddress->province->id,
+            'city_id' => $this->selectedAddress->city->id,
+            'recipient_name' => $this->selectedAddress->recipient_name,
+            'recipient_mobile' => $this->selectedAddress->recipient_mobile,
+            'postal_address' => $this->selectedAddress->postal_address,
+            'zipcode' => $this->selectedAddress->zipcode,
+            'description' => $this->description,
+            'shipping_method' => $this->shipping_method,
+            'shipping_price' => $this->shipping_price
+        ];
     }
 
     public function render()

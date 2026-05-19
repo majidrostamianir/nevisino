@@ -6,7 +6,7 @@
          x-show="showPopup"
          x-transition.opacity.duration.200ms
          @click="showPopup = false">
-        <div class="bg-white rounded-2xl shadow-lg w-10/12 sm:w-1/3 px-4"
+        <div class="bg-white rounded-2xl shadow-lg w-10/12 lg:w-1/3 px-4"
              @click.stop>
             <div class="flex justify-between border-b-2  border-b-pars-400 py-4">
                 <strong class="text-lg font-semibold">آدرس های شما</strong>
@@ -45,9 +45,9 @@
             </div>
         </div>
     </div>
-    <div class="sm:flex ">
+    <div class="lg:flex ">
         @if($selectedAddress)
-            <div class="w-full sm:w-2/3 p-4 bg-pars-100 shadow rounded-2xl">
+            <div class="w-full lg:w-1/3 p-4 bg-pars-100 shadow rounded-2xl">
                 <div class="w-full rounded border border-pars-400 shadow">
                     <div class="flex w-full p-2 cursor-pointer" @click="showPopup = true">
                         <img class="w-12" src="{{ asset('images/post.png') }}" alt="">
@@ -85,7 +85,7 @@
                 </div>
             </div>
         @else
-            <div class="w-full sm:w-2/3 p-4 bg-pars-100 shadow rounded-2xl">
+            <div class="w-full lg:w-1/3 p-4 bg-pars-100 shadow rounded-2xl">
                 <strong>مشخصات و آدرس دریافت کننده :</strong>
                 <div class="mt-4">
                     <label class="mr-4 text-sm">نام و نام خانوادگی: <strong class="text-red-500">*</strong></label>
@@ -156,37 +156,121 @@
                         class="text-red-500 text-xs">{{ english_to_persian_num($message) }}</p> @enderror
                 </div>
             </div>
-        
         @endif
+        <div class="lg:sticky top-20 w-full h-fit lg:w-1/3 bg-pars-100 shadow rounded-2xl mt-2 lg:mt-0 lg:mr-2 p-4"
+             x-data="{
+        shipping_method: @entangle('shipping_method').live ?? 'post_cod'
+    }"
+             x-cloak>
         
-        <div class="sticky top-20 w-full h-fit sm:w-1/3 bg-pars-100 shadow rounded-2xl mt-2 sm:mt-0 sm:mr-2 p-4">
-            <div class="w-full mb-4 flex justify-between">
-                <div class=""><strong>جمع مبلغ سفارش</strong></div>
-                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class=" text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
-            </div>
-            <div class="w-full mb-4 flex justify-between">
-                <div class=""><strong>حمل و نقل:</strong></div>
-                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class="text-left"><span>{{ english_to_persian_num(number_format( $shipping)) }} تومان</span></div>
-            </div>
-            <div class="w-full mb-4 flex justify-between">
-                <div class=""><strong>روش ارسال</strong></div>
-                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class=" text-left">پست پیشتاز</div>
-            </div>
-            <div class="w-full mb-4 flex justify-between">
-                <div class=""><strong>زمان ارسال</strong></div>
-                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class=text-left">
-                    <span>هر روز ساعت ۱۰ صبح<span class="text-xs">(روزهای کاری)</span></span>
+        <div class="w-full mb-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <strong>انتخاب روش ارسال</strong>
+                    <livewire:components.tooltip text="در روش پس‌کرایه، هزینه ارسال را درب منزل به پستچی پرداخت می‌کنید. اما در روش پیش‌کرایه، مبلغ هزینه ارسال را به همراه مبلغ کالاها به سایت پرداخت می‌کنید و دیگر در زمان تحویل گرفتن، هیچگونه مبلغی پرداخت نمی‌کنید. (روش پس‌کرایه از روش پیش‌کرایه ارزان‌تر است)"
+                                                 position="bottom"/>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <label
+                        class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                        :class="shipping_method === 'post_cod' ? 'border-pars-500 shadow-md' : 'border-gray-300'">
+                        
+                        <input type="radio" value="post_cod" x-model="shipping_method" class="hidden"
+                               wire:click="updateShippingMethod('post_cod')">
+                        <div class="flex items-center">
+                    <span
+                        class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                        :class="shipping_method === 'post_cod' ? 'border-pars-500' : 'border-gray-400'">
+                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                              x-show="shipping_method === 'post_cod'"></span>
+                    </span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium">پست پیشتاز - پس‌کرایه</span>
+                                    <span class="text-xs text-green-400 font-bold">(پیشنهاد ما)</span>
+                                </div>
+                                <div class="text-xs text-gray-500">زمان تحویل: ۲ تا ۵ روز</div>
+                            </div>
+                        </div>
+                    </label>
+                    <label
+                        class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                        :class="shipping_method === 'post_cash' ? 'border-pars-500 shadow-md' : 'border-gray-300'">
+                        
+                        <input type="radio" value="post_cash" x-model="shipping_method" class="hidden"
+                               wire:click="updateShippingMethod('post_cash')">
+                        
+                        <div class="flex items-center">
+                    <span
+                        class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                        :class="shipping_method === 'post_cash' ? 'border-pars-500' : 'border-gray-400'">
+                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                              x-show="shipping_method === 'post_cash'"></span>
+                    </span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium">پست پیشتاز - پیش‌کرایه</span>
+                                </div>
+                                <div class="text-xs text-gray-500">زمان تحویل: ۲ تا ۵ روز</div>
+                            </div>
+                        </div>
+                        <div
+                            class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(config('shop.post_price'))) }}
+                            تومان
+                        </div>
+                    </label>
+                    <label
+                        class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                        :class="shipping_method === 'tipax_cod' ? 'border-pars-500 shadow-md' : 'border-gray-300'">
+                        
+                        <input type="radio" value="tipax_cod" x-model="shipping_method" class="hidden"
+                               wire:click="updateShippingMethod('tipax_cod')">
+                        
+                        <div class="flex items-center">
+                    <span
+                        class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                        :class="shipping_method === 'tipax_cod' ? 'border-pars-500' : 'border-gray-400'">
+                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                              x-show="shipping_method === 'tipax_cod'"></span>
+                    </span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium">تیپاکس - پس‌کرایه</span>
+                                </div>
+                                <div class="text-xs text-gray-500">زمان تحویل: ۱ تا ۳ روز</div>
+                            </div>
+                        </div>
+                    </label>
+                    <label
+                        class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                        :class="shipping_method === 'tipax_cash' ? 'border-pars-500 shadow-md' : 'border-gray-300'">
+                        
+                        <input type="radio" value="tipax_cash" x-model="shipping_method" class="hidden"
+                               wire:click="updateShippingMethod('tipax_cash')">
+                        
+                        <div class="flex items-center">
+                    <span
+                        class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
+                        :class="shipping_method === 'tipax_cash' ? 'border-pars-500' : 'border-gray-400'">
+                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                              x-show="shipping_method === 'tipax_cash'"></span>
+                    </span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium">تیپاکس - پیش‌کرایه</span>
+                                </div>
+                                <div class="text-xs text-gray-500">زمان تحویل: ۱ تا ۳ روز</div>
+                            </div>
+                        </div>
+                        <div
+                            class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(config('shop.tipax_price') )) }}
+                            تومان
+                        </div>
+                    </label>
                 </div>
             </div>
-            <div class="w-full mb-16 flex justify-between">
-                <div class=""><strong>زمان رسیدن به مقصد</strong></div>
-                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class="text-left">{{ english_to_persian_num('بین 3 تا 5 روز') }}</div>
-            </div>
+        </div>
+        <div class="lg:sticky top-20 w-full h-fit lg:w-1/3 bg-pars-100 shadow rounded-2xl mt-2 lg:mt-0 lg:mr-2 p-4">
+            
             
             <div class="w-full mb-4 flex justify-between">
                 <div class=""><strong>مبلغ قابل پرداخت:</strong></div>
@@ -221,7 +305,7 @@
                     </span>
                         <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                     </label>
-                    @if($isTorobpayEligible)
+                    @if($torobEligible)
                         <label
                             class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
                             :class="payment_method === 'torobpay'
@@ -238,13 +322,14 @@
                                       x-show="payment_method === 'torobpay'"></span>
                             </span>
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
-                                    <span class="text-xs text-gray-500">۴ قسط {{ english_to_persian_num(number_format($amount/4)) }} تومانی</span>
+                                    <span class="text-sm font-medium">{{ $torobpayTitle }}</span>
+                                    <span class="text-xs text-gray-500">{{ $torobpayDescription }}</span>
                                 </div>
                             </div>
                             
                             <div class="flex flex-col items-center mr-2">
-                                <img class="w-16 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                <img class="w-16 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}"
+                                     alt="ترب پی">
                                 <span class="text-xs text-gray-600 mt-1">بدون چک و ضامن</span>
                             </div>
                         </label>
@@ -266,12 +351,14 @@
                             </span>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
-                                    <span class="text-xs text-gray-500">برای سفارش های با مبالغ بالاتر از ۲۰۰,۰۰۰ تومان<span>
+                                    <span
+                                        class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان<span>
                                 </div>
                             </div>
                             
                             <div class="flex flex-col items-center mr-2">
-                                <img class="w-16 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                <img class="w-16 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}"
+                                     alt="ترب پی">
                                 <span class="text-xs text-gray-600 mt-1">بدون چک و ضامن</span>
                             </div>
                         </label>
@@ -331,7 +418,7 @@
                             </div>
                         </div>
                     </div>
-                   
+                
                 </div>
             </div>
             <div class="w-full"

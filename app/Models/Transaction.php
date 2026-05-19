@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $fillable = ['order_id', 'status', 'amount', 'payment_gateway', 'authority'];
-    protected $casts = [
-        'meta' => 'array',
+    protected $fillable = [
+        'order_id',
+        'status',
+        'amount',
+        'payment_gateway',
+        'authority',
     ];
 
     public function order()

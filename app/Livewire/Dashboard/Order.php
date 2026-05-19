@@ -24,18 +24,6 @@ class Order extends Component
         }
     }
 
-//    public function check()
-//    {
-//
-//        try {
-//            $receipt = Payment::amount(1000)->transactionId(4252488982)->verify();
-//            $this->receipt = $receipt->getReferenceId();
-//
-//        } catch (InvalidPaymentException $exception) {
-//
-//            $this->receipt = $exception->getMessage();
-//        }
-//    }
     public function mount()
     {
         $this->user = Auth::user();

@@ -19,9 +19,19 @@ class Cart extends Model
         return $this->hasMany(CartItem::class);
     }
 
-    public function convertToOrder($province_id, $city_id, $recipient_name, $recipient_mobile, $postal_address, $zipcode, $description = null)
+    public function convertToOrder(array $orderData)
     {
-        return DB::transaction(function () use ($city_id, $province_id, $zipcode, $postal_address, $recipient_mobile, $recipient_name, $description) {
+        return DB::transaction(function () use ($orderData) {
+
+            $province_id = $orderData['province_id'];
+            $city_id = $orderData['city_id'];
+            $recipient_name = $orderData['recipient_name'];
+            $recipient_mobile = $orderData['recipient_mobile'];
+            $postal_address = $orderData['postal_address'];
+            $zipcode = $orderData['zipcode'];
+            $description = $orderData['description'] ?? null;
+            $shipping_method = $orderData['shipping_method'] ?? 'post_cod';
+            $shipping_price = $orderData['shipping_price'] ?? 0;
 
             $totalPrice = $this->items->sum(function ($item) {
                 return ($item->product->discounted_price ?? $item->product->price) * $item->quantity;
@@ -37,8 +47,9 @@ class Cart extends Model
                 'order_number' => $newOrderNumber,
                 'status' => 'pending',
                 'total_price' => $totalPrice,
-                'shipping_price' => config('shop.shipping'),
-                'amount' => $totalPrice + config('shop.shipping'),
+                'shipping_method' => $shipping_method,
+                'shipping_price' => $shipping_price,
+                'amount' => $totalPrice + $shipping_price,
                 'recipient_name' => $recipient_name,
                 'recipient_mobile' => $recipient_mobile,
                 'postal_address' => $postal_address,
