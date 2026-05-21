@@ -185,10 +185,10 @@
                     </span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium">پست پیشتاز - پس‌کرایه</span>
+                                    <span class="text-sm font-medium">{{ \App\Enums\ShippingMethodEnum::POST_COD->label() }}</span>
                                     <span class="text-xs text-green-400 font-bold">(پیشنهاد ما)</span>
                                 </div>
-                                <div class="text-xs text-gray-500">زمان تحویل: ۲ تا ۵ روز</div>
+                                <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_COD->description() }}</div>
                             </div>
                         </div>
                     </label>
@@ -208,9 +208,9 @@
                     </span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium">پست پیشتاز - پیش‌کرایه</span>
+                                    <span class="text-sm font-medium">{{ \App\Enums\ShippingMethodEnum::POST_CASH->label() }}</span>
                                 </div>
-                                <div class="text-xs text-gray-500">زمان تحویل: ۲ تا ۵ روز</div>
+                                <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_CASH->description() }}</div>
                             </div>
                         </div>
                         <div
@@ -234,9 +234,9 @@
                     </span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium">تیپاکس - پس‌کرایه</span>
+                                    <span class="text-sm font-medium">{{ \App\Enums\ShippingMethodEnum::TIPAX_COD->label() }}</span>
                                 </div>
-                                <div class="text-xs text-gray-500">زمان تحویل: ۱ تا ۳ روز</div>
+                                <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_COD->description() }}</div>
                             </div>
                         </div>
                     </label>
@@ -256,9 +256,9 @@
                     </span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium">تیپاکس - پیش‌کرایه</span>
+                                    <span class="text-sm font-medium">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->label() }}</span>
                                 </div>
-                                <div class="text-xs text-gray-500">زمان تحویل: ۱ تا ۳ روز</div>
+                                <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->description() }}</div>
                             </div>
                         </div>
                         <div
@@ -305,7 +305,7 @@
                     </span>
                         <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                     </label>
-                    @if($torobEligible)
+                    @if($torobpayEligible)
                         <label
                             class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-300"
                             :class="payment_method === 'torobpay'

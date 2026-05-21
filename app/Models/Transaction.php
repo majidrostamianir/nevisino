@@ -12,6 +12,9 @@ class Transaction extends Model
         'amount',
         'payment_gateway',
         'authority',
+        'payment_token',
+        'torobpay_transaction_id',
+        'torobpay_status',
     ];
 
     public function order()

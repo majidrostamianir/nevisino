@@ -75,10 +75,12 @@ class TorobpayService
      */
     private function authHeaders(): array
     {
-        return [
-            'Authorization' => 'Bearer ' . $this->getToken(),
-            'Content-Type'  => 'application/json',
-        ];
+        try {
+            return ['Authorization' => 'Bearer ' . $this->getToken(), 'Content-Type' => 'application/json'];
+        } catch (\Exception $e) {
+            Cache::forget(self::CACHE_KEY); // پاک کن و دوباره بگیر
+            return ['Authorization' => 'Bearer ' . $this->fetchNewToken(), 'Content-Type' => 'application/json'];
+        }
     }
 
     // ─────────────────────────────────────────────
@@ -87,11 +89,12 @@ class TorobpayService
 
     /**
      * قبل از نمایش درگاه ترب‌پی در checkout، این متد رو صدا بزن
-     * مبلغ به ریال
+     * مبلغ به تومان وارد میشه، داخل سرویس به ریال تبدیل میشه
+     *
+     * @return array{eligible: bool, message_title: string, description: string}
      */
-    public function checkEligible(int $amountInToman): bool
+    public function checkEligible(int $amountInToman): array
     {
-        // مبلغ باید به ریال ارسال بشه
         $amountInRial = $amountInToman * 10;
 
         try {
@@ -101,14 +104,18 @@ class TorobpayService
                 ]);
 
             if (!$response->successful()) {
-                return false;
+                return ['eligible' => false, 'message_title' => '', 'description' => ''];
             }
 
-            return $response->json('response.eligible') === true;
+            return [
+                'eligible'      => $response->json('response.eligible') === true,
+                'message_title' => $response->json('response.message_title') ?? 'پرداخت اقساطی با ترب پی',
+                'description'   => $response->json('response.description') ?? '',
+            ];
 
         } catch (\Exception $e) {
             Log::error('TorobPay: eligible check failed', ['error' => $e->getMessage()]);
-            return false;
+            return ['eligible' => false, 'message_title' => '', 'description' => ''];
         }
     }
 
@@ -129,7 +136,6 @@ class TorobpayService
 
         // تبدیل تومان به ریال
         $amountInRial = $transaction->amount * 10;
-
         $payload = [
             'amount'                    => $amountInRial,
             'paymentMethodTypeDto'      => 'ONLINE_CREDIT',
@@ -140,7 +146,7 @@ class TorobpayService
             'name_full_customer'        => $order->recipient_name,
             'city'                      => $order->city,
             'province'                  => $order->province,
-            'number_phone_registration' => $order->recipient_mobile,
+            'number_phone_registration' => $order->user->mobile,
             'mobile'                    => $order->recipient_mobile,
             'cartList'                  => $this->buildCartList($transaction, $orderData),
         ];
@@ -315,14 +321,14 @@ class TorobpayService
 
     private function buildCartList(Transaction $transaction, array $orderData): array
     {
-        $order     = $transaction->order->load('items.product');
+        $order     = $transaction->order()->with('items.product')->first();
         $cartItems = $order->items->map(function ($item) {
             return [
                 'id'             => (string) $item->product_id,
                 'name'           => $item->product->title,
                 'count'          => $item->quantity,
-                'amount'         => $item->price * 10, // تومان به ریال
-                'category'       => $item->product->category?->name ?? 'general',
+                'amount'         => $item->price_snapshot * 10, // تومان به ریال
+                'category'       => $item->product->category?->title ?? 'general',
                 'commissionType' => 0,
             ];
         })->toArray();

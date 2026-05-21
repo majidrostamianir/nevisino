@@ -2,20 +2,19 @@
 
 namespace App\Livewire\Payment;
 
-
 use App\Models\Address;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\TorobpayService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Shetabit\Multipay\Invoice;
 use Shetabit\Payment\Facade\Payment;
 
 class Checkout extends Component
 {
-
-
     public string $payment_method = 'gateway';
     public User $user;
     public Address|null $selectedAddress = null;
@@ -27,6 +26,11 @@ class Checkout extends Component
     public $showPopup = false;
     public string $shipping_method = 'post_cod';
 
+    // ترب‌پی
+    public bool $torobpayEligible = false;
+    public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
+    public string $torobpayDescription = '';
+
     public function mount()
     {
         $this->user = Auth::user();
@@ -35,12 +39,38 @@ class Checkout extends Component
         $this->calculateAmount();
         $this->shipping_method = 'post_cod';
         $this->shipping_price = 0;
+        $this->checkTorobpayEligibility();
+    }
+
+    // ─────────────────────────────────────────────
+    //  بررسی صلاحیت ترب‌پی
+    // ─────────────────────────────────────────────
+
+    private function checkTorobpayEligibility(): void
+    {
+        if ($this->amount <= 0) {
+            $this->torobpayEligible = false;
+            return;
+        }
+        try {
+            $service = app(TorobpayService::class);
+            $result = $service->checkEligible($this->amount);
+            $this->torobpayEligible = $result['eligible'];
+
+            if ($result['eligible']) {
+                $this->torobpayTitle = $result['message_title'] ?? 'پرداخت اقساطی با ترب پی';
+                $this->torobpayDescription = $result['description'] ?? '';
+            }
+        } catch (\Exception $e) {
+            $this->torobpayEligible = false;
+        }
     }
 
     public function updateShippingMethod($method)
     {
         $this->shipping_method = $method;
         $this->calculateAmount();
+        $this->checkTorobpayEligibility();
     }
 
     public function selectAddress($value)
@@ -55,7 +85,6 @@ class Checkout extends Component
         $this->selectedAddress = null;
         $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
     }
-
 
     protected $rules = [
         'recipient_name' => 'required|min:3|string',
@@ -125,17 +154,35 @@ class Checkout extends Component
                     'authority' => '5022291533610273',
                 ]);
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
+
             case 'torobpay':
-//                $order = $cart->convertToOrder($orderParams);
-//                $transaction = Transaction::query()->create([
-//                    'order_id' => $order->id,
-//                    'amount' => $this->amount,  //به تومان
-//                    'status' => 'pending',
-//                    'payment_gateway' => 'torobpay',
-//                ]);
+                // اگر کاربر به هر طریقی گزینه غیرفعال رو bypass کرد
+                if (!$this->torobpayEligible) {
+                    abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
+                }
 
-                return redirect()->route('');
+                $order = $cart->convertToOrder($orderParams);
 
+                $transaction = Transaction::query()->create([
+                    'order_id' => $order->id,
+                    'amount' => $this->amount,
+                    'status' => 'pending',
+                    'payment_gateway' => 'torobpay',
+                    'authority' => '',
+                ]);
+
+                try {
+                    $result = app(TorobpayService::class)->createPaymentToken($transaction, $orderParams);
+                    $transaction->update(['payment_token' => $result['paymentToken']]);
+
+                    return redirect()->away($result['paymentPageUrl']);
+
+                } catch (\Exception $e) {
+                    // اگر توکن گرفته نشد، تراکنش رو failed میکنیم
+                    $transaction->update(['status' => 'failed']);
+                    Log::error($e->getMessage());
+                    abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
+                }
         }
     }
 
@@ -144,7 +191,6 @@ class Checkout extends Component
         $this->cities = \App\Models\City::where('province_id', $provinceId)->get();
         $this->city_id = null;
     }
-
 
     public function calculateAmount()
     {
@@ -156,13 +202,11 @@ class Checkout extends Component
             return $price * $item->quantity;
         });
 
-
         if ($this->sum <= 0) {
             $this->shipping_price = 0;
             $this->amount = 0;
             return;
         }
-
 
         switch ($this->shipping_method) {
             case 'post_cash':
@@ -190,7 +234,7 @@ class Checkout extends Component
             'zipcode' => $this->selectedAddress->zipcode,
             'description' => $this->description,
             'shipping_method' => $this->shipping_method,
-            'shipping_price' => $this->shipping_price
+            'shipping_price' => $this->shipping_price,
         ];
     }
 

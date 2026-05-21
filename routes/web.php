@@ -1,9 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-
-
 
 Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker::class , \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/', \App\Livewire\Home\Index::class)->name('home');
@@ -48,3 +44,13 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
     Route::get('/admin/attr',\App\Livewire\Admin\Product\Attr::class)->name('admin.product.attr');
 });
+
+
+//torobPay
+Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
+    ->name('torobpay.result')
+    ->middleware('auth');
+
+Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
+    ->name('torobpay.callback')
+    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر

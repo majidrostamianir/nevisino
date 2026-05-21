@@ -272,12 +272,6 @@
                         
                         </div>
                     </div>
-                    <div class="mt-8 flex gap-3">
-                            @if($order->isTorobpayOrder())
-                                <livewire:admin.component.torobpay-settle-button :order="$order" />
-                                <livewire:admin.component.torobpay-cancel-buttons :order="$order" />
-                            @endif
-                    </div>
                     <div class="mt-8">
                         <div class="mb-2">
                             <div class="text-gray-400">تراکنش ها</div>
@@ -313,19 +307,47 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
                                         </div>
-                                        @if($value->status !== "success")
-                                            <div>
-                                                <span class="mx-4  text-pars-400">&#9679;</span>
-                                                <button wire:click.prevent="verifyTransaction('{{$value->id}}')"
-                                                        class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
-                                                    چک کردن موجودی و تایید تراکنش و کاهش موجودی
-                                                </button>
-                                                
-                                                <button wire:click.prevent="failedTransaction('{{$value->id}}')"
-                                                        class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
-                                                    عدم تایید تراکنش
-                                                </button>
+                                        @if($value->payment_gateway === 'torobpay')
+                                            <div class="w-full mt-1 flex flex-wrap gap-2 items-center">
+        <span class="text-xs text-gray-500">
+            درگاه: ترب‌پی
+        </span>
+                                                @if($value->torobpay_status)
+                                                    <span class="text-xs px-2 py-0.5 rounded-full
+                {{ in_array($value->torobpay_status, ['ONGOING','PAID','UPDATED']) ? 'bg-green-100 text-green-700' : '' }}
+                {{ in_array($value->torobpay_status, ['NEW','IPG','W_FOR_VERIFY']) ? 'bg-yellow-100 text-yellow-700' : '' }}
+                {{ $value->torobpay_status === 'W_FOR_SETTLE' ? 'bg-blue-100 text-blue-700' : '' }}
+                {{ in_array($value->torobpay_status, ['FAILED','CANCELLED']) ? 'bg-red-100 text-red-700' : '' }}
+            ">
+                {{ \App\Enums\TorobpayStatusEnum::from($value->torobpay_status)->toSimpleStatus() }}
+            </span>
+                                                @endif
+                                                @if($value->status === 'success' && in_array($value->torobpay_status, ['W_FOR_VERIFY','W_FOR_SETTLE','ONGOING','PAID','UPDATED']))
+                                                    <button wire:click.prevent="cancelTorobpayOrder('{{ $order->id }}')"
+                                                            wire:confirm="آیا مطمئن هستید؟ پول کاربر عودت داده می‌شود."
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
+                                                        کنسل سفارش و عودت وجه
+                                                    </button>
+                                                    <button wire:click.prevent="checkTorobpayStatus('{{ $value->id }}')"
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-blue-400 text-white text-sm">
+                                                        بررسی وضعیت از ترب‌پی
+                                                    </button>
+                                                @endif
                                             </div>
+                                        @else
+                                            @if($value->status !== 'success')
+                                                <div>
+                                                    <span class="mx-4 text-pars-400">&#9679;</span>
+                                                    <button wire:click.prevent="verifyTransaction('{{ $value->id }}')"
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
+                                                        چک کردن موجودی و تایید تراکنش و کاهش موجودی
+                                                    </button>
+                                                    <button wire:click.prevent="failedTransaction('{{ $value->id }}')"
+                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
+                                                        عدم تایید تراکنش
+                                                    </button>
+                                                </div>
+                                            @endif
                                         @endif
                                     </div>
                                 @endforeach

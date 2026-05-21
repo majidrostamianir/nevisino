@@ -89,11 +89,11 @@ class Order extends Component
         foreach ($order->items as $item) {
             if ($item->variant_id && $item->variant) {
                 if ($item->variant->stock < $item->quantity) {
-                    abort('403' , 'موجودی ' . Product::query()->find($item->product_id)->title . '-' . ProductVariant::query()->find($item->variant_id)->title . ' کمتر از این سفارش است.');
+                    abort('403', 'موجودی ' . Product::query()->find($item->product_id)->title . '-' . ProductVariant::query()->find($item->variant_id)->title . ' کمتر از این سفارش است.');
                 }
-            }else{
-                if(Product::query()->find($item->product_id)->stock < $item->quantity){
-                    abort('403' ,'موجودی ' . Product::query()->find($item->product_id)->title . ' کمتر از این سفارش است.');
+            } else {
+                if (Product::query()->find($item->product_id)->stock < $item->quantity) {
+                    abort('403', 'موجودی ' . Product::query()->find($item->product_id)->title . ' کمتر از این سفارش است.');
                 }
             }
         }
@@ -135,6 +135,65 @@ class Order extends Component
         }
     }
 
+    public function cancelTorobpayOrder($orderId)
+    {
+        $order = \App\Models\Order::query()->findOrFail($orderId);
+
+        $transaction = $order->transactions()
+            ->where('payment_gateway', 'torobpay')
+            ->where('status', 'success')
+            ->first();
+
+        if (!$transaction) {
+            $this->dispatch('showNotification', message: 'تراکنش ترب‌پی معتبری یافت نشد');
+            return;
+        }
+
+        try {
+            app(\App\Services\TorobpayService::class)->cancel($transaction->payment_token);
+
+            $transaction->update([
+                'status' => 'failed',
+                'torobpay_status' => \App\Enums\TorobpayStatusEnum::CANCELLED->value,
+            ]);
+
+            $order->update([
+                'status' => 'canceled',
+                'shipping_status' => 'pending',
+            ]);
+
+            // برگردوندن موجودی
+            foreach ($order->items as $item) {
+                if ($item->variant_id && $item->variant) {
+                    $item->variant->increment('stock', $item->quantity);
+                } else {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
+
+            $this->dispatch('showNotification', message: 'سفارش با موفقیت کنسل شد و موجودی برگشت');
+
+        } catch (\Exception $e) {
+            $this->dispatch('showNotification', message: 'خطا در کنسل کردن: ' . $e->getMessage());
+        }
+    }
+    public function checkTorobpayStatus($transactionId)
+    {
+        $transaction = Transaction::query()->findOrFail($transactionId);
+
+        try {
+            $result = app(\App\Services\TorobpayService::class)->getStatus($transaction->payment_token);
+
+            $this->dispatch('showNotification', message:
+                'وضعیت ترب‌پی: ' . $result['status'] .
+                ' | مبلغ: ' . number_format($result['amount'] / 10) . ' تومان' .
+                ' | شناسه: ' . $result['transactionId']
+            );
+
+        } catch (\Exception $e) {
+            $this->dispatch('showNotification', message: 'خطا: ' . $e->getMessage());
+        }
+    }
     public function render()
     {
         $orders = $this->user->orders()->latest()->get();
