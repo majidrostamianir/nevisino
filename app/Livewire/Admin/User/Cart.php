@@ -10,8 +10,6 @@ class Cart extends Component
 {
     public array|null $cart = [];
     public int $sum = 0;
-    public int $shipping = 0;
-    public int $total = 0;
 
     public User $user ;
     public Collection $orders;
@@ -55,14 +53,6 @@ class Cart extends Component
                 return $price * $item->quantity;
             });
 
-
-        if ($this->sum > 0) {
-            $this->shipping = config('shop.shipping');
-            $this->total = $this->sum + $this->shipping;
-        } else {
-            $this->shipping = 0;
-            $this->total = 0;
-        }
     }
 
     public function render()

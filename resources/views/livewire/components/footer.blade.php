@@ -29,14 +29,14 @@
                 <a href="tel:+989169889759" target="_blank"
                    class="flex items-center gap-2 text-sm hover:text-pars-600 transition-colors">
                     <img src="{{ asset('images/call.png') }}" class="w-5 h-5" alt="تماس با پشتیبان">
-                    <span>۰۹۱۶۹۲۱۵۳۰۰</span>
+                    <span>۰۹۱۶۹۸۸۹۷۵۹</span>
                 </a>
             </div>
             <div class="flex flex-col gap-3">
                 <span class="font-bold text-pars-700 mb-1">محصولات پرفروش</span>
                 <a href="{{ route('category-page',['dashed' => 'دفتر-مشق']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">دفتر مشق</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-اتودی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی اتودی</a>
-                <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-فلزی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی فلزی</a>
+                <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-جعبه-فلزی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی جعبه فلزی</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-آریا-آرتیست']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی آریا آرتیست</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-50-رنگ']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی ۵۰ رنگ</a>
             </div>

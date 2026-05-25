@@ -88,22 +88,6 @@
             <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
             <div class=" text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
         </div>
-        <div class="w-full mb-4 flex justify-between">
-            <div class=""><strong>روش ارسال</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class=" text-left">پست پیشتاز</div>
-        </div>
-        <div class="w-full mb-4 flex justify-between">
-            <div class=""><strong>زمان ارسال</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class=text-left">
-                <span>هر روز ساعت ۱۰ صبح<span class="text-xs">(روزهای کاری)</span></span>
-            </div>
-        </div>
-        <div class="w-full mb-16 flex justify-between">
-            <div class=""><strong>زمان رسیدن به مقصد</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class="text-left">{{ english_to_persian_num('بین 3 تا 5 روز') }}</div>
-        </div>
+       
     </div>
 </div>

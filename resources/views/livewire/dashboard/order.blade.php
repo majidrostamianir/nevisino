@@ -401,7 +401,7 @@
                                 </div>
                                 <div class="lg:w-36 lg:self-center"
                                      x-data="{ payment_method: @entangle('payment_method').live }">
-                                    <button wire:click.prevent="pay" wire:target="pay"
+                                    <button wire:click.prevent="pay('{{ $order->id }}')" wire:target="pay"
                                             class="w-full h-10   cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl flex items-center justify-center transition-all duration-300">
                                             <span wire:loading.remove wire:target="pay">
                                                 <span  class="text-sm"
