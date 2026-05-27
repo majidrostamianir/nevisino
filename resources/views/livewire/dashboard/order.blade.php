@@ -68,14 +68,13 @@
                         <span class="mx-4  text-pars-400">&#9679;</span>
                         <span>جمع کل سفارش: {{ english_to_persian_num(number_format($order->total_price)) }} تومان</span>
                         <span class="mx-4  text-pars-400">&#9679;</span>
-                        <span>روش ارسال: {{ $order->shipping_method->label() }}</span>
-                        {{--@if($order->shipping_method->isCashOnDelivery())
-                            <span class="mx-4  text-pars-400">&#9679;</span>
+                        <span>ارسال: {{ $order->shipping_method->label() }}</span>
+                        @if($order->shipping_method->isCashOnDelivery())
+                            <span class="mx-1  text-pars-400"></span>
                             <span>
-                            هزینه ارسال:
                                 {{ english_to_persian_num(number_format($order->shipping_price)) }} تومان
                         </span>
-                        @endif--}}
+                        @endif
                     </div>
                 </div>
                 
@@ -242,7 +241,8 @@
                                         class="flex lg:flex-1 items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-300 cursor-not-allowed h-14 opacity-60">
                                         <input type="radio" disabled value="torobpay" class="hidden">
                                         <div class="flex items-center">
-                                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 border-gray-400 ml-3"></span>
+                                            <span
+                                                class="w-5 h-5 flex items-center justify-center rounded-full border-2 border-gray-400 ml-3"></span>
                                             <div class="flex flex-col">
                                                 <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
                                                 <span class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان</span>
@@ -264,7 +264,8 @@
                     <span wire:loading.remove wire:target="pay({{ $order->id }})">
                         <span class="text-sm" x-text="payment_method === 'card' ? 'ثبت واریزی' : 'پرداخت مجدد'"></span>
                     </span>
-                                        <span wire:loading wire:target="pay({{ $order->id }})" class="flex items-center justify-center">
+                                        <span wire:loading wire:target="pay({{ $order->id }})"
+                                              class="flex items-center justify-center">
                         <svg class="w-6 h-6 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                              viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
@@ -319,8 +320,9 @@
                                         <span
                                             class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
                                             :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
-                                                  x-show="payment_method === 'torobpay'"></span>
+                                            <span
+                                                class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-300"
+                                                x-show="payment_method === 'torobpay'"></span>
                                         </span>
                                             <div class="flex flex-col">
                                                 <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
@@ -360,7 +362,8 @@
                                         <span
                                             class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-300"
                                             :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-400'">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500" x-show="payment_method === 'card'"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
+                                                  x-show="payment_method === 'card'"></span>
                                         </span>
                                         <span class="text-sm">پرداخت از طریق کارت به کارت</span>
                                     </label>
@@ -404,8 +407,8 @@
                                     <button wire:click.prevent="pay('{{ $order->id }}')" wire:target="pay"
                                             class="w-full h-10   cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl flex items-center justify-center transition-all duration-300">
                                             <span wire:loading.remove wire:target="pay">
-                                                <span  class="text-sm"
-                                                    x-text="payment_method === 'card' ? 'ثبت واریزی' : 'پرداخت مجدد'"></span>
+                                                <span class="text-sm"
+                                                      x-text="payment_method === 'card' ? 'ثبت واریزی' : 'پرداخت مجدد'"></span>
                                             </span>
                                         <span wire:loading wire:target="pay" class="flex items-center justify-center">
                                                 <svg class="w-6 h-6 animate-spin text-white"
@@ -457,8 +460,15 @@
                                             <div>
                                                 @if($value->payment_gateway == 'card')
                                                     <span class="mx-4  text-pars-400">&#9679;</span>
-                                                    <span>ارسال شده به کارت: {{ english_to_persian_num($value->authority) }}</span>
+                                                    <span>روش پرداخت: کارت به کارت</span>
+                                                    <span class="mx-4  text-pars-400">&#9679;</span>
+                                                    <span>واریز شده به کارت : {{ english_to_persian_num($value->authority) }}</span>
+                                                @elseif($value->payment_gateway == 'torobpay')
+                                                    <span class="mx-4  text-pars-400">&#9679;</span>
+                                                    <span>روش پرداخت: اقساط ترب‌پی</span>
                                                 @else
+                                                    <span class="mx-4  text-pars-400">&#9679;</span>
+                                                    <span>روش پرداخت: درگاه بانکی</span>
                                                     <span class="mx-4  text-pars-400">&#9679;</span>
                                                     <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
                                                 @endif

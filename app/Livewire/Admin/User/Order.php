@@ -128,7 +128,7 @@ class Order extends Component
             $transaction->status = 'failed';
             $transaction->save();
 
-            $this->dispatch('showNotification', message: 'تراکنش تایید نشد');
+            $this->dispatch('showNotification', message: 'تراکنش به تایید نشده تبدیل شد');
 
         } else {
             $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید یا لغو هستند');

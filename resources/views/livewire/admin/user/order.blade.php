@@ -64,7 +64,13 @@
                         <span class="mx-4  text-pars-400">&#9679;</span>
                         <span>جمع کل سفارش: {{ english_to_persian_num(number_format($order->total_price)) }} تومان</span>
                         <span class="mx-4  text-pars-400">&#9679;</span>
-                        <span>حمل و نقل: {{ english_to_persian_num(number_format($order->shipping_price)) }} تومان</span>
+                        <span>ارسال: {{ $order->shipping_method->label() }}</span>
+                        @if($order->shipping_method->isCashOnDelivery())
+                            <span class="mx-1  text-pars-400"></span>
+                            <span>
+                                {{ english_to_persian_num(number_format($order->shipping_price)) }} تومان
+                        </span>
+                        @endif
                     </div>
                 </div>
                 
@@ -278,6 +284,7 @@
                             <div class="p-2 border-pars-400 mb-8 rounded bg-pars-200">
                                 @foreach($order->transactions->sortByDesc('created_at') as $key => $value)
                                     <div class="pb-2 last:pb-0 flex flex-wrap items-center">
+                                        
                                         @switch($value->status)
                                             @case('pending')
                                                 <span><span
@@ -296,8 +303,31 @@
                                                 @break
                                         @endswitch
                                         <div>
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
+                                            @if($value->payment_gateway == 'card')
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>روش پرداخت: کارت به کارت</span>
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>واریز شده به کارت : {{ english_to_persian_num($value->authority) }}</span>
+                                            @elseif($value->payment_gateway == 'torobpay')
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>روش پرداخت: اقساط ترب‌پی</span>
+                                                @if($value->torobpay_status)
+                                                    <span class="mx-4  text-pars-400">&#9679;</span>
+                                                    <span class="
+                                                        {{ in_array($value->torobpay_status, ['ONGOING','PAID','UPDATED']) ? ' text-green-500' : '' }}
+                                                        {{ in_array($value->torobpay_status, ['NEW','IPG','W_FOR_VERIFY']) ? 'text-orange-500' : '' }}
+                                                        {{ $value->torobpay_status === 'W_FOR_SETTLE' ? ' text-blue-700' : '' }}
+                                                        {{ in_array($value->torobpay_status, ['FAILED','CANCELLED']) ? 'bg-red-100 text-red-500' : '' }}
+                                                    ">
+                                                        {{ \App\Enums\TorobpayStatusEnum::from($value->torobpay_status)->toSimpleStatus() }}
+                                                    </span>
+                                                @endif
+                                            @else
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>روش پرداخت: درگاه بانکی</span>
+                                                <span class="mx-4  text-pars-400">&#9679;</span>
+                                                <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
+                                            @endif
                                         </div>
                                         <div>
                                             <span class="mx-4  text-pars-400">&#9679;</span>
@@ -307,47 +337,18 @@
                                             <span class="mx-4  text-pars-400">&#9679;</span>
                                             <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
                                         </div>
-                                        @if($value->payment_gateway === 'torobpay')
-                                            <div class="w-full mt-1 flex flex-wrap gap-2 items-center">
-        <span class="text-xs text-gray-500">
-            درگاه: ترب‌پی
-        </span>
-                                                @if($value->torobpay_status)
-                                                    <span class="text-xs px-2 py-0.5 rounded-full
-                {{ in_array($value->torobpay_status, ['ONGOING','PAID','UPDATED']) ? 'bg-green-100 text-green-700' : '' }}
-                {{ in_array($value->torobpay_status, ['NEW','IPG','W_FOR_VERIFY']) ? 'bg-yellow-100 text-yellow-700' : '' }}
-                {{ $value->torobpay_status === 'W_FOR_SETTLE' ? 'bg-blue-100 text-blue-700' : '' }}
-                {{ in_array($value->torobpay_status, ['FAILED','CANCELLED']) ? 'bg-red-100 text-red-700' : '' }}
-            ">
-                {{ \App\Enums\TorobpayStatusEnum::from($value->torobpay_status)->toSimpleStatus() }}
-            </span>
-                                                @endif
-                                                @if($value->status === 'success' && in_array($value->torobpay_status, ['W_FOR_VERIFY','W_FOR_SETTLE','ONGOING','PAID','UPDATED']))
-                                                    <button wire:click.prevent="cancelTorobpayOrder('{{ $order->id }}')"
-                                                            wire:confirm="آیا مطمئن هستید؟ پول کاربر عودت داده می‌شود."
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
-                                                        کنسل سفارش و عودت وجه
-                                                    </button>
-                                                    <button wire:click.prevent="checkTorobpayStatus('{{ $value->id }}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-blue-400 text-white text-sm">
-                                                        بررسی وضعیت از ترب‌پی
-                                                    </button>
-                                                @endif
+                                        @if($value->status !== 'success')
+                                            <div>
+                                                <span class="mx-4 text-pars-400">&#9679;</span>
+                                                <button wire:click.prevent="verifyTransaction('{{ $value->id }}')"
+                                                        class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
+                                                    چک کردن موجودی و تایید تراکنش و کاهش موجودی
+                                                </button>
+                                                <button wire:click.prevent="failedTransaction('{{ $value->id }}')"
+                                                        class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
+                                                    عدم تایید تراکنش
+                                                </button>
                                             </div>
-                                        @else
-                                            @if($value->status !== 'success')
-                                                <div>
-                                                    <span class="mx-4 text-pars-400">&#9679;</span>
-                                                    <button wire:click.prevent="verifyTransaction('{{ $value->id }}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-green-400 text-white text-sm">
-                                                        چک کردن موجودی و تایید تراکنش و کاهش موجودی
-                                                    </button>
-                                                    <button wire:click.prevent="failedTransaction('{{ $value->id }}')"
-                                                            class="cursor-pointer rounded-2xl px-2 py-1 bg-red-400 text-white text-sm">
-                                                        عدم تایید تراکنش
-                                                    </button>
-                                                </div>
-                                            @endif
                                         @endif
                                     </div>
                                 @endforeach

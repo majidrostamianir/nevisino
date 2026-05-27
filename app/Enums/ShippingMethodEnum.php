@@ -25,11 +25,10 @@ enum ShippingMethodEnum: string
     public function description(): string
     {
         return match ($this) {
-            self::POST_CASH  ,  self::POST_COD => 'زمان تحویل: ۲ تا ۵ روز',
-            self::TIPAX_CASH  , self::TIPAX_COD => 'زمان تحویل: ۱ تا ۳ روز',
+            self::POST_CASH, self::POST_COD => 'زمان تحویل: ۲ تا ۵ روز',
+            self::TIPAX_CASH, self::TIPAX_COD => 'زمان تحویل: ۱ تا ۳ روز',
         };
     }
-
 
 
     /**
@@ -49,4 +48,17 @@ enum ShippingMethodEnum: string
             $case->value => $case->label()
         ])->toArray();
     }
+
+
+    /**
+     * بررسی اینکه روش ارسال به صورت پرداخت در محل (پیش‌کرایه) است یا خیر
+     */
+    public function isCashOnDelivery(): bool
+    {
+        return match ($this) {
+            self::POST_CASH, self::TIPAX_CASH => true,
+            default => false,
+        };
+    }
+
 }
