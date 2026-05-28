@@ -135,7 +135,7 @@ class Order extends Component
         }
     }
 
-    public function cancelTorobpayOrder($orderId)
+   /* public function cancelTorobpayOrder($orderId)
     {
         $order = \App\Models\Order::query()->findOrFail($orderId);
 
@@ -176,8 +176,8 @@ class Order extends Component
         } catch (\Exception $e) {
             $this->dispatch('showNotification', message: 'خطا در کنسل کردن: ' . $e->getMessage());
         }
-    }
-    public function checkTorobpayStatus($transactionId)
+    }*/
+    /*public function checkTorobpayStatus($transactionId)
     {
         $transaction = Transaction::query()->findOrFail($transactionId);
 
@@ -193,7 +193,7 @@ class Order extends Component
         } catch (\Exception $e) {
             $this->dispatch('showNotification', message: 'خطا: ' . $e->getMessage());
         }
-    }
+    }*/
     public function render()
     {
         $orders = $this->user->orders()->latest()->get();
