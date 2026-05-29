@@ -11,7 +11,6 @@ class Index extends Component
     public $ariaArtist , $cClass ,$daftarMashq,$medad,$edari ;
     public function mount()
     {
-
         $cClassIds = [122 , 123 , 124 , 125];
 
         $this->cClass = Product::with(['variants' => function($query) {

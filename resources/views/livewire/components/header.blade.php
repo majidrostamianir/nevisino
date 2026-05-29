@@ -75,10 +75,10 @@
                     <li>
                         <button type="button"
                                 @click="activeDropdown = (activeDropdown === {{ $key }} ? null : {{ $key }})"
-                                class="flex cursor-pointer items-center w-full p-2 text-base  transition duration-75 rounded-lg group hover:bg-pars-400 hover:text-pars-500 ">
+                                class="flex cursor-pointer items-center w-full p-2 text-base  transition duration-75 rounded-lg group hover:bg-pars-400 hover:text-gray-800 ">
                             <img src="{{ asset('images/icon/'.$key +1 .'.png') }}" width="30">
                             <span
-                                class="flex-1 ms-3 lg:hidden group-hover:block text-right rtl:text-right whitespace-nowrap">{{ $value->title }}</span>
+                                class="flex-1 ms-3 lg:hidden group-hover:block text-right rtl:text-right text-gray-800 whitespace-nowrap">{{ $value->title }}</span>
                             <svg class="w-3 h-3 ml-auto transition-transform duration-300"
                                  :class="activeDropdown === {{ $key }} ? 'rotate-180' : 'rotate-0'"
                                  fill="none" viewBox="0 0 10 6">
@@ -96,7 +96,7 @@
                                 <li>
                                     <a href="{{ route('category-page', ['dashed' => $value->dashed_url] ) }}"
                                        wire:navigate
-                                       class="flex items-center w-full p-2  transition duration-75 rounded-lg pl-11 group hover:bg-pars-400 hover:text-pars-500  text-xs text-nowrap">{{ $value->title }}</a>
+                                       class="flex items-center w-full p-2  transition duration-75 rounded-lg pl-11 group hover:bg-pars-400 hover:text-gray-800  text-xs text-nowrap">{{ $value->title }}</a>
                                 </li>
                             @endforeach
                         </ul>

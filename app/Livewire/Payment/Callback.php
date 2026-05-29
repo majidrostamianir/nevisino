@@ -58,12 +58,13 @@ class Callback extends Component
 
     public function sendVerifyOrderSms($order): void
     {
+        $link = 'https://nevisino.ir/dashboard/order?open=' . $order;
         $username = '09169889759';
         $password = 'Faraz@1920115072';
         $from = '3000505';
         $pattern_code = 'yhvz50h4nox3dq4';
         $to = array('98' . substr(\Auth::user()->mobile, 1));
-        $input_data = array('order' => $order);
+        $input_data = array('link' => $link);
 
         $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
             urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .

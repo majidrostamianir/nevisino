@@ -55,12 +55,12 @@ class Order extends Component
         $order->tracking_code = $this->trackingCodes[$orderId];
         $order->save();
         $this->sendTrackingSms($this->trackingCodes[$orderId]);
-        $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد');
+        $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد' , showCartButton: false);
     }
 
-    public function sendTrackingSms($tracking): void
+    public function sendTrackingSms($orderId): void
     {
-        $link = 'https://tracking.post.ir/?id=' . $tracking;
+        $link = 'https://nevisino.ir/dashboard/order?open=' . $orderId;
         $username = '09169889759';
         $password = 'Faraz@1920115072';
         $from = '3000505';
@@ -114,10 +114,10 @@ class Order extends Component
                     $item->product->decrement('stock', $item->quantity);
                 }
             }
-            $this->dispatch('showNotification', message: 'تراکنش تایید شد و موجودی اقلام سفارش کاهش یافت');
+            $this->dispatch('showNotification', message: 'تراکنش تایید شد و موجودی اقلام سفارش کاهش یافت' , showCartButton: false);
 
         } else {
-            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید هستند');
+            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید هستند' , showCartButton: false);
         }
     }
 
@@ -128,10 +128,10 @@ class Order extends Component
             $transaction->status = 'failed';
             $transaction->save();
 
-            $this->dispatch('showNotification', message: 'تراکنش به تایید نشده تبدیل شد');
+            $this->dispatch('showNotification', message: 'تراکنش به تایید نشده تبدیل شد', showCartButton: false);
 
         } else {
-            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید یا لغو هستند');
+            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید یا لغو هستند', showCartButton: false);
         }
     }
 

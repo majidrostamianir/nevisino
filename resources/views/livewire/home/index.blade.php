@@ -1,6 +1,6 @@
 <div>
     <livewire:components.story/>
-    
+
     <div class="flex gap-4 mb-8">
         <!-- باکس سفید: سبد تخفیف -->
         <div
@@ -18,7 +18,7 @@
                         x-bind:style="progressWidth"
                     ></div>
                 </div>
-                
+
                 <!-- محتوای محصول — کل آیتم قابل کلیک -->
                 <div class="relative w-[90%] h-[90%] mx-auto flex items-center justify-center ">
                     <template x-for="(product, index) in products" :key="index">
@@ -39,14 +39,14 @@
                                 <img :src="product.image" alt=""
                                      class="w-full h-full rounded-2xl border border-gray-300">
                             </div>
-                            
+
                             <!-- نام محصول -->
                             <div class="block font-bold text-base line-clamp-2 max-w-full " x-text="product.name"></div>
-                            
+
                             <!-- قیمت اصلی (خط خورده) -->
                             <div class="text-sm line-through text-gray-400 mt-4"
                                  x-text="formatPrice(product.price)"></div>
-                            
+
                             <!-- قیمت تخفیفی -->
                             <div class="text-lg font-bold text-green-600"
                                  x-text="formatPrice(product.discounted_price)"></div>
@@ -81,9 +81,9 @@
                             </a>
                         </div>
                     </template>
-                
+
                 </div>
-                
+
                 <!-- دکمه قبلی -->
                 <button @click="prev()"
                         class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 ">
@@ -91,7 +91,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/>
                     </svg>
                 </button>
-                
+
                 <!-- دکمه بعدی -->
                 <button @click="next()"
                         class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 hover:bg-white text-pars-800 cursor-pointer p-1 lg:p-2 rounded-full shadow-xl transition-all hover:scale-110 ">
@@ -99,7 +99,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/>
                     </svg>
                 </button>
-                
+
                 <!-- دات‌های پایین -->
                 <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex flex-row-reverse gap-3 ">
                     <template x-for="(slide, index) in slides">
@@ -112,9 +112,9 @@
             </div>
         </div>
     </div>
-    
+
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 sm:px-4 mb-8">
-        
+
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
             <img src="{{ asset('images/price.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
@@ -122,7 +122,7 @@
                 <span class="block text-xs text-gray-600">قیمت پایین در کنار حفظ کیفیت</span>
             </div>
         </div>
-        
+
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
             <img src="{{ asset('images/guarantee.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
@@ -130,7 +130,7 @@
                 <span class="block text-xs text-gray-600">امکان مرجوعی کالا تا ۷۲ ساعت</span>
             </div>
         </div>
-        
+
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
             <img src="{{ asset('images/delivery.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
@@ -138,7 +138,7 @@
                 <span class="block text-xs text-gray-600">تحویل به پست بصورت روزانه</span>
             </div>
         </div>
-        
+
         <div class="flex items-center bg-white rounded-2xl shadow-[0_2px_6px_rgba(0,0,0,0.1)] p-3">
             <img src="{{ asset('images/support.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
@@ -146,9 +146,9 @@
                 <span class="block text-xs text-gray-600">پاسخ دهی در کوتاه‌ترین زمان</span>
             </div>
         </div>
-    
+
     </div>
-    
+
     <div class="relative bg-gradient-to-r from-purple-300 to-purple-600 mb-8  shadow-lg px-4 rounded-2xl"
         x-data="{
             scrollLeft(container) {
@@ -167,7 +167,7 @@
                 <path d="M9 18l6-6-6-6"/>
             </svg>
         </button>
-        
+
         <button
             @click="scrollLeft($refs.sliderContainer)"
             class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
@@ -177,7 +177,7 @@
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
         </button>
-        
+
         <div x-ref="sliderContainer"
              class="flex overflow-x-auto overflow-y-hidden hide-scrollbar gap-x-5 w-full scroll-smooth"
              style="scroll-behavior: smooth;">
@@ -202,7 +202,7 @@
                         با نوک قابل تعویض
                     </p>
                 </div>
-                
+
                 <div class="mt-auto pt-2 pb-3">
                     <a href="{{ route('category-page' , 'مداد-رنگی-اتودی') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
@@ -297,10 +297,10 @@
                     </div>
                 @endif
             @endforeach
-        
+
         </div>
     </div>
-    
+
 {{--    <div class="grid grid-cols-2 gap-4 px-4 mb-8 lg:grid-cols-4">--}}
 {{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
 {{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
@@ -315,7 +315,7 @@
 {{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
 {{--        </a>--}}
 {{--    </div>--}}
-    
+
     <div class="relative bg-radial from-orange-300 to-orange-500 mb-8 shadow-lg  px-4 rounded-2xl"
          x-data="{
             scrollLeft(container) {
@@ -334,7 +334,7 @@
                 <path d="M9 18l6-6-6-6"/>
             </svg>
         </button>
-        
+
         <button
             @click="scrollLeft($refs.sliderContainer)"
             class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
@@ -344,7 +344,7 @@
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
         </button>
-        
+
         <div x-ref="sliderContainer"
              class="flex overflow-x-auto overflow-y-hidden hide-scrollbar gap-x-5 w-full scroll-smooth"
              style="scroll-behavior: smooth;">
@@ -372,7 +372,7 @@
                         انتخاب حرفه ای ها
                     </p>
                 </div>
-                
+
                 <div class="mt-auto pt-2 pb-3">
                     <a href="{{ route('category-page' , 'مداد-رنگی-آریا-آرتیست') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
@@ -467,7 +467,7 @@
                     </div>
                 @endif
             @endforeach
-        
+
         </div>
     </div>
 
@@ -475,7 +475,7 @@
 {{--        <span class="font-bold text-red-400">نحوه بسته بندی و ارسال در نویسینو</span>--}}
 {{--        <img src="{{ asset('images/post.png') }}" class="w-8 h-8 mx-4" alt="">--}}
 {{--    </div>--}}
-    
+
     <div class="relative bg-gradient-to-l from-black/80 to-black/50 mb-8 shadow-lg  px-4 rounded-2xl"
          x-data="{
             scrollLeft(container) {
@@ -494,7 +494,7 @@
                 <path d="M9 18l6-6-6-6"/>
             </svg>
         </button>
-        
+
         <button
             @click="scrollLeft($refs.sliderContainer)"
             class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
@@ -504,7 +504,7 @@
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
         </button>
-        
+
         <div x-ref="sliderContainer"
              class="flex overflow-x-auto overflow-y-hidden hide-scrollbar gap-x-5 w-full scroll-smooth"
              style="scroll-behavior: smooth;">
@@ -532,7 +532,7 @@
                         تعداد برگ های متنوع
                     </p>
                 </div>
-                
+
                 <div class="mt-auto pt-2 pb-3">
                     <a href="{{ route('category-page' , 'دفتر-مشق') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
@@ -627,15 +627,15 @@
                     </div>
                 @endif
             @endforeach
-        
+
         </div>
     </div>
-    
+
 {{--    <div class="bg-gray-300 rounded-2xl p-6 flex mb-8">--}}
 {{--        <span class="font-bold text-red-400">نحوه بسته بندی و ارسال در نویسینو</span>--}}
 {{--        <img src="{{ asset('images/post.png') }}" class="w-8 h-8 mx-4" alt="">--}}
 {{--    </div>--}}
-    
+
     <div class="relative bg-radial from-green-100 to-green-500 mb-8 shadow-lg  px-4 rounded-2xl"
          x-data="{
             scrollLeft(container) {
@@ -654,7 +654,7 @@
                 <path d="M9 18l6-6-6-6"/>
             </svg>
         </button>
-        
+
         <button
             @click="scrollLeft($refs.sliderContainer)"
             class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
@@ -664,7 +664,7 @@
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
         </button>
-        
+
         <div x-ref="sliderContainer"
              class="flex overflow-x-auto overflow-y-hidden hide-scrollbar gap-x-5 w-full scroll-smooth"
              style="scroll-behavior: smooth;">
@@ -689,7 +689,7 @@
                         کاغذ
                     </p>
                 </div>
-                
+
                 <div class="mt-auto pt-2 pb-3">
                     <a href="{{ route('category-page' , 'لوازم-اداری') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
@@ -784,7 +784,7 @@
                     </div>
                 @endif
             @endforeach
-        
+
         </div>
     </div>
 

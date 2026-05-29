@@ -286,7 +286,7 @@
                                                 <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                                                 @enderror
                                             </div>
-                                            <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
+                                            <button wire:click.prevent="saveTrackingCode('{{ $order->order_number }}')"
                                                     class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm whitespace-nowrap flex items-center gap-2">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -433,7 +433,7 @@
                     </div>
 
                     {{-- محصولات سفارش --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden pb-30">
                         <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
                             <h3 class="text-pars-700 font-bold flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

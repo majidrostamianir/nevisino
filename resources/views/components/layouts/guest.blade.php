@@ -20,7 +20,7 @@
         </a>
         <div class="w-full">
             <a href="/" wire:navigate>
-                <img class="w-40 justify-self-center" src="{{ asset('images/logo.png') }}">
+                <img class="w-40 justify-self-center" src="{{ asset('images/logo2.png') }}">
             </a>
         </div>
         {{ $slot }}
