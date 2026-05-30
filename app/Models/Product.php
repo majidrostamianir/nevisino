@@ -52,7 +52,13 @@ class Product extends Model
         return $query;
     }
 
-    public function getStoryImageAttribute()
+
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+ /*   public function getStoryImageAttribute()
     {
         return asset("storage/products/{$this->id}/small/1.webp");
     }
@@ -65,6 +71,6 @@ class Product extends Model
 
         // اگر واریانت ندارد
         return $this->stock > 0;
-    }
+    }*/
 
 }
