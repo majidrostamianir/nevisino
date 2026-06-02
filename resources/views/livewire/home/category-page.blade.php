@@ -35,12 +35,12 @@
                 </div>
             </div>
         @endif
-        {{--        <div class="bg-white rounded shadow-md py-2 px-4 mb-4 gap-1 flex">--}}
-        {{--            <div class="text-white text-sm bg-pars-500 rounded px-2 py-1 cursor-default font-bold">جدیدترین</div>--}}
-        {{--            <div class="px-2 py-1 cursor-pointer text-sm">پرفروش‌ترین</div>--}}
-        {{--            <div class="px-2 py-1 cursor-pointer text-sm">ارزان‌ترین</div>--}}
-        {{--            <div class="px-2 py-1 cursor-pointer text-sm">گران‌ترین</div>--}}
-        {{--        </div>--}}
+{{--                <div class="bg-white rounded shadow-md py-2 px-4 mb-4 gap-1 flex">--}}
+{{--                    <div class="text-white text-sm bg-pars-500 rounded px-2 py-1 cursor-default font-bold">جدیدترین</div>--}}
+{{--                    <div class="px-2 py-1 cursor-pointer text-sm">پرفروش‌ترین</div>--}}
+{{--                    <div class="px-2 py-1 cursor-pointer text-sm">ارزان‌ترین</div>--}}
+{{--                    <div class="px-2 py-1 cursor-pointer text-sm">گران‌ترین</div>--}}
+{{--                </div>--}}
         @if($products->isNotEmpty())
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
                 @foreach($products as $product)

@@ -88,7 +88,9 @@ class Address extends Component
                 'user_id' => auth()->id(),
             ]
         );
-
+        if ($this->user->name == null) {
+            $this->user->update(['name' => $this->recipient_name]);
+        }
         $this->togglePopup();
     }
 

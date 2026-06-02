@@ -79,12 +79,6 @@ class Index extends Component
         $this->mini_article = '';
         $this->categoryId = 0;
 
-        Artisan::call('scout:flush', [
-            'model' => Url::class
-        ]);
-        Artisan::call('scout:import', [
-            'model' => Url::class
-        ]);
     }
 
     public function setUrl($id): void

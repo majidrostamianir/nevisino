@@ -13,14 +13,18 @@
     @livewireStyles
 </head>
 <body class="text-gray-900 antialiased">
-<div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4 ">
-    <div class="w-full relative sm:w-4/12  p-4 h-[85vh] bg-pars-100  shadow-md overflow-hidden sm:rounded-lg">
-        <a class="absolute top-4 left-4 bg-pars-700 text-white text-sm py-1 px-3 rounded-2xl" href="/" wire:navigate>
+<div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4">
+    <div class="w-full relative sm:w-4/12 p-4 h-[85vh] bg-white border border-gray-100 shadow-sm overflow-hidden sm:rounded-2xl">
+        <a class="absolute top-4 left-4 flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm py-1.5 px-3 rounded-xl transition-all duration-200"
+           href="/" wire:navigate>
             بازگشت
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
         </a>
-        <div class="w-full">
+        <div class="w-full flex justify-center mt-4">
             <a href="/" wire:navigate>
-                <img class="w-40 justify-self-center" src="{{ asset('images/logo.png') }}">
+                <img class="w-40" src="{{ asset('images/logo2.png') }}" alt="نویسینو">
             </a>
         </div>
         {{ $slot }}
@@ -28,11 +32,5 @@
 </div>
 
 @livewireScripts
-
-{{--<script type="text/javascript">--}}
-{{--    ["keydown","touchmove","touchstart","mouseover"].forEach(function(v){window.addEventListener(v,function(){if(!window.isGoftinoAdded){window.isGoftinoAdded=1;var i="YDxx5N",d=document,g=d.createElement("script"),s="https://www.goftino.com/widget/"+i,l=localStorage.getItem("goftino_"+i);g.type="text/javascript",g.async=!0,g.src=l?s+"?o="+l:s;d.getElementsByTagName("head")[0].appendChild(g);}})});--}}
-{{--</script>--}}
-
-
 </body>
 </html>

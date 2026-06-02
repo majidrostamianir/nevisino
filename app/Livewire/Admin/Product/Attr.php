@@ -47,7 +47,7 @@ class Attr extends Component
 
     public function render()
     {
-        $attrs = \App\Models\Attr::all()->sortBy('category_id'   );
+        $attrs = \App\Models\Attr::all()->sortBy(['category_id' , 'title' , 'value']     );
         return view('livewire.admin.product.attr',compact('attrs'))->layout('components.layouts.admin');
     }
 }

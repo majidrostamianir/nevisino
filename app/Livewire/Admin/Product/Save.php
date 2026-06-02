@@ -45,8 +45,7 @@ class Save extends Component
                             'value' => $attr->value,
                         ]
                     ];
-                })
-                ->toArray();
+                })->sortBy('title')->toArray();
             $this->categoryId = $product->category_id;
             $this->size = $product->size;
             $this->price = $product->price;
@@ -269,12 +268,12 @@ class Save extends Component
         $this->updateAvailableAttrs();
     }
 
-    public function search($query): array
-    {
-        return array_filter($this->urls, function ($item) use ($query) {
-            return stripos($item, $query) !== false;
-        });
-    }
+//    public function search($query): array
+//    {
+//        return array_filter($this->urls, function ($item) use ($query) {
+//            return stripos($item, $query) !== false;
+//        });
+//    }
 
     protected function updateAvailableUrls()
     {
@@ -293,7 +292,7 @@ class Save extends Component
 
     protected function updateAvailableAttrs()
     {
-        $query = '%' . $this->query . '%';
+        $query = '%' . $this->queryAttr . '%';
 
         $this->attrs = \App\Models\Attr::query()
             ->where('category_id', $this->categoryId)
@@ -310,8 +309,9 @@ class Save extends Component
                         'value' => $item->value,
                     ]
                 ];
-            })
+            })->sortBy('title')
             ->toArray();
+        
     }
 
     public function render()

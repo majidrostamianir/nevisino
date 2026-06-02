@@ -1,284 +1,492 @@
-<div>
+<div class="space-y-6"
+     x-data="{
+        openOrderNumber: null,
+        init() {
+            const params = new URLSearchParams(window.location.search)
+            const openNumber = params.get('open')
+            if (openNumber) {
+                this.openOrderNumber = openNumber
+                this.$nextTick(() => {
+                    const el = document.getElementById('order-' + openNumber)
+                    if (!el) return
+                    const isDesktop = window.innerWidth >= 1024
+                    const offset = isDesktop ? 80 : 0
+                    const top = el.getBoundingClientRect().top + window.pageYOffset - offset
+                    window.scrollTo({ top, behavior: 'smooth' })
+                })
+            }
+        }
+     }">
+
     @foreach($orders as $order)
-        <div class="w-full shadow p-4 border border-pars-400 bg-white rounded mb-4 order-card">
-            <div class="toggle-btn flex justify-between items-center cursor-pointer">
-                <div>
-                    @switch($order->status)
-                        @case('pending')
-                            <div class="flex mb-4">
-                                <p class="text-orange-300 font-bold pt-1">در انتظار پرداخت ...</p>
+        <div id="order-{{ $order->order_number }}"
+             wire:key="{{ $order->order_number }}"
+             class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300">
+
+            {{-- هدر سفارش (قابل کلیک برای باز/بسته شدن) --}}
+            <div @click="openOrderNumber = (openOrderNumber === '{{ $order->order_number }}' ? null : '{{ $order->order_number }}')"
+                 class="cursor-pointer select-none transition-colors duration-200 hover:bg-gray-50">
+                <div class="p-5 lg:p-6">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                        <div class="flex-1 min-w-0 space-y-3">
+
+                            {{-- وضعیت سفارش --}}
+                            @switch($order->status)
+                                @case('pending')
+                                    @if($order->transactions()->where('payment_gateway','card')->where('status','pending')->exists())
+                                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 rounded-full">
+                                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                                            <span class="text-blue-600 font-bold text-sm">در انتظار تایید پشتیبانی</span>
+                                        </div>
+                                    @else
+                                        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-full">
+                                            <div class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                                            <span class="text-amber-600 font-bold text-sm">در انتظار پرداخت</span>
+                                        </div>
+                                    @endif
+                                    @break
+                                @case('paid')
+                                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
+                                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        <span class="text-green-600 font-bold text-sm">پرداخت شده</span>
+                                    </div>
+                                    @break
+                                @case('canceled')
+                                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full">
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                        <span class="text-gray-500 font-bold text-sm">لغو شده</span>
+                                    </div>
+                                    @break
+                            @endswitch
+
+                            {{-- اطلاعات متا (تاریخ، کد پیگیری، مبلغ، روش ارسال) --}}
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600">
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>{{ english_to_persian_num(verta($order->created_at)->format('%d %B %Y')) }}</span>
+                                    <span class="text-gray-300">|</span>
+                                    <span>{{ english_to_persian_num(verta($order->created_at)->format('H:i:s')) }}</span>
+                                </div>
+
+                                <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                                    </svg>
+                                    <span>کد پیگیری: {{ english_to_persian_num($order->order_number) }}</span>
+                                </div>
+
+                                <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span>جمع کل: <strong class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($order->total_price)) }}</strong> تومان</span>
+                                </div>
+
+                                <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                        <rect x="1" y="8" width="13" height="11" rx="1.5"/>
+                                        <path d="M14 10h4l3 4v5h-7V10z"/>
+                                        <circle cx="5.5" cy="19.5" r="1.5"/>
+                                        <circle cx="18.5" cy="19.5" r="1.5"/>
+                                    </svg>
+                                    <span>ارسال: {{ $order->shipping_method->label() }}</span>
+                                    @if($order->shipping_method->isCashOnDelivery())
+                                        <span class="text-gray-400">({{ english_to_persian_num(number_format($order->shipping_price)) }} تومان)</span>
+                                    @endif
+                                </div>
                             </div>
-                            @break
-                        @case('paid')
-                            <p class="text-green-500 font-bold mb-2">پرداخت شده</p>
-                            @break
-                        @case('canceled')
-                            <p class="text-gray-500 font-bold mb-2">لغو شده</p>
-                            @break
-                    @endswitch
-                    <div class="flex flex-wrap">
-                        <span>{{ english_to_persian_num(verta($order->created_at)->format('%d %B %Y - H:i:s')) }}</span>
-                        <span class="mx-4  text-pars-400">&#9679;</span>
-                        <span>کد پیگیری سفارش: {{ english_to_persian_num($order->order_number) }}</span>
-                        <span class="mx-4  text-pars-400">&#9679;</span>
-                        <span>جمع کل سفارش: {{ english_to_persian_num(number_format($order->total_price)) }} تومان</span>
-                        <span class="mx-4  text-pars-400">&#9679;</span>
-                        <span>حمل و نقل: {{ english_to_persian_num(number_format($order->shipping_price)) }} تومان</span>
+                        </div>
+
+                        {{-- دکمه اکاردئون --}}
+                        <div class="flex justify-center lg:justify-end w-full lg:w-auto flex-shrink-0 mt-4 lg:mt-0">
+                            <button class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200">
+                                <svg x-bind:class="{'rotate-180': openOrderNumber === '{{ $order->order_number }}'}"
+                                     class="w-5 h-5 text-gray-600 transition-transform duration-300"
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <button class=" flex items-center cursor-pointer">
-                    <svg class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
             </div>
 
-            <div class="order-details overflow-hidden transition-all duration-300 ease-in-out mt-2">
-                <div class="mt-8">
-                    <div class="w-full sm:flex">
-                        <div class="w-full sm:w-1/2 mb-4 sm:mb-0">
-                            <div>
-                             <span class="text-gray-400">تحویل گیرنده <span
-                                     class="text-pars-700">{{ english_to_persian_num($order->recipient_name) }}</span></span>
-                                <span class="mx-4  text-pars-400">&#9679;</span>
-                                <span class="text-gray-400">شماره موبایل <span
-                                        class="text-pars-700">{{ english_to_persian_num($order->recipient_mobile) }}</span></span>
+            {{-- جزئیات سفارش (اکاردئون) --}}
+            <div x-show="openOrderNumber === '{{ $order->order_number }}'"
+                 x-collapse
+                 class="border-t border-gray-100 bg-gray-50/30">
+                <div class="p-5 lg:p-6 space-y-8">
+
+                    {{-- اطلاعات گیرنده + آدرس (قابل کپی) --}}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+                         x-data="{
+                            copiedName: false, copyName(){ navigator.clipboard.writeText('{{ $order->recipient_name }}'); this.copiedName = true; setTimeout(()=>this.copiedName = false, 1500); },
+                            copiedMobile: false, copyMobile(){ navigator.clipboard.writeText('{{ $order->recipient_mobile }}'); this.copiedMobile = true; setTimeout(()=>this.copiedMobile = false, 1500); },
+                            copiedAddress: false, copyAddress(){ navigator.clipboard.writeText('{{ $order->province }} - {{ $order->city }} - {{ $order->postal_address }}'); this.copiedAddress = true; setTimeout(()=>this.copiedAddress = false, 1500); },
+                            copiedZipcode: false, copyZipcode(){ navigator.clipboard.writeText('{{ $order->zipcode }}'); this.copiedZipcode = true; setTimeout(()=>this.copiedZipcode = false, 1500); },
+                            copiedDescription: false, copyDescription(){ navigator.clipboard.writeText('{{ addslashes($order->description) }}'); this.copiedDescription = true; setTimeout(()=>this.copiedDescription = false, 1500); }
+                         }">
+
+                        {{-- گیرنده --}}
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                            <h3 class="text-pars-700 font-bold mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                اطلاعات تحویل گیرنده
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-500">نام و نام خانوادگی:</span>
+                                    <span @click="copyName()" :class="copiedName ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium" x-text="copiedName ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_name) }}'"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-500">شماره موبایل:</span>
+                                    <span @click="copyMobile()" :class="copiedMobile ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium" x-text="copiedMobile ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_mobile) }}'"></span>
+                                </div>
                             </div>
-                            <div class="w-full sm:w-1/2">
-                                <span class=" text-gray-400">آدرس <span
-                                        class="text-pars-700">
-                                        {{ $order->province }} -
-                                        {{ $order->city }} -
-                                        {{ english_to_persian_num($order->postal_address) }}
-                                    </span></span>
-                                    <span class="mx-4  text-pars-400">&#9679;</span>
-                                    <span class="text-gray-400">کد پستی <span
-                                            class="text-pars-700">{{ english_to_persian_num($order->zipcode) }}</span></span>
-                            </div>
-                            <div class="w-full sm:w-1/2">
-                                <span class=" text-gray-400">توضیحات <span
-                                        class="text-pars-700">
-                                        {{ $order->description }}
-                                 </div>
                         </div>
-                        <div class="w-full sm:w-1/2">
+
+                        {{-- آدرس --}}
+                        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                            <h3 class="text-pars-700 font-bold mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                آدرس ارسال
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between gap-4 items-start">
+                                    <span class="text-gray-500 flex-shrink-0">استان و شهر:</span>
+                                    <span class="font-medium text-gray-800">{{ $order->province }} - {{ $order->city }}</span>
+                                </div>
+                                <div class="flex justify-between gap-4 items-start">
+                                    <span class="text-gray-500 flex-shrink-0">آدرس پستی:</span>
+                                    <span @click="copyAddress()" :class="copiedAddress ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium text-left leading-relaxed" x-text="copiedAddress ? 'کپی شد!' : '{{ english_to_persian_num($order->postal_address) }}'"></span>
+                                </div>
+                                <div class="flex justify-between gap-4 items-center">
+                                    <span class="text-gray-500 flex-shrink-0">کد پستی:</span>
+                                    <span @click="copyZipcode()" :class="copiedZipcode ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium" x-text="copiedZipcode ? 'کپی شد!' : '{{ english_to_persian_num($order->zipcode) }}'"></span>
+                                </div>
+                                @if($order->description)
+                                    <div class="flex justify-between gap-4 items-start">
+                                        <span class="text-gray-500 flex-shrink-0">توضیحات:</span>
+                                        <span @click="copyDescription()" :class="copiedDescription ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="font-medium text-left" x-text="copiedDescription ? 'کپی شد!' : '{{ english_to_persian_num($order->description) }}'"></span>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- وضعیت ارسال با stepper + کنترل ادمین --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
+                            <h3 class="text-pars-700 font-bold flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <rect x="1" y="8" width="13" height="11" rx="1.5"/>
+                                    <path d="M14 10h4l3 4v5h-7V10z"/>
+                                    <circle cx="5.5" cy="19.5" r="1.5"/>
+                                    <circle cx="18.5" cy="19.5" r="1.5"/>
+                                </svg>
+                                وضعیت سفارش
+                                @if(in_array($order->shipping_status, ['processing', 'preparing', 'shipped']))
+                                    <span class="text-xs text-gray-400 mr-2">(مدیریت: دکمه مرحله بعد)</span>
+                                @endif
+                            </h3>
+                        </div>
+
+                        @php
+                            $orderSteps = [
+                                ['key' => 'register',    'label' => 'ثبت سفارش'],
+                                ['key' => 'pending',     'label' => 'در انتظار پرداخت'],
+                                ['key' => 'processing',  'label' => 'پردازش سفارش'],
+                                ['key' => 'preparing',   'label' => 'بسته‌بندی'],
+                                ['key' => 'shipped',     'label' => 'در مسیر مقصد'],
+                                ['key' => 'delivered',   'label' => 'تحویل داده شده'],
+                            ];
+                            $stepKeys      = array_column($orderSteps, 'key');
+                            $currentStatus = $order->shipping_status ?? 'register';
+                            $currentIdx    = array_search($currentStatus, $stepKeys);
+                            if ($currentIdx === false) $currentIdx = 0;
+                        @endphp
+
+                        <div class="relative flex items-start justify-between my-5 px-4">
+                            <div class="absolute top-4 right-[10%] left-[10%] h-0.5 bg-gray-100"></div>
+                            @if($currentIdx > 0)
+                                <div class="absolute top-4 right-[10%] h-0.5 bg-green-400 transition-all duration-700"
+                                     style="width: calc({{ ($currentIdx / (count($orderSteps) - 1)) * 80 }}%);"></div>
+                            @endif
+
+                            @foreach($orderSteps as $i => $step)
+                                <div class="relative flex flex-col items-center gap-1.5 z-10" style="width: {{ 100 / count($orderSteps) }}%">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300
+                                        @if($i < $currentIdx) bg-green-500 border-green-500 text-white
+                                        @elseif($i === $currentIdx)
+                                            @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
+                                            @else bg-white border-green-500 text-green-600 shadow-sm
+                                            @endif
+                                        @else bg-white border-gray-200 text-gray-300 @endif">
+                                        @if($i <= $currentIdx)
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        @else
+                                            {{ english_to_persian_num($i + 1) }}
+                                        @endif
+                                    </div>
+                                    <span class="text-center text-xs leading-tight px-1
+                                        @if($i <= $currentIdx) text-gray-700 font-semibold @else text-gray-300 @endif">
+                                        {{ $step['label'] }}
+                                    </span>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- کنترل‌های ادمین برای تغییر وضعیت و ثبت کد مرسوله --}}
+                        <div class="px-5 pb-5 space-y-4">
                             @switch($order->shipping_status)
-                                @case('pending')
-                                    <div class="flex w-full">
-                                        <div class="w-full">
-                                            <div class="flex justify-between">
-                                                <span class="text-sm text-orange-300 font-bold">در انتظار پرداخت</span>
-                                                <span class="text-xs">مبلغ: {{ english_to_persian_num(number_format($order->amount)) }} تومان</span>
-                                            </div>
-                                            <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                                <div class="bg-orange-300 h-2 rounded-full" style="width: 15%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @break
                                 @case('processing')
-                                    <div class="flex w-full">
-                                        <div class="w-full">
-                                            <div class="flex justify-between">
-                                                <span
-                                                    class="text-sm text-green-500 font-bold">در حال پردازش سفارش</span>
-                                                <span class="text-xs">مرحله بعد: بسته بندی</span>
-                                            </div>
-                                            <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                                <div class="bg-green-500 h-2 rounded-full" style="width: 25%"></div>
-                                            </div>
-                                        </div>
-                                        <button wire:click.prevent="nextStep('{{ $order->id }}')"
-                                                class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl  h-fit text-white cursor-pointer">
-                                            مرحله بعد
-                                        </button>
-                                    </div>
-                                    @break
                                 @case('preparing')
-                                    <div class="flex w-full">
-                                        <div class="w-full">
-                                            <div class="flex justify-between">
-                                                <span
-                                                    class="text-sm text-green-500 font-bold">در حال بسته بندی و ارسال</span>
-                                                <span class="text-xs">مرحله بعد: تحویل به اداره پست</span>
-                                            </div>
-                                            <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                                <div class="bg-green-500 h-2 rounded-full" style="width: 40%"></div>
-                                            </div>
-                                        </div>
+                                    <div class="flex justify-end">
                                         <button wire:click.prevent="nextStep('{{ $order->id }}')"
-                                                class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl  h-fit text-white cursor-pointer">
+                                                class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                            </svg>
                                             مرحله بعد
                                         </button>
                                     </div>
                                     @break
                                 @case('shipped')
-                                    <div class="flex w-full">
-                                        <div class="w-full">
-                                            <div class="flex justify-between">
-                                                <span
-                                                    class="text-sm text-green-500 font-bold">در حال ارسال به آدرس شما</span>
-                                                <span class="text-xs">مرحله بعد: تحویل کالا به مشتری</span>
-                                            </div>
-                                            <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                                <div class="bg-green-500 h-2 rounded-full" style="width: 70%"></div>
-                                            </div>
-                                            <div class="flex w-full ">
-                                                <span class="text-sm text-nowrap mt-2">کد پیگیری مرسوله</span>
-                                                <input type="text"
-                                                       wire:model.defer="trackingCodes.{{ $order->id }}"
-                                                       class="bg-white w-full rounded-2xl border py-0 px-2 mt-0.5 mr-2">
+                                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                                        <div class="flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+                                            <div class="flex-1 w-full">
+                                                <input type="text" wire:model.defer="trackingCodes.{{ $order->id }}"
+                                                       class="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-pars-400 focus:ring-1 focus:ring-pars-400 transition-all"
+                                                       placeholder="کد رهگیری مرسوله">
                                                 @error("trackingCodes.$order->id")
-                                                <span class="text-red-500">{{ $message }}</span>
+                                                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                                                 @enderror
-
-                                                <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
-                                                        class="bg-pars-700 hover:bg-pars-800 px-3 py-1 rounded-2xl text-white cursor-pointer ml-2">
-                                                    دخیره و ارسال پیامک
-                                                </button>
                                             </div>
+                                            <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
+                                                    class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm whitespace-nowrap flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                ثبت و ارسال پیامک
+                                            </button>
+                                            <button wire:click.prevent="nextStep('{{ $order->id }}')"
+                                                    class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                </svg>
+                                                مرحله بعد
+                                            </button>
                                         </div>
-                                        <button wire:click.prevent="nextStep('{{ $order->id }}')"
-                                                class="bg-pars-700 hover:bg-pars-800 w-fit text-nowrap mr-2 px-2 py-1 rounded-2xl  h-fit text-white cursor-pointer">
-                                            مرحله بعد
-                                        </button>
                                     </div>
                                     @break
-                                @case('delivered')
-                                    <div class="flex justify-between">
-                                        <span class="text-sm text-green-500 font-bold">تحویل داده شده</span>
-                                    </div>
-                                    <div class="w-full mt-2 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
-                                    </div>
                             @endswitch
+
+                            @if($order->shipping_status === 'shipped' && !empty($order->tracking_code))
+                                <div class="bg-gray-50 rounded-lg p-3 text-center">
+                                    <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}"
+                                       target="_blank" rel="nofollow noopener noreferrer"
+                                       class="inline-flex items-center gap-2 text-sm text-pars-600 hover:text-pars-700 underline">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                        </svg>
+                                        کد پیگیری مرسوله: {{ english_to_persian_num($order->tracking_code) }}
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
-                    <div class="mt-8">
-                        <div class="mb-2">
-                            <div class="text-gray-400">تراکنش ها</div>
-                            <div class=" p-2 border-pars-400 rounded mb-4 bg-pars-200">
-                                @foreach($order->transactions->sortByDesc('created_at') as $key => $value)
-                                    <div class="flex flex-wrap items-center">
-                                        @switch($value->status)
-                                            @case('pending')
-                                                <span><span
-                                                        class="ml-4  text-orange-500">&#9679;</span>در انتظار پرداخت</span>
-                                                @break
-                                            @case('success')
-                                                <span><span
-                                                        class="ml-4  text-green-500">&#9679;</span>پرداخت موفق</span>
-                                                @break
-                                            @case('failed')
-                                                <span><span
-                                                        class="ml-4  text-red-500">&#9679;</span>پرداخت ناموفق</span>
-                                                @break
-                                            @case('cancel')
-                                                <span><span class="ml-4  text-gray-500">&#9679;</span>لغو شده</span>
-                                                @break
-                                        @endswitch
-                                        <div>
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span>کد پیگیری تراکنش {{ english_to_persian_num($value->authority) }}</span>
-                                        </div>
-                                        <div>
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span>مبلغ تراکنش {{ english_to_persian_num(number_format($value->amount)) }} تومان</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span> {{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }} </span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <span class="mx-4  text-pars-400">&#9679;</span>
-                                            <span wire:click.prevent="verifyTransaction('{{$value->authority}}')"
-                                                  class="cursor-pointer text-sm">تایید دستی</span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <div class="flex flex-wrap">
-                                @foreach($order->items as $item)
-                                        <?php
-                                        $product = \App\Models\Product::query()->find($item->product_id)
-                                        ?>
-                                    <div class="w-48 ml-2 mb-2">
-                                        <a href="{{ route('product-page' , ['title' => $product->dashed_url]) }}"
-                                           class="flex flex-row sm:flex-col items-center bg-white rounded shadow hover:shadow-lg cursor-pointer h-full">
-                                            <div
-                                                class="w-24 sm:w-full  overflow-hidden rounded-r-sm sm:rounded-t-sm sm:rounded-b-none">
-                                                @if($item->variant_id)
-                                                    <img class="w-full aspect-square hover:scale-105 transition-all"
-                                                         src="{{ asset('storage/products/' . $product->id . '/small/'. $item->variant_id.'.webp') }}"
-                                                         alt="">
-                                                @else
-                                                    <img class="w-full aspect-square hover:scale-105 transition-all"
-                                                         src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
-                                                         alt="">
+                    {{-- تاریخچه تراکنش‌ها + دکمه‌های تایید ادمین --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
+                            <h3 class="text-pars-700 font-bold flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                </svg>
+                                تاریخچه تراکنش‌ها
+                            </h3>
+                        </div>
+
+                        <div class="p-5">
+                            @if(!$order->transactions()->exists())
+                                <div class="text-center py-8 text-gray-400">
+                                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span>هیچ تراکنشی انجام نشده است.</span>
+                                </div>
+                            @else
+                                <div class="space-y-3">
+                                    @foreach($order->transactions->sortByDesc('created_at') as $value)
+                                        <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-all duration-200">
+                                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                                <div class="flex items-center gap-3">
+                                                    @switch($value->status)
+                                                        @case('pending')
+                                                            @if($value->payment_gateway == 'card')
+                                                                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                                                                <span class="text-blue-600 text-sm font-medium">در انتظار تایید</span>
+                                                            @else
+                                                                <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                                                <span class="text-amber-600 text-sm font-medium">در انتظار پرداخت</span>
+                                                            @endif
+                                                            @break
+                                                        @case('success')
+                                                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                                            <span class="text-green-600 text-sm font-medium">پرداخت موفق</span>
+                                                            @break
+                                                        @case('failed')
+                                                            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                                                            <span class="text-red-600 text-sm font-medium">پرداخت ناموفق</span>
+                                                            @break
+                                                        @case('cancel')
+                                                            <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                                                            <span class="text-gray-500 text-sm font-medium">لغو شده</span>
+                                                            @break
+                                                    @endswitch
+                                                </div>
+
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <span class="text-gray-500">
+                                                        @switch($value->payment_gateway)
+                                                            @case('card') کارت به کارت @break
+                                                            @case('torobpay') ترب‌پی @break
+                                                            @default درگاه بانکی
+                                                        @endswitch
+                                                    </span>
+                                                    @if($value->payment_gateway == 'card' && $value->authority)
+                                                        <span class="text-xs text-gray-400 bg-white px-2 py-1 rounded-full">
+                                                            واریز به: {{ english_to_persian_num($value->authority) }}
+                                                        </span>
+                                                    @elseif($value->payment_gateway == 'gateway' && $value->authority)
+                                                        <span class="text-xs text-gray-400 bg-white px-2 py-1 rounded-full">
+                                                            کد پیگیری: {{ english_to_persian_num($value->authority) }}
+                                                        </span>
+                                                    @endif
+                                                    @if($value->payment_gateway == 'torobpay' && $value->torobpay_status)
+                                                        <span class="text-xs px-2 py-1 rounded-full
+                                                            {{ in_array($value->torobpay_status, ['ONGOING','PAID','UPDATED']) ? 'bg-green-100 text-green-700' : '' }}
+                                                            {{ in_array($value->torobpay_status, ['NEW','IPG','W_FOR_VERIFY']) ? 'bg-amber-100 text-amber-700' : '' }}
+                                                            {{ $value->torobpay_status === 'W_FOR_SETTLE' ? 'bg-blue-100 text-blue-700' : '' }}
+                                                            {{ in_array($value->torobpay_status, ['FAILED','CANCELLED']) ? 'bg-red-100 text-red-700' : '' }}">
+                                                            {{ \App\Enums\TorobpayStatusEnum::from($value->torobpay_status)->toSimpleStatus() }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+
+                                                <div class="flex items-center gap-2 mr-auto">
+                                                    <span class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($value->amount)) }}</span>
+                                                    <span class="text-xs text-gray-400">تومان</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex flex-wrap items-center justify-between mt-3 pt-2 border-t border-gray-200">
+                                                <div class="flex items-center gap-1.5 text-xs text-gray-400">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span>{{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }}</span>
+                                                </div>
+
+                                                @if($value->status !== 'success')
+                                                    <div class="flex gap-2">
+                                                        <button wire:click.prevent="verifyTransaction('{{ $value->id }}')"
+                                                                class="cursor-pointer rounded-xl px-3 py-1.5 bg-green-500 hover:bg-green-600 active:scale-95 text-white text-xs font-medium transition-all duration-200">
+                                                            ✓  چک کردن موجودی و تایید تراکنش و کاهش موجودی
+                                                        </button>
+                                                        <button wire:click.prevent="failedTransaction('{{ $value->id }}')"
+                                                                class="cursor-pointer rounded-xl px-3 py-1.5 bg-red-400 hover:bg-red-500 active:scale-95 text-white text-xs font-medium transition-all duration-200">
+                                                            ✗ رد تراکنش
+                                                        </button>
+                                                    </div>
                                                 @endif
                                             </div>
-                                            <div class="flex-1 px-2 sm:px-0 sm:py-4 text-right sm:text-center">
-                                                <h5 class="text-xs font-bold">
-                                                    {{ english_to_persian_num($product->title) }}
-                                                </h5>
-                                                <h5 class="text-xs sm:text-sm mt-2">
-                                                    {{ english_to_persian_num(number_format($item->price_snapshot)) }}
-                                                    تومان
-                                                </h5>
-                                                <h5 class="text-xs sm:text-sm mt-2">
-                                                    تعداد {{ english_to_persian_num($item->quantity) }} عدد
-                                                </h5>
-                                                @if($item->variant_id)
-                                                    <h5 class="text-xs sm:text-sm mt-2">
-                                                        {{ $product->variant }}
-                                                        : {{ \App\Models\ProductVariant::query()->find($item->variant_id)->name }}
-                                                    </h5>
-                                                @endif
-                                            </div>
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
+
+                    {{-- محصولات سفارش --}}
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden pb-30">
+                        <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
+                            <h3 class="text-pars-700 font-bold flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                محصولات سفارش
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-5">
+                            @foreach($order->items as $item)
+                                @php
+                                    $product = \App\Models\Product::query()->find($item->product_id)
+                                @endphp
+                                <a href="{{ route('product-page', ['title' => $product->dashed_url, 'npi' => $product->id]) }}"
+                                   class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                                    <div class="relative overflow-hidden bg-gray-100">
+                                        @if($item->variant_id)
+                                            <img class="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                                                 src="{{ asset('storage/products/' . $product->id . '/small/'. $item->variant_id.'.webp') }}"
+                                                 alt="{{ $product->title }}">
+                                        @else
+                                            <img class="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-300"
+                                                 src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
+                                                 alt="{{ $product->title }}">
+                                        @endif
+                                    </div>
+                                    <div class="p-3 text-center">
+                                        <h5 class="text-xs font-bold text-gray-800 line-clamp-2 min-h-[2.5rem]">
+                                            {{ english_to_persian_num($product->title) }}
+                                        </h5>
+                                        <div class="mt-2 space-y-1">
+                                            <p class="text-pars-700 font-bold text-sm">
+                                                {{ english_to_persian_num(number_format($item->price_snapshot)) }}
+                                                <span class="text-xs font-normal text-gray-400">تومان</span>
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                تعداد: {{ english_to_persian_num($item->quantity) }} عدد
+                                            </p>
+                                            @if($item->variant_id)
+                                                <p class="text-xs text-gray-400 line-clamp-1">
+                                                    {{ $product->variant }}
+                                                    : {{ \App\Models\ProductVariant::query()->find($item->variant_id)->name }}
+                                                </p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     @endforeach
-
-    <script>
-        const toggleButtons = document.querySelectorAll('.toggle-btn');
-
-        toggleButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const card = btn.closest('.order-card');
-                const details = card.querySelector('.order-details');
-                const arrow = btn.querySelector('svg');
-
-                // بستن سایر کارت‌ها
-                document.querySelectorAll('.order-card .order-details').forEach(d => {
-                    if (d !== details) {
-                        d.style.height = '0px';
-                        d.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
-                    }
-                });
-
-                // باز/بسته کردن کارت جاری با ارتفاع اتوماتیک
-                if (details.style.height && details.style.height !== '0px') {
-                    details.style.height = '0px';
-                    arrow.classList.remove('rotate-180');
-                } else {
-                    details.style.height = details.scrollHeight + 'px';
-                    arrow.classList.add('rotate-180');
-                }
-            });
-        });
-
-        // تنظیم اولیه همه کارت‌ها
-        document.querySelectorAll('.order-card .order-details').forEach(d => d.style.height = '0px');
-    </script>
 </div>

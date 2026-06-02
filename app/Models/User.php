@@ -51,6 +51,7 @@ class User extends Authenticatable
     {
         return self::where('name', 'like', "%{$term}%")
             ->orWhere('mobile', 'like', "%{$term}%")
+            ->latest()
             ->get();
     }
 

@@ -11,17 +11,17 @@ class SearchQuery extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public static function querySearch($q, $limit = 100)
+    public static function querySearch($q, $limit = 300)
     {
         $q = self::normalize($q);
         return SearchQuery::query()->where('query', 'LIKE', '%' . $q . '%')->orderBy('created_at', 'desc')->limit($limit)->get();
     }
-    public static function ipSearch($q, $limit = 100)
+    public static function ipSearch($q, $limit = 300)
     {
         $q = self::normalize($q);
         return SearchQuery::query()->where('ip', 'LIKE', '%' . $q . '%')->orderBy('created_at', 'desc')->limit($limit)->get();
     }
-    public static function userSearch($q, $limit = 100)
+    public static function userSearch($q, $limit = 300)
     {
         $q = self::normalize($q);
 

@@ -15,9 +15,9 @@ class getReferrer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->session()->has('referrer')) {
+        if (!$request->session()->has('newReferer')) {
             $referrer = $request->server('HTTP_REFERER') ?? '';
-            $request->session()->put('referrer', $referrer);
+            $request->session()->put('newReferer', $referrer);
         }
 
         return $next($request);

@@ -19,7 +19,7 @@
         <div class="absolute top-10 rounded right-3 w-full bg-white p-4 z-10 shadow" wire:ignore.self>
             <span class="text-xs bg-pars-100 py-0.5 px-1 rounded cursor-default">محصولات</span>
             @foreach($products as $product)
-                <a wire:navigate href="{{ route('product-page', ['title' => $product->dashed_url] ) }}"
+                <a wire:navigate href="{{ route('product-page', ['title' => $product->dashed_url , 'npi'=>$product->id] ) }}"
                    class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ english_to_persian_num($product->title) }}</a>
             @endforeach
             <hr class="my-2">

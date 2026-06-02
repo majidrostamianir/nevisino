@@ -17,11 +17,20 @@ class CategoryPage extends Component
     }
     public function render()
     {
-        $rawProducts = \App\Models\Product::query()
-            ->whereNotNull('discounted_price')
-            ->inRandomOrder()
-            ->limit(8)
-            ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
+        $availableIds = \App\Models\Product::whereNotNull('discounted_price')
+            ->get()
+            ->filter(fn($p) => $p->hasValidStock())
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($availableIds)) {
+            $rawProducts = collect();
+        } else {
+            $rawProducts = \App\Models\Product::whereIn('id', $availableIds)
+                ->inRandomOrder()
+                ->limit(15)
+                ->get(['id', 'title', 'dashed_url', 'price', 'discounted_price']);
+        }
 
         $discounted_products = $rawProducts->map(function ($p) {
             return [
@@ -29,7 +38,7 @@ class CategoryPage extends Component
                 'name' => $p->title ?? 'بدون نام',
                 'discounted_price' => (int)$p->discounted_price,
                 'price' => (int)$p->price,
-                'link' => route('product-page', ['title' => $p->dashed_url ?? 'unknown'])
+                'link' => route('product-page', ['title' => $p->dashed_url ?? 'unknown' , 'npi'=>$p->id])
             ];
         })->values()->toArray();
 

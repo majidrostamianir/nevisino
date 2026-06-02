@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Admin\User;
 
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Transaction;
 use App\Models\User;
 use Livewire\Component;
@@ -52,13 +54,13 @@ class Order extends Component
 
         $order->tracking_code = $this->trackingCodes[$orderId];
         $order->save();
-        $this->sendTrackingSms($this->trackingCodes[$orderId]);
-        $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد');
+        $this->sendTrackingSms($order->order_number);
+        $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد' , showCartButton: false);
     }
 
-    public function sendTrackingSms($tracking): void
+    public function sendTrackingSms($orderId): void
     {
-        $link = 'https://tracking.post.ir/?id=' . $tracking;
+        $link = 'https://nevisino.ir/dashboard/order?open=' . $orderId;
         $username = '09169889759';
         $password = 'Faraz@1920115072';
         $from = '3000505';
@@ -78,15 +80,28 @@ class Order extends Component
         curl_close($handler);
     }
 
-    public function verifyTransaction($authority)
+    public function verifyTransaction($id)
     {
-        $transaction = Transaction::query()->where('authority', $authority)->first();
+
+        $transaction = Transaction::query()->findOrFail($id);
+        $order = $transaction->order;
+
+        foreach ($order->items as $item) {
+            if ($item->variant_id && $item->variant) {
+                if ($item->variant->stock < $item->quantity) {
+                    abort('403', 'موجودی ' . Product::query()->find($item->product_id)->title . '-' . ProductVariant::query()->find($item->variant_id)->title . ' کمتر از این سفارش است.');
+                }
+            } else {
+                if (Product::query()->find($item->product_id)->stock < $item->quantity) {
+                    abort('403', 'موجودی ' . Product::query()->find($item->product_id)->title . ' کمتر از این سفارش است.');
+                }
+            }
+        }
 
         if ($transaction->status == 'pending') {
             $transaction->status = 'success';
             $transaction->save();
 
-            $order = $transaction->order;
             $order->status = 'paid';
             $order->shipping_status = 'processing';
             $order->save();
@@ -99,15 +114,86 @@ class Order extends Component
                     $item->product->decrement('stock', $item->quantity);
                 }
             }
-            $this->dispatch('showNotification', message: 'تراکنش تایید شد و موجودی اقلام سفارش کاهش یافت');
+            $this->dispatch('showNotification', message: 'تراکنش تایید شد و موجودی اقلام سفارش کاهش یافت' , showCartButton: false);
 
         } else {
-            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید هستند');
+            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید هستند' , showCartButton: false);
         }
-
-
     }
 
+    public function failedTransaction($id)
+    {
+        $transaction = Transaction::query()->findOrFail($id);
+        if ($transaction->status == 'pending') {
+            $transaction->status = 'failed';
+            $transaction->save();
+
+            $this->dispatch('showNotification', message: 'تراکنش به تایید نشده تبدیل شد', showCartButton: false);
+
+        } else {
+            $this->dispatch('showNotification', message: 'فقط تراکنش های در حال انتظار قابل تایید یا لغو هستند', showCartButton: false);
+        }
+    }
+
+   /* public function cancelTorobpayOrder($orderId)
+    {
+        $order = \App\Models\Order::query()->findOrFail($orderId);
+
+        $transaction = $order->transactions()
+            ->where('payment_gateway', 'torobpay')
+            ->where('status', 'success')
+            ->first();
+
+        if (!$transaction) {
+            $this->dispatch('showNotification', message: 'تراکنش ترب‌پی معتبری یافت نشد');
+            return;
+        }
+
+        try {
+            app(\App\Services\TorobpayService::class)->cancel($transaction->payment_token);
+
+            $transaction->update([
+                'status' => 'failed',
+                'torobpay_status' => \App\Enums\TorobpayStatusEnum::CANCELLED->value,
+            ]);
+
+            $order->update([
+                'status' => 'canceled',
+                'shipping_status' => 'pending',
+            ]);
+
+            // برگردوندن موجودی
+            foreach ($order->items as $item) {
+                if ($item->variant_id && $item->variant) {
+                    $item->variant->increment('stock', $item->quantity);
+                } else {
+                    $item->product->increment('stock', $item->quantity);
+                }
+            }
+
+            $this->dispatch('showNotification', message: 'سفارش با موفقیت کنسل شد و موجودی برگشت');
+
+        } catch (\Exception $e) {
+            $this->dispatch('showNotification', message: 'خطا در کنسل کردن: ' . $e->getMessage());
+        }
+    }*/
+    /*public function checkTorobpayStatus($transactionId)
+    {
+        $transaction = Transaction::query()->findOrFail($transactionId);
+
+        try {
+            $result = app(\App\Services\TorobpayService::class)->getStatus($transaction->payment_token);
+
+            $this->dispatch('showNotification', message:
+                'وضعیت ترب‌پی: ' . $result['status'] .
+                ' | مبلغ: ' . number_format($result['amount'] / 10) . ' تومان' .
+                ' | شناسه: ' . $result['transactionId']
+            );
+
+        } catch (\Exception $e) {
+            $this->dispatch('showNotification', message: 'خطا: ' . $e->getMessage());
+        }
+    }*/
     public function render()
     {
         $orders = $this->user->orders()->latest()->get();

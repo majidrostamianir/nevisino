@@ -65,7 +65,7 @@
         </div>
         <div class="sm:w-3/12 p-1 ">
             <small class="pr-2">وزن به گرم</small>
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="وزن به گرم"
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="وزن به گرم"
                    wire:model="weight">
             @error('weight')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
@@ -73,7 +73,7 @@
         </div>
         <div class="sm:w-3/12 p-1 ">
             <small class="pr-2">قیمت به تومان</small>
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت به تومان"
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت به تومان"
                    wire:model="price">
             @error('price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
@@ -81,7 +81,7 @@
         </div>
         <div class="sm:w-3/12 p-1 ">
             <small class="pr-2">قیمت با تحفیف به تومان</small>
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت با تخفیف به تومان"
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت با تخفیف به تومان"
                    wire:model="discounted_price">
             @error('discounted_price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
@@ -89,7 +89,7 @@
         </div>
         <div class="sm:w-3/12 p-1 ">
             <small class="pr-2">موجودی</small>
-            <input type="number" class="w-full rounded-2xl bg-white pr-2" placeholder="موجودی"
+            <input  type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="موجودی"
                    wire:model="stock" @if($variant) disabled @endif>
             @error('stock')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
@@ -175,13 +175,9 @@
                     @error('variants.' . $i  .'.name')
                     <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                     @enderror
-{{--                    <input type="number" class="rounded-2xl w-1/4 pr-2"--}}
-{{--                           placeholder="قیمت (اختیاری)"--}}
-{{--                           wire:model="variants.{{ $i }}.price">--}}
-{{--                    @error('variants.' . $i  .'.price')--}}
-{{--                    <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>--}}
-{{--                    @enderror--}}
-                    <input type="number" class="rounded-2xl w-1/4 pr-2"
+                    <input type="number"
+                           x-on:wheel.prevent
+                           class="rounded-2xl w-1/4 pr-2"
                            placeholder="موجودی"
                            wire:model="variants.{{ $i }}.stock">
                     @error('variants.' . $i  .'.stock')

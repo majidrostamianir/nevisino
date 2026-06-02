@@ -16,30 +16,37 @@
 }">
     <div class="flex justify-around items-center mt-20">
         <div class="w-full">
-            <strong>کاربر گرامی؛</strong>
-            <div class="w-full mt-2">لطفا شماره موبایل خود را وارد کنید:</div>
+            <strong class="text-gray-800">کاربر گرامی؛</strong>
+            <div class="w-full mt-2 text-gray-600">لطفا شماره موبایل خود را وارد کنید:</div>
 
             <input
-                inputmode="numeric"
-                type="text"
-                x-model="value"
-                @keydown.enter.prevent="submit()"
-                @input="convert($event.target.value)"
-                dir="auto"
-                autofocus
-                placeholder="{{ english_to_persian_num('09123456789') }}"
-                class="mt-8 w-full rounded-2xl placeholder:text-gray-300 placeholder:text-center text-center">
+                    inputmode="numeric"
+                    type="text"
+                    x-model="value"
+                    @keydown.enter.prevent="submit()"
+                    @input="convert($event.target.value)"
+                    dir="auto"
+                    autofocus
+                    placeholder="{{ english_to_persian_num('09123456789') }}"
+                    class="mt-8 w-full rounded-2xl placeholder:text-gray-400 placeholder:text-center text-center border-2 border-gray-200 focus:border-pars-500 focus:outline-none focus:ring-2 focus:ring-pars-200 bg-white p-3 transition-all duration-200">
+
+            <div class="text-right mt-2 text-xs text-gray-400 flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>مثال: {{ english_to_persian_num('09123456789') }}</span>
+            </div>
         </div>
     </div>
 
     <div class="flex flex-col items-center mt-8 mb-4">
-        <a class="w-full text-center cursor-pointer rounded-2xl p-1.5 bg-pars-500 hover:bg-pars-600 transition-all text-white mb-2"
-            @click.prevent="submit()">ورود</a>
-{{--        <a class="text-xs cursor-pointer self-end mt-1" href="{{ route('forget') }}" wire:navigate.hover>--}}
-{{--            فراموشی رمز عبور--}}
-{{--        </a>--}}
+        <button @click.prevent="submit()"
+                class="w-full text-center cursor-pointer rounded-2xl p-1.5 bg-pars-500 hover:bg-pars-600 transition-all text-white mb-2">
+            ورود
+        </button>
     </div>
+
     @error('enMobile')
-    <span class="text-xs text-red-500">{{ $message }}</span>
+    <span class="text-xs text-red-500 block text-right">{{ english_to_persian_num($message) }}</span>
     @enderror
 </div>

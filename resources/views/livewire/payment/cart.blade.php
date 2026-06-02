@@ -1,172 +1,202 @@
-<div class="flex flex-col lg:flex-row gap-2">
-    <!-- جدول -->
-    <div class="w-full lg:w-2/3 overflow-x-auto">
-        @if($orders->isNotEmpty())
-            <div class="bg-pars-100 rounded-2xl mb-4 p-4">
-                <strong class="block mb-3 text-sm sm:text-base">
-                    شما {{ english_to_persian_num(count($orders)) }} سفارش در انتظار پرداخت دارید
+<div class="space-y-6">
+    {{-- سفارشات در انتظار پرداخت --}}
+    @if($orders->isNotEmpty())
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-amber-200 bg-amber-100/50">
+                <strong class="text-amber-800 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    شما یک سفارش در انتظار پرداخت دارید
                 </strong>
-
+            </div>
+            <div class="p-4 space-y-3">
                 @foreach($orders as $order)
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between
-                    border border-gray-300 w-full p-4 my-2 rounded-lg">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-                        <!-- اطلاعات سفارش -->
                         <div class="text-sm">
-                            {{ english_to_persian_num($order->order_number) }}
-                            <span class="mx-2 text-pars-400 hidden sm:inline">&#9679;</span>
-                            قابل پرداخت:
-                            {{ english_to_persian_num(number_format($order->amount)) }}
-                            تومان
+                            <span class="text-gray-500">شماره سفارش:</span>
+                            <span class="font-bold text-gray-800">{{ english_to_persian_num($order->order_number) }}</span>
+                            <span class="hidden sm:inline mx-2 text-gray-300">|</span>
+                            <span class="text-gray-500">مبلغ قابل پرداخت:</span>
+                            <span class="font-bold text-pars-700">{{ english_to_persian_num(number_format($order->amount)) }}</span>
+                            <span class="text-xs text-gray-400">تومان</span>
                         </div>
 
-                        <!-- هشدار -->
-                        <div class="flex items-center gap-2 text-xs text-gray-700">
-                            <svg width="18" height="18" viewBox="0 0 64 64" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg" class="shrink-0">
+                        <div class="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full">
+                            <svg width="16" height="16" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="32" cy="32" r="30" fill="#FF9800"/>
-                                <path d="M32 18C30.9 18 30 18.9 30 20V36C30 37.1 30.9 38 32 38C33.1 38 34 37.1 34 36V20C34 18.9 33.1 18 32 18Z"
-                                      fill="white"/>
+                                <path d="M32 18C30.9 18 30 18.9 30 20V36C30 37.1 30.9 38 32 38C33.1 38 34 37.1 34 36V20C34 18.9 33.1 18 32 18Z" fill="white"/>
                                 <circle cx="32" cy="45" r="2.5" fill="white"/>
                             </svg>
                             <span>در صورت عدم پرداخت، این سفارش بزودی لغو خواهد شد.</span>
                         </div>
 
-                        <!-- دکمه‌ها -->
-                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                            <a href="/dashboard/order?open={{ $order->order_number }}"
-                               class="text-xs sm:text-sm border border-gray-500 rounded px-4 py-1 text-center"
-                               wire:navigate>
-                                جزئیات سفارش
-                            </a>
+                        <a href="/dashboard/order?open={{ $order->order_number }}"
+                           class="cursor-pointer text-sm bg-pars-500 hover:bg-pars-600 active:scale-95 text-white rounded-xl px-5 py-2 text-center transition-all duration-200 shadow-sm flex items-center justify-center gap-2"
+                           wire:navigate>
 
-                            <a wire:click="payAgain('{{ $order->id }}')"
-                               class="cursor-pointer text-xs sm:text-sm bg-pars-500 text-white rounded px-4 py-1 text-center"
-                               wire:navigate>
-                                پرداخت
-                            </a>
-                        </div>
+                            جزئیات سفارش و پرداخت
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l-7 7 7 7"/>
+                            </svg>
+                        </a>
                     </div>
                 @endforeach
             </div>
+        </div>
+    @endif
 
-        @endif
-        @if($cart)
-            <table class=" w-full text-right bg-pars-100 rounded-2xl">
-                <tbody>
-                @foreach ($cart as $key => $product)
+    {{-- محتوای اصلی سبد خرید --}}
+    <div class="flex flex-col lg:flex-row gap-6">
 
-                    <tr wire:key="{{$key}}" class="border-b border-b-gray-200 last:border-0">
-                        <td class="px-4 py-2">
-                            @if($product['variant'])
-                                <a wire:navigate
-                                   href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url]) }}">
-                                    <img class="w-24 rounded"
-                                         src="{{ asset('storage/products/' . $product['id'] . '/small/'. $product['variant'] .'.webp') }}"
-                                         alt="">
-                                </a>
-                            @else
-                                <a wire:navigate
-                                   href="{{ route('product-page' , ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url]) }}">
-                                    <img class="w-24 rounded"
-                                         src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}"
-                                         alt="">
-                                </a>
-                            @endif
-                        </td>
-                        <td class="px-4 py-2">
-                            <span
-                                    class="font-bold">{{ $product['title'] }}  {{ english_to_persian_num($product['code']) }}</span>
-                            @if($product['variant'])
-                                <br>
-                                <span class="text-sm">
-                                    {{ \App\Models\Product::query()->find($product['id'])->variant }}
-                                : {{ $product['variantName'] }}
-                                </span>
-                                <br>
-                                <div class="lg:hidden pt-2">
-                                    @if($product['quantity'] > 1)
-
-                                        {{ english_to_persian_num(number_format($product['price'])) }}
-                                        ×
-                                        {{ english_to_persian_num($product['quantity']) }}
-
+        {{-- جدول محصولات --}}
+        <div class="w-full lg:w-2/3 overflow-x-auto">
+            @if($cart)
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full text-right">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="px-5 py-4 text-sm font-bold text-gray-700">تصویر</th>
+                            <th class="px-5 py-4 text-sm font-bold text-gray-700">محصول</th>
+                            <th class="px-5 py-4 text-sm font-bold text-gray-700 hidden lg:table-cell">قیمت</th>
+                            <th class="px-5 py-4 text-sm font-bold text-gray-700 hidden lg:table-cell"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ($cart as $key => $product)
+                            <tr wire:key="{{$key}}" class="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
+                                <td class="px-5 py-4">
+                                    @if($product['variant'])
+                                        <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}">
+                                            <img class="w-20 h-20 object-cover rounded-xl shadow-sm" src="{{ asset('storage/products/' . $product['id'] . '/small/' . $product['variant'] . '.webp') }}" alt="">
+                                        </a>
                                     @else
-                                        {{  english_to_persian_num(number_format( $product['price'])) }}
+                                        <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}">
+                                            <img class="w-20 h-20 object-cover rounded-xl shadow-sm" src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}" alt="">
+                                        </a>
                                     @endif
-                                </div>
-                            @else
-                                <br>
-                                <div class="lg:hidden pt-2">
-                                    @if($product['quantity'] > 1)
+                                </td>
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div>
+                                            <span class="font-bold text-gray-800 text-sm">{{ $product['title'] }} {{ english_to_persian_num($product['code']) }}</span>
+                                            @if($product['variant'])
+                                                <div class="text-xs text-gray-500 mt-1">
+                                                    {{ \App\Models\Product::query()->find($product['id'])->variant }}: {{ $product['variantName'] }}
+                                                </div>
+                                            @endif
 
-                                        {{ english_to_persian_num(number_format($product['price'])) }}
-                                        ×
-                                        {{ english_to_persian_num($product['quantity']) }}
+                                        </div>
 
-                                    @else
-                                        {{  english_to_persian_num(number_format( $product['price'])) }}
-                                    @endif
-                                </div>
-                            @endif
-                        </td>
-                        <td class="px-4 py-2 hidden lg:table-cell">
-                            @if($product['quantity'] > 1)
-                                {{  english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}
-                                =  {{ english_to_persian_num($product['quantity']) }}
-                                × {{ english_to_persian_num(number_format($product['price'])) }}
-                            @else
-                                {{  english_to_persian_num(number_format( $product['price'])) }}
-                            @endif
-                        </td>
-                        <td class="px-4 py-2">
-                            <span wire:click.prevent="removeFromCart('{{ $key }}')"
-                                  class="font-bold bg-pars-500 transition-all duration-300 hover:bg-red-500 text-white cursor-pointer rounded-full px-2 ">×</span>
-                        </td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        @else
-            <div class="w-full bg-pars-100 rounded-2xl shadow text-center py-8">
-                <img class="w-32 mx-auto" src="{{ asset('images/cart2.png') }}" alt="">
-                <p class="pt-4 mb-8">سبد خرید شما خالی است</p>
-                <a href="{{ route('shop') }}" wire:navigate
-                   class="bg-pars-500 text-white px-2 py-1 rounded hover:bg-pars-600 shadow">برو به فروشگاه</a>
+                                    </div>
+                                    <div class="lg:hidden mt-3">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-gray-500 text-sm">تعداد:</span>
+                                            <span class="text-sm font-medium">{{ english_to_persian_num($product['quantity']) }}</span>
+                                            <span class="text-pars-700 font-bold mr-3">{{ english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}</span>
+                                            <span class="text-xs text-gray-400">تومان</span>
+                                        </div>
+                                    </div>
+
+                                </td>
+                                <td class="px-5 py-4 hidden lg:table-cell">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div>
+                                            <span class="text-pars-700 font-bold text-lg">{{ english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}</span>
+                                            <span class="text-xs text-gray-400 mr-1">تومان</span>
+                                            @if($product['quantity'] > 1)
+                                                <div class="text-xs text-gray-400">({{ english_to_persian_num(number_format($product['price'])) }} × {{ english_to_persian_num($product['quantity']) }})</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4 hidden lg:table-cell">
+                                    <button wire:click.prevent="removeFromCart('{{ $key }}')" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex-shrink-0">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 text-center py-12">
+                    <img class="w-32 mx-auto" src="{{ asset('images/cart2.png') }}" alt="">
+                    <p class="pt-4 mb-8">سبد خرید شما خالی است</p>
+                    <a href="{{ route('shop') }}" wire:navigate class="inline-block mt-4 bg-pars-500 hover:bg-pars-600 text-white px-6 py-2 rounded-xl text-sm font-bold transition-all">
+                        برو به فروشگاه
+                    </a>
+                </div>
+            @endif
+        </div>
+        <div class="w-full h-fit lg:w-1/3  bg-white  border border-gray-100 p-5 shadow rounded-2xl mt-2 lg:mt-0 lg:mr-2 sticky top-20">
+            <div class="w-full mb-4 flex justify-between">
+                <div class=""><strong>جمع مبلغ سبد خرید</strong></div>
+                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+                <div class="text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
             </div>
-        @endif
-    </div>
-
-    <!-- منوی سمت راست -->
-    <div class="w-full h-fit lg:w-1/3 p-4 bg-pars-100 shadow rounded-2xl mt-2 lg:mt-0 lg:mr-2 sticky top-20">
-        <div class="w-full mb-4 flex justify-between">
-            <div class=""><strong>جمع مبلغ سفارش</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class=" text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
-        </div>
-        <div class="w-full mb-4 flex justify-between">
-            <div class=""><strong>روش ارسال</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class=" text-left">پست پیشتاز</div>
-        </div>
-        <div class="w-full mb-4 flex justify-between">
-            <div class=""><strong>زمان ارسال</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class=text-left">
-                <span>هر روز ساعت ۱۰ صبح<span class="text-xs">(روزهای کاری)</span></span>
+            <div class="w-full mb-4 flex justify-between">
+                <div class=""><strong>روش‌های ارسال</strong></div>
+                <span>
+                    <livewire:components.tooltip
+                            text="در بخش تکمیل سفارش، شما می‌توانید روش ارسال دلخواه خود را انتخاب کنید. گزینه‌های موجود شامل تیپاکس (ارسال سریع‌تر) و پست پیشتاز (ارسال اقتصادی) می‌باشد." position="left"/>
+                </span>
+                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+                <div class="text-left">پست پیشتاز یا تیپاکس</div>
             </div>
-        </div>
-        <div class="w-full mb-16 flex justify-between">
-            <div class=""><strong>زمان رسیدن به مقصد</strong></div>
-            <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-            <div class="text-left">{{ english_to_persian_num('بین 3 تا 5 روز') }}</div>
-        </div>
+            <div class="w-full mb-4 flex justify-between">
+                <div class=""><strong>هزینه ارسال</strong></div>
+                <span>
+                         <livewire:components.tooltip
+                                 text="در روش پیش‌کرایه مبلغ ثابتی بابت هزینه ارسال به مبلغ قابل پرداخت شما اضافه خواهد شد ولی در روش پس‌کرایه هزینه ارسال سفارش بر اساس وزن و مسافت محاسبه شده و در هنگام تحویل کالا، به مامور پست پرداخت می‌شود. (روش پس‌کرایه از روش پیش‌کرایه ارزان‌تر است)" position="left"/>
+                    </span>
+                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+                <div class="text-left">
+                    <span>پیش‌کرایه یا پس‌کرایه</span>
 
-        <div class="w-full lg:flex justify-between">
-            <button wire:click.prevent="checkout"
-                    class="w-full text-center bg-pars-700 hover:bg-pars-800 text-white rounded-2xl py-1 cursor-pointer">
-                تکمیل سفارش
-            </button>
+                </div>
+            </div>
+            <div class="w-full mb-4 flex justify-between">
+                <div class=""><strong>زمان ارسال</strong></div>
+                <span>
+                         <livewire:components.tooltip
+                                 text="سفارش‌های ثبت شده تا قبل از ساعت ۱۰ صبحِ روزهای کاری، در همان روز و سفارش‌های ثبت شده بعد از این ساعت، در روز کاری بعد ارسال می‌گردند." position="left"/>
+                    </span>
+                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+                <div class="text-left">
+                    <span>هرروز ساعت ۱۰ صبح(غیرتعطیل)</span>
+                </div>
+            </div>
+            <div class="w-full mb-4 flex justify-between">
+                <div class=""><strong>بسته‌بندی</strong></div>
+                <span>
+                         <livewire:components.tooltip
+                                 text="کلیه سفارش‌ها در کارتن‌های پستیِ سه‌لایه و استاندارد، با دقت بالا بسته‌بندی شده و فضاهای خالی داخل کارتن با ضربه‌گیر پر می‌شود تا محصول در سلامت کامل به دست شما برسد." position="left"/>
+                    </span>
+                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+                <div class="text-left">
+                    <span>کارتن‌های پستیِ سه‌لایه</span>
+                </div>
+            </div>
+            <div class="w-full mb-16 flex justify-between">
+                <div class=""><strong>زمان رسیدن به مقصد</strong></div>
+                <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
+                <div class="text-left">{{ english_to_persian_num('بین 1 تا 3 روز') }}</div>
+            </div>
+            <div class="w-full lg:flex justify-between">
+                <button wire:click.prevent="checkout"
+                        class="w-full mt-6 bg-pars-500 hover:bg-pars-600 active:scale-95 text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+
+                    تکمیل سفارش
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l-7 7 7 7"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 </div>

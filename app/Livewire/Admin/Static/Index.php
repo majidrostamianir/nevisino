@@ -10,16 +10,39 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $query , $ip , $user;
+    public $query , $ip , $user ,$total_stock, $total_value;
     public $queries;
 
     public function mount()
     {
         $this->queries = SearchQuery::query()->orderBy('created_at', 'desc')
-            ->take(100)
+            ->take(300)
             ->get();
+
+        $this->calculate();
     }
 
+    public function calculate()
+    {
+        $this->total_stock = \App\Models\Product::query()
+                ->whereNull('variant')
+                ->sum('stock')
+            +
+            \App\Models\ProductVariant::query()
+                ->whereHas('product', fn($q) => $q->whereNotNull('variant'))
+                ->sum('stock');
+
+        $this->total_value = \App\Models\Product::query()
+            ->whereNull('variant')
+            ->selectRaw('SUM(stock * COALESCE(discounted_price, price)) as total')
+            ->value('total') ?? 0;
+
+        $this->total_value += \App\Models\ProductVariant::query()
+            ->join('products', 'products.id', '=', 'product_variants.product_id')
+            ->whereNotNull('products.variant')
+            ->selectRaw('SUM(product_variants.stock * COALESCE(products.discounted_price, products.price)) as total')
+            ->value('total') ?? 0;
+    }
     public function updatedQuery()
     {
         $this->queries = SearchQuery::querySearch($this->query);
@@ -37,7 +60,7 @@ class Index extends Component
     {
         Order::query()
             ->where('status', 'pending')
-            ->where('created_at', '<', now()->subDays(1))
+            ->where('created_at', '<', now()->subMinutes(30))
             ->update([
                 'status' => 'canceled'
             ]);

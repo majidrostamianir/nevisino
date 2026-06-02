@@ -16,9 +16,16 @@ class Index extends Component
         $this->users = User::where('type', 'client')->latest()->get();
     }
 
+    public function resetMobileOtpSentCount($userId)
+    {
+        $user = User::findOrFail($userId);
+        $user->update(['mobile_otp_sent_count' => 1]);
+    }
+
     public function loginUser($id)
     {
         Auth::loginUsingId($id);
+        return redirect()->route('home');
     }
 
     public function updatedQueryName()
