@@ -54,7 +54,7 @@ class Order extends Component
 
         $order->tracking_code = $this->trackingCodes[$orderId];
         $order->save();
-        $this->sendTrackingSms($this->trackingCodes[$orderId]);
+        $this->sendTrackingSms($order->order_number);
         $this->dispatch('showNotification', message: 'کد مرسوله ذخیره شد' , showCartButton: false);
     }
 

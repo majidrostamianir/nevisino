@@ -58,10 +58,10 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
- /*   public function getStoryImageAttribute()
-    {
-        return asset("storage/products/{$this->id}/small/1.webp");
-    }
+//   public function getStoryImageAttribute()
+//    {
+//        return asset("storage/products/{$this->id}/small/1.webp");
+//    }
     public function hasValidStock(): bool
     {
         // اگر واریانت دارد
@@ -71,6 +71,6 @@ class Product extends Model
 
         // اگر واریانت ندارد
         return $this->stock > 0;
-    }*/
+    }
 
 }
