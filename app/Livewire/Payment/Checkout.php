@@ -26,10 +26,12 @@ class Checkout extends Component
     public $showPopup = false;
     public string $shipping_method = 'post_cod';
 
+    /*
     // ترب‌پی
-    public bool $torobpayEligible = false;
+   public bool $torobpayEligible = false;
     public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
     public string $torobpayDescription = '';
+*/
 
     public function mount()
     {
@@ -39,38 +41,38 @@ class Checkout extends Component
         $this->calculateAmount();
         $this->shipping_method = 'post_cod';
         $this->shipping_price = 0;
-        $this->checkTorobpayEligibility();
+//        $this->checkTorobpayEligibility();
     }
 
     // ─────────────────────────────────────────────
     //  بررسی صلاحیت ترب‌پی
     // ─────────────────────────────────────────────
 
-    private function checkTorobpayEligibility(): void
-    {
-        if ($this->amount <= 0) {
-            $this->torobpayEligible = false;
-            return;
-        }
-        try {
-            $service = app(TorobpayService::class);
-            $result = $service->checkEligible($this->amount);
-            $this->torobpayEligible = $result['eligible'];
+    /* private function checkTorobpayEligibility(): void
+     {
+         if ($this->amount <= 0) {
+             $this->torobpayEligible = false;
+             return;
+         }
+         try {
+             $service = app(TorobpayService::class);
+             $result = $service->checkEligible($this->amount);
+             $this->torobpayEligible = $result['eligible'];
 
-            if ($result['eligible']) {
-                $this->torobpayTitle = $result['message_title'] ?? 'پرداخت اقساطی با ترب پی';
-                $this->torobpayDescription = $result['description'] ?? '';
-            }
-        } catch (\Exception $e) {
-            $this->torobpayEligible = false;
-        }
-    }
+             if ($result['eligible']) {
+                 $this->torobpayTitle = $result['message_title'] ?? 'پرداخت اقساطی با ترب پی';
+                 $this->torobpayDescription = $result['description'] ?? '';
+             }
+         } catch (\Exception $e) {
+             $this->torobpayEligible = false;
+         }
+     }*/
 
     public function updateShippingMethod($method)
     {
         $this->shipping_method = $method;
         $this->calculateAmount();
-        $this->checkTorobpayEligibility();
+//        $this->checkTorobpayEligibility();
     }
 
     public function selectAddress($value)
@@ -100,6 +102,11 @@ class Checkout extends Component
 
     public function pay()
     {
+
+        $this->dispatch('showNotification', message: ' اطلاعیه: فروشگاه از ۱۳ الی ۲۴ خرداد به دلیل انبارگردانی تعطیل می‌باشد.مشتریان عزیز می‌توانید از ۲۵ خرداد سفارشات خود را ثبت نمایید.', type: 'error' , showCartButton: false );
+        return;
+
+
         $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
         $this->postal_address = str_replace(["\r\n", "\r", "\n"], ' ', $this->postal_address);
 
@@ -155,7 +162,7 @@ class Checkout extends Component
                 ]);
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
-            case 'torobpay':
+           /* case 'torobpay':
                 // اگر کاربر به هر طریقی گزینه غیرفعال رو bypass کرد
                 if (!$this->torobpayEligible) {
                     abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
@@ -182,7 +189,7 @@ class Checkout extends Component
                     $transaction->update(['status' => 'failed']);
                     Log::error($e->getMessage());
                     abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
-                }
+                }*/
         }
     }
 

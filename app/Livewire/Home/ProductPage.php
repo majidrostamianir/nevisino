@@ -103,6 +103,10 @@ class ProductPage extends Component
 
     public function addToCart()
     {
+//        $this->dispatch('showNotification', message: ' اطلاعیه: فروشگاه از ۱۳ الی ۲۴ خرداد به دلیل انبارگردانی تعطیل می‌باشد.مشتریان عزیز می‌توانید از ۲۵ خرداد سفارشات خود را ثبت نمایید.', type: 'error' , showCartButton: false );
+//        return;
+
+
 
         // 1. اعتبارسنجی
         $this->validate(
