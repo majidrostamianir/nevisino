@@ -8,12 +8,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <small class="mr-2 text-gray-700 font-medium">نام برند</small>
-                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="name">
+                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model.live="name">
                     @error('name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div>
                     <small class="mr-2 text-gray-700 font-medium">slug</small>
-                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="slug">
+                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model.live="slug" placeholder="خالی بذارید خودکار پر میشه">
+                    <span class="text-xs text-gray-400">اگر خالی بذارید، از روی نام برند ساخته می‌شود</span>
                     @error('slug') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div>

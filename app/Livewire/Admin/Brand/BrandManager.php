@@ -12,6 +12,7 @@ class BrandManager extends Component
     public $name, $slug, $logo, $website, $description, $order, $status = true;
     public $editingId = null;
     public $searchQuery = '';
+    public $manualSlug = false;
 
     protected function rules()
     {
@@ -26,13 +27,33 @@ class BrandManager extends Component
         ];
     }
 
-    public function updatedName()
+    public function updatedName($value)
     {
-        $this->slug = Str::slug($this->name);
+        if (!$this->manualSlug) {
+            $this->slug = $this->makeSlug($value);
+        }
+    }
+
+    public function updatedSlug()
+    {
+        $this->manualSlug = true;
+    }
+
+    public function makeSlug($text)
+    {
+        $text = trim($text);
+        $text = preg_replace('/\s+/', '-', $text);
+        $text = preg_replace('/[^\\x{0600}-\\x{06FF}\\x{FB50}-\\x{FDFF}\\x{FE70}-\\x{FEFF}a-zA-Z0-9\-]/u', '', $text);
+        return $text;
     }
 
     public function save()
     {
+        if (empty($this->slug)) {
+            $this->slug = $this->makeSlug($this->name);
+            $this->manualSlug = false;
+        }
+
         $this->validate();
 
         Brand::updateOrCreate(
@@ -48,7 +69,7 @@ class BrandManager extends Component
             ]
         );
 
-        $this->reset(['name', 'slug', 'logo', 'website', 'description', 'order', 'status', 'editingId']);
+        $this->reset(['name', 'slug', 'logo', 'website', 'description', 'order', 'status', 'editingId', 'manualSlug']);
         session()->flash('message', 'برند ذخیره شد.');
         $this->loadBrands();
     }
@@ -64,6 +85,7 @@ class BrandManager extends Component
         $this->description = $brand->description;
         $this->order = $brand->order;
         $this->status = $brand->status;
+        $this->manualSlug = true;
     }
 
     public function delete($id)
