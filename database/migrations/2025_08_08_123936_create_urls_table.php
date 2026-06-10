@@ -26,8 +26,6 @@ return new class extends Migration
             $table->boolean('following')->default(true);
             $table->timestamps();
 
-            $table->fullText('title');
-
         });
     }
 

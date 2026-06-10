@@ -24,9 +24,18 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function attrs()
+    public function attributes()
     {
-        return $this->belongsToMany(Attr::class)->withTimestamps();
+        return $this->belongsToMany(Attribute::class, 'attribute_product')
+            ->withPivot('attribute_value_id')
+            ->withTimestamps();
+    }
+
+    public function attributeValues()
+    {
+        return $this->belongsToMany(AttributeValue::class, 'attribute_product')
+            ->withPivot('attribute_id')
+            ->withTimestamps();
     }
     public function toSearchableArray()
     {
@@ -53,10 +62,6 @@ class Product extends Model
     }
 
 
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
-    }
 
 //   public function getStoryImageAttribute()
 //    {

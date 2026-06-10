@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Admin\Product;
 
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Url;
@@ -16,12 +18,12 @@ class Save extends Component
     public int $size, $price, $weight;
     public string $title = '', $query = '', $queryAttr = '';
 
-    public string|null $variant = null, $code = null  , $description = null;
+    public string|null $variant = null, $code = null, $description = null;
 
     public array $urls = [];
     public array $attrs = [];
     public array $selectedUrls = [];
-    public array $selectedAttrs = [];
+    public array $selectedAttrs = []; // [attribute_id => attribute_value_id]
     public bool $isFocused = false;
     public bool $isFocusedAttr = false;
     public array $variants = [];
@@ -37,23 +39,28 @@ class Save extends Component
             $this->description = $product->description;
             $this->variant = $product->variant;
             $this->selectedUrls = $product->urls->pluck('title_tag', 'id')->toArray();
-            $this->selectedAttrs = $product->attrs
+
+            // تبدیل ساختار جدید به selectedAttrs
+            $this->selectedAttrs = $product->attributes()
+                ->withPivot('attribute_value_id')
+                ->get()
                 ->mapWithKeys(function ($attr) {
                     return [
                         $attr->id => [
-                            'title' => $attr->title,
-                            'value' => $attr->value,
+                            'attribute_id' => $attr->id,
+                            'attribute_name' => $attr->name,
+                            'value_id' => $attr->pivot->attribute_value_id,
+                            'value' => $attr->values->where('id', $attr->pivot->attribute_value_id)->first()->value ?? '',
                         ]
                     ];
-                })->sortBy('title')->toArray();
+                })->toArray();
+
             $this->categoryId = $product->category_id;
             $this->size = $product->size;
             $this->price = $product->price;
             $this->discounted_price = $product->discounted_price;
             $this->weight = $product->weight;
             $this->stock = $product->stock;
-//            $this->clearTemporaryFiles();
-
 
             $this->variants = $product->variants->map(function ($v) {
                 return [
@@ -72,6 +79,7 @@ class Save extends Component
             $this->size = 0;
         }
     }
+
     protected function rules(): array
     {
         return [
@@ -92,6 +100,7 @@ class Save extends Component
             'description' => 'nullable|string|min:1|max:1000',
         ];
     }
+
     public function save()
     {
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
@@ -107,7 +116,6 @@ class Save extends Component
             $this->discounted_price = null;
         }
 
-
         $this->validate();
         $this->product->title = $this->title;
         $this->product->dashed_url = $dashed_url;
@@ -121,8 +129,15 @@ class Save extends Component
         $this->product->code = $this->code;
         $this->product->description = $this->description;
         $this->product->save();
+
         $this->product->urls()->sync(array_keys($this->selectedUrls));
-        $this->product->attrs()->sync(array_keys($this->selectedAttrs));
+
+        // همگام سازی ویژگی‌های جدید
+        $syncData = [];
+        foreach ($this->selectedAttrs as $attributeId => $data) {
+            $syncData[$attributeId] = ['attribute_value_id' => $data['value_id']];
+        }
+        $this->product->attributes()->sync($syncData);
 
         $keptIds = [];
         foreach ($this->variants as $variant) {
@@ -133,16 +148,16 @@ class Save extends Component
                     'stock' => $variant['stock'] ?? 0,
                 ]
             );
-            $keptIds[] = $v->id; // آی‌دی‌هایی که باید نگه داشته شوند
+            $keptIds[] = $v->id;
         }
 
-// حالا هر چیزی که جزو آی‌دی‌های جدید نیست حذف می‌کنیم
         $this->product->variants()
             ->whereNotIn('id', $keptIds)
             ->delete();
 
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
+
     public function addVariant(): void
     {
         $this->variants[] = [
@@ -185,7 +200,6 @@ class Save extends Component
         $this->isFocusedAttr = false;
     }
 
-
     public function selectUrl($key)
     {
         if (!in_array($key, $this->selectedUrls)) {
@@ -195,26 +209,20 @@ class Save extends Component
         $this->query = '';
     }
 
-    public function selectAttr($key)
+    public function selectAttr($attributeId, $valueId, $attributeName, $value)
     {
-        if (!array_key_exists($key, $this->selectedAttrs)) {
-
-            $attr = \App\Models\Attr::query()
-                ->select('id', 'title', 'value')
-                ->find($key);
-
-            if ($attr) {
-                $this->selectedAttrs[$key] = [
-                    'title' => $attr->title,
-                    'value' => $attr->value,
-                ];
-            }
+        if (!array_key_exists($attributeId, $this->selectedAttrs)) {
+            $this->selectedAttrs[$attributeId] = [
+                'attribute_id' => $attributeId,
+                'attribute_name' => $attributeName,
+                'value_id' => $valueId,
+                'value' => $value,
+            ];
         }
 
         $this->updateAvailableAttrs();
-        $this->query = '';
+        $this->queryAttr = '';
     }
-
 
     public function removeUrl($urlId)
     {
@@ -222,11 +230,12 @@ class Save extends Component
         $this->updateAvailableUrls();
     }
 
-    public function removeAttr($attrId)
+    public function removeAttr($attributeId)
     {
-        unset($this->selectedAttrs[$attrId]);
+        unset($this->selectedAttrs[$attributeId]);
         $this->updateAvailableAttrs();
     }
+
     public function updatedCategoryId(): void
     {
         $this->setUrls();
@@ -257,7 +266,6 @@ class Save extends Component
         }
     }
 
-
     public function updatedQuery()
     {
         $this->updateAvailableUrls();
@@ -267,13 +275,6 @@ class Save extends Component
     {
         $this->updateAvailableAttrs();
     }
-
-//    public function search($query): array
-//    {
-//        return array_filter($this->urls, function ($item) use ($query) {
-//            return stripos($item, $query) !== false;
-//        });
-//    }
 
     protected function updateAvailableUrls()
     {
@@ -294,24 +295,33 @@ class Save extends Component
     {
         $query = '%' . $this->queryAttr . '%';
 
-        $this->attrs = \App\Models\Attr::query()
+        $allAttributes = Attribute::with(['values'])
             ->where('category_id', $this->categoryId)
-            ->where(function ($q) use ($query) {
-                $q->where('title', 'like', $query)
-                    ->orWhere('value', 'like', $query);
-            })
-            ->whereNotIn('id', array_keys($this->selectedAttrs))
-            ->get(['id', 'title', 'value'])
-            ->mapWithKeys(function ($item) {
-                return [
-                    $item->id => [
-                        'title' => $item->title,
-                        'value' => $item->value,
-                    ]
-                ];
-            })->sortBy('title')
-            ->toArray();
-        
+            ->get();
+
+        $availableAttrs = [];
+        foreach ($allAttributes as $attribute) {
+            foreach ($attribute->values as $value) {
+                // بررسی نشدن در selectedAttrs
+                if (!isset($this->selectedAttrs[$attribute->id])) {
+                    // جستجو در نام ویژگی یا مقدار
+                    $searchText = $this->queryAttr;
+                    if (empty($searchText) ||
+                        strpos(mb_strtolower($attribute->name), mb_strtolower($searchText)) !== false ||
+                        strpos(mb_strtolower($value->value), mb_strtolower($searchText)) !== false) {
+
+                        $availableAttrs[] = [
+                            'attribute_id' => $attribute->id,
+                            'attribute_name' => $attribute->name,
+                            'value_id' => $value->id,
+                            'value' => $value->value,
+                        ];
+                    }
+                }
+            }
+        }
+
+        $this->attrs = $availableAttrs;
     }
 
     public function render()
