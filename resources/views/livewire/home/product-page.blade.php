@@ -393,8 +393,18 @@
         </div>
     @endif
 
-    {{-- ویژگی‌ها --}}
-    @if($product->attrs()->exists())
+    @php
+        $displayAttrs = [];
+        foreach($product->attributes as $attr) {
+            $valueId = $attr->pivot->attribute_value_id;
+            $value = \App\Models\AttributeValue::find($valueId);
+            if($value) {
+                $displayAttrs[] = ['name' => $attr->name, 'value' => $value->value];
+            }
+        }
+    @endphp
+
+    @if(!empty($displayAttrs))
         <div class="w-full p-4 pb-8 sm:p-8 rounded-2xl mx-auto bg-white border border-gray-100 shadow-sm mt-4">
             <div class="font-bold mb-4 text-gray-800 flex items-center gap-2">
                 <svg class="w-5 h-5 text-pars-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -403,10 +413,10 @@
                 ویژگی‌ها
             </div>
             <div class="rounded-xl overflow-hidden border border-gray-100">
-                @foreach($product->attrs()->get()->sortBy('title') as $attr)
+                @foreach($displayAttrs as $attr)
                     <div class="flex text-sm">
-                        <div class="text-gray-700 w-1/2 md:w-1/3 p-2.5 pr-4 border-b border-gray-100 bg-gray-50 font-medium">{{ english_to_persian_num($attr->title) }}</div>
-                        <div class="text-gray-800 w-1/2 md:w-2/3 p-2.5 pr-4 border-b border-gray-100 bg-white">{{ english_to_persian_num($attr->value) }}</div>
+                        <div class="text-gray-700 w-1/2 md:w-1/3 p-2.5 pr-4 border-b border-gray-100 bg-gray-50 font-medium">{{ english_to_persian_num($attr['name']) }}</div>
+                        <div class="text-gray-800 w-1/2 md:w-2/3 p-2.5 pr-4 border-b border-gray-100 bg-white">{{ english_to_persian_num($attr['value']) }}</div>
                     </div>
                 @endforeach
             </div>

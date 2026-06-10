@@ -12,39 +12,53 @@
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
+
+        <div class="sm:w-3/12 p-1">
+            <small class="pr-2">برند</small>
+            <select class="w-full rounded-2xl" wire:model="brandId">
+                <option value="">انتخاب برند</option>
+                @foreach(\App\Models\Brand::where('status', true)->orderBy('order')->get() as $brand)
+                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                @endforeach
+            </select>
+            @error('brandId')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="sm:w-3/12 p-1">
             <small class="pr-2">تنوع</small>
-            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="تنوع"
-                   wire:model.blur="variant">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="تنوع" wire:model.blur="variant">
             @error('variant')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
-            <small class="pr-2">عنوان و آدرس</small>
-            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="عنوان و آدرس"
-                   wire:model="title">
-            @error('title')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-        </div>
-        <div class="sm:w-3/12 p-1 ">
+
+        <div class="sm:w-3/12 p-1">
             <small class="pr-2">کد کالا</small>
-            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="کد کالا"
-                   wire:model="code">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="کد کالا" wire:model="code">
             @error('code')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-full p-1 ">
+
+        <div class="sm:w-full p-1">
+            <small class="pr-2">عنوان و آدرس</small>
+            <input type="text" class="w-full rounded-2xl bg-white pr-2" placeholder="عنوان و آدرس" wire:model="title">
+            @error('title')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <div class="sm:w-full p-1">
             <small class="pr-2">توضیحات</small>
-            <textarea type="text" rows="3" class="w-full rounded-2xl bg-white pr-2" placeholder="توضیحات"
-                      wire:model="description"></textarea>
+            <textarea rows="3" class="w-full rounded-2xl bg-white pr-2" placeholder="توضیحات" wire:model="description"></textarea>
             @error('description')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
+
+        <div class="sm:w-3/12 p-1">
             <small class="pr-2">حداقل اندازه کارتن پستی</small>
             <select class="w-full rounded-2xl" wire:model="size">
                 <option value="0">انتخاب کنید</option>
@@ -62,40 +76,40 @@
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
+
+        <div class="sm:w-3/12 p-1">
             <small class="pr-2">وزن به گرم</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="وزن به گرم"
-                   wire:model="weight">
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="وزن به گرم" wire:model="weight">
             @error('weight')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
+
+        <div class="sm:w-3/12 p-1">
             <small class="pr-2">قیمت به تومان</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت به تومان"
-                   wire:model="price">
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت به تومان" wire:model="price">
             @error('price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
-            <small class="pr-2">قیمت با تحفیف به تومان</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت با تخفیف به تومان"
-                   wire:model="discounted_price">
+
+        <div class="sm:w-3/12 p-1">
+            <small class="pr-2">قیمت با تخفیف به تومان</small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="قیمت با تخفیف به تومان" wire:model="discounted_price">
             @error('discounted_price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
-        <div class="sm:w-3/12 p-1 ">
+
+        <div class="sm:w-3/12 p-1">
             <small class="pr-2">موجودی</small>
-            <input  type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="موجودی"
-                    wire:model="stock" @if($variant) disabled @endif>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2" placeholder="موجودی" wire:model="stock" @if($variant) disabled @endif>
             @error('stock')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
 
-        {{-- ویژگی های محصول - مثل استایل AttributeManager --}}
+        {{-- ویژگی های محصول --}}
         <div class="relative sm:w-1/3 p-1">
             <small class="pr-2">ویژگی های محصول</small>
             <div class="w-full relative rounded-2xl bg-white border border-gray-300">
@@ -106,19 +120,12 @@
                             <button wire:click="removeAttr({{ $attributeId }})" class="text-red-600 hover:text-red-800" title="حذف">🗑️</button>
                         </div>
                     @endforeach
-                        <input
-                                class="flex-1 min-w-[100px] outline-none py-2"
-                                type="text"
-                                wire:model.live.debounce.300ms="queryAttr"
-                                wire:focus="focusAttr"
-                                wire:click.away="blurAttr"
-                                placeholder="جستجوی ویژگی ها...">
+                    <input class="flex-1 min-w-[100px] outline-none py-2" type="text" wire:model.live.debounce.300ms="queryAttr" wire:focus="focusAttr" wire:click.away="blurAttr" placeholder="جستجوی ویژگی ها...">
                 </div>
                 @if ($isFocusedAttr && !empty($attrs))
                     <ul class="absolute z-10 bg-white mt-1 rounded shadow w-full max-h-60 overflow-y-auto">
                         @foreach ($attrs as $item)
-                            <li wire:click="selectAttr({{ $item['attribute_id'] }}, {{ $item['value_id'] }}, '{{ $item['attribute_name'] }}', '{{ $item['value'] }}')"
-                                class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
+                            <li wire:click="selectAttr({{ $item['attribute_id'] }}, {{ $item['value_id'] }}, '{{ $item['attribute_name'] }}', '{{ $item['value'] }}')" class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
                                 {{ $item['attribute_name'] }} : {{ $item['value'] }}
                             </li>
                         @endforeach
@@ -127,6 +134,7 @@
             </div>
         </div>
 
+        {{-- صفحات نمایش دهنده --}}
         <div class="relative sm:w-1/3 p-1">
             <small class="pr-2">صفحات نمایش دهنده این محصول</small>
             <div class="w-full relative rounded-2xl bg-white border border-gray-300">
@@ -137,19 +145,12 @@
                             <button wire:click="removeUrl({{ $key }})" class="text-red-600 hover:text-red-800" title="حذف">🗑️</button>
                         </div>
                     @endforeach
-                    <input
-                            class="flex-1 min-w-[100px] outline-none py-2"
-                            type="text"
-                            wire:focus="focus"
-                            wire:click.away="blur"
-                            wire:model.live.debounce.300ms="query"
-                            placeholder="جستجوی سردسته ها...">
+                    <input class="flex-1 min-w-[100px] outline-none py-2" type="text" wire:focus="focus" wire:click.away="blur" wire:model.live.debounce.300ms="query" placeholder="جستجوی سردسته ها...">
                 </div>
                 @if ($isFocused && !empty($urls))
                     <ul class="absolute z-10 bg-white mt-1 rounded shadow w-full max-h-60 overflow-y-auto">
                         @foreach ($urls as $key => $value)
-                            <li wire:click="selectUrl({{ $key }})"
-                                class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
+                            <li wire:click="selectUrl({{ $key }})" class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
                                 {{ $value }}
                             </li>
                         @endforeach
@@ -168,38 +169,23 @@
             @foreach($variants as $i => $variantItem)
                 <div class="flex gap-2 items-center mb-2">
                     <span>{{ $i+1 }} .</span>
-                    <input type="text" class="rounded-2xl w-1/3 pr-2 border border-gray-300"
-                           placeholder="نام ویژگی (مثلاً قرمز، بتمن)"
-                           wire:model="variants.{{ $i }}.name">
+                    <input type="text" class="rounded-2xl w-1/3 pr-2 border border-gray-300" placeholder="نام ویژگی (مثلاً قرمز، بتمن)" wire:model="variants.{{ $i }}.name">
                     @error('variants.' . $i . '.name')
                     <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                     @enderror
-                    <input type="number"
-                           x-on:wheel.prevent
-                           class="rounded-2xl w-1/4 pr-2 border border-gray-300"
-                           placeholder="موجودی"
-                           wire:model="variants.{{ $i }}.stock">
+                    <input type="number" x-on:wheel.prevent class="rounded-2xl w-1/4 pr-2 border border-gray-300" placeholder="موجودی" wire:model="variants.{{ $i }}.stock">
                     @error('variants.' . $i . '.stock')
                     <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
                     @enderror
-                    <button type="button" class="text-red-500 font-bold px-2 cursor-pointer" wire:click="removeVariant({{ $i }})">
-                        حذف
-                    </button>
+                    <button type="button" class="text-red-500 font-bold px-2 cursor-pointer" wire:click="removeVariant({{ $i }})">حذف</button>
                 </div>
             @endforeach
-
-            <button type="button"
-                    class="bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white text-sm px-3 py-1 rounded-2xl cursor-pointer"
-                    wire:click="addVariant">+ افزودن ویژگی
-            </button>
+            <button type="button" class="bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white text-sm px-3 py-1 rounded-2xl cursor-pointer" wire:click="addVariant">+ افزودن ویژگی</button>
         </div>
     @endif
 
     <div class="w-full text-center my-2">
-        <button
-                class="w-1/2 rounded-2xl p-1.5 cursor-pointer bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white transition-all"
-                wire:click="save()">ذخیره و آپلود عکس ها
-        </button>
+        <button class="w-1/2 rounded-2xl p-1.5 cursor-pointer bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white transition-all" wire:click="save()">ذخیره و آپلود عکس ها</button>
     </div>
 
     @if($product->id)

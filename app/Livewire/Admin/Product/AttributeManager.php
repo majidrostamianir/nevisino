@@ -98,13 +98,23 @@ class AttributeManager extends Component
 
     public function deleteAttribute($id)
     {
-        Attribute::find($id)->delete();
+        // ابتدا usage_count همه مقادیر این ویژگی را صفر کن
+        $attribute = Attribute::find($id);
+        foreach ($attribute->values as $value) {
+            $value->products()->detach();
+            $value->usage_count = 0;
+            $value->save();
+        }
+        $attribute->delete();
         session()->flash('message', 'ویژگی حذف شد.');
     }
 
     public function deleteValue($id)
     {
-        AttributeValue::find($id)->delete();
+        $value = AttributeValue::find($id);
+        // جدا کردن از همه محصولات
+        $value->products()->detach();
+        $value->delete();
         session()->flash('message', 'مقدار حذف شد.');
     }
 

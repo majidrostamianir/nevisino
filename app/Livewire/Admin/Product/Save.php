@@ -27,12 +27,13 @@ class Save extends Component
     public bool $isFocused = false;
     public bool $isFocusedAttr = false;
     public array $variants = [];
-
+    public $brandId = null;
 
 
     public function mount($product = null): void
     {
         if ($product) {
+            $this->brandId = $product->brand_id;
             $this->product = $product;
             $this->title = $product->title;
             $this->code = $product->code;
@@ -98,6 +99,7 @@ class Save extends Component
             'stock' => 'nullable|integer|min:0',
             'code' => 'nullable|string|min:1|max:255',
             'description' => 'nullable|string|min:1|max:1000',
+            'brandId' => 'nullable|exists:brands,id',
         ];
     }
 
@@ -121,6 +123,7 @@ class Save extends Component
         $this->product->dashed_url = $dashed_url;
         $this->product->variant = $this->variant;
         $this->product->category_id = $this->categoryId;
+        $this->product->brand_id = $this->brandId;
         $this->product->size = $this->size;
         $this->product->weight = $this->weight;
         $this->product->price = $this->price;
@@ -132,12 +135,29 @@ class Save extends Component
 
         $this->product->urls()->sync(array_keys($this->selectedUrls));
 
+        // دریافت attribute_value_ids قبلی قبل از همگام سازی
+        $oldValueIds = $this->product->attributeValues()->pluck('attribute_value_id')->toArray();
+
         // همگام سازی ویژگی‌های جدید
         $syncData = [];
+        $newValueIds = [];
         foreach ($this->selectedAttrs as $attributeId => $data) {
             $syncData[$attributeId] = ['attribute_value_id' => $data['value_id']];
+            $newValueIds[] = $data['value_id'];
         }
         $this->product->attributes()->sync($syncData);
+
+        // کاهش count برای مقادیری که حذف شده‌اند
+        $removedValueIds = array_diff($oldValueIds, $newValueIds);
+        foreach ($removedValueIds as $valueId) {
+            \App\Models\AttributeValue::find($valueId)?->decrement('usage_count');
+        }
+
+        // افزایش count برای مقادیری که اضافه شده‌اند
+        $addedValueIds = array_diff($newValueIds, $oldValueIds);
+        foreach ($addedValueIds as $valueId) {
+            \App\Models\AttributeValue::find($valueId)?->increment('usage_count');
+        }
 
         $keptIds = [];
         foreach ($this->variants as $variant) {
@@ -157,7 +177,6 @@ class Save extends Component
 
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
-
     public function addVariant(): void
     {
         $this->variants[] = [

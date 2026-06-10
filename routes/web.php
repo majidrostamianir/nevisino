@@ -43,6 +43,7 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
     Route::get('/admin/attr',\App\Livewire\Admin\Product\AttributeManager::class)->name('admin.product.attr');
+    Route::get('/admin/brand',\App\Livewire\Admin\Brand\BrandManager::class)->name('admin.brand');
 });
 
 
