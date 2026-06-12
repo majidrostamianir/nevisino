@@ -158,6 +158,8 @@ return array(
         "enMobile" => "شماره تلفن",
         "enPassword" => "رمز عبور",
         "enOtp" => "کد تایید",
+        "message" => "پیام",
+        "contact" => "شماره تماس",
 
 
     ),

@@ -153,6 +153,6 @@ class Index extends Component
             ->orderByDesc('stock')
             ->get();
 
-        return view('livewire.home.index', compact('rawProducts', 'productsForJs', 'topProducts', 'paintProducts','officeProducts'));
+        return view('livewire.home.index', compact('rawProducts', 'productsForJs', 'topProducts', 'paintProducts','officeProducts'))->title('نویسینو | خرید اینترنتی لوازم تحریر و نوشت افزار');
     }
 }

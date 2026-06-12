@@ -142,6 +142,13 @@
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">برندها</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('admin.contact-messages') }}"
+                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                        🗨️
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">کامنت</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </aside>

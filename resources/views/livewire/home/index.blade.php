@@ -127,7 +127,7 @@
             <img src="{{ asset('images/guarantee.png') }}" class="w-10 h-10 flex-shrink-0" alt="">
             <div class="mr-3">
                 <strong class="block text-sm lg:text-base text-black">ضمانت مرجوعی</strong>
-                <span class="block text-xs text-gray-600">امکان مرجوعی کالا تا ۷۲ ساعت</span>
+                <span class="block text-xs text-gray-600">امکان مرجوعی کالا تا ۷ روز</span>
             </div>
         </div>
 

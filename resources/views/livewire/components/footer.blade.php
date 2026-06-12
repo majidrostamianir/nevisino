@@ -43,11 +43,11 @@
             
             <div class="flex flex-col gap-3">
                 <span class="font-bold text-pars-700 mb-1">لینک‌های مفید</span>
-                <a href="#" wire:navigate class="text-sm hover:text-pars-600 transition-colors">درباره ما</a>
-                <a href="#" wire:navigate class="text-sm hover:text-pars-600 transition-colors">تماس با ما</a>
-                <a href="#" wire:navigate class="text-sm hover:text-pars-600 transition-colors">شرایط مرجوعی</a>
-                <a href="#" wire:navigate class="text-sm hover:text-pars-600 transition-colors">فروش اقساطی</a>
-                <a href="#" wire:navigate class="text-sm hover:text-pars-600 transition-colors">نحوه بسته‌بندی و
+                <a href="{{ route('about') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">درباره ما</a>
+                <a href="{{ route('contact') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">تماس با ما</a>
+                <a href="{{ route('return.policy') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">شرایط مرجوعی</a>
+                <a href="{{ route('faq') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">سوالات متداول</a>
+                <a href="{{ route('shipping.info') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">نحوه بسته‌بندی و
                     ارسال</a>
             </div>
             
