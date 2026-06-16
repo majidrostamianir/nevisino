@@ -66,10 +66,10 @@ class Product extends Model
 
 
 
-//   public function getStoryImageAttribute()
-//    {
-//        return asset("storage/products/{$this->id}/small/1.webp");
-//    }
+   public function getStoryImageAttribute()
+    {
+        return asset("storage/products/{$this->id}/small/1.webp");
+    }
     public function hasValidStock(): bool
     {
         // اگر واریانت دارد

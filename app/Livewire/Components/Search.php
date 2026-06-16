@@ -50,7 +50,7 @@ class Search extends Component
             );
         }
 
-        $this->products = $this->products->unique('id')->take(3)->values();
+        $this->products = $this->products->unique('id')->take(5)->values();
         $this->urls = $this->urls->unique('id')->take(3)->values();
 
         $this->validate(['query' => 'string']);

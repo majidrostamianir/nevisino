@@ -53,10 +53,10 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
 
 
 //torobPay
-Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
-    ->name('torobpay.result')
-    ->middleware('auth');
-
-Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
-    ->name('torobpay.callback')
-    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر
+//Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
+//    ->name('torobpay.result')
+//    ->middleware('auth');
+//
+//Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
+//    ->name('torobpay.callback')
+//    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر

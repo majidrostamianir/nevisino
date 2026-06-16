@@ -40,6 +40,7 @@ class Story extends Component
                 })
                 ->values()
                 ->toArray();
+            dd($firstProduct);
         });
     }
     public function openStory($storyId)

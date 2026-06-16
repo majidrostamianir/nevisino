@@ -1,7 +1,7 @@
 <div>
     <div class="w-full lg:fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
         <div class="flex flex-col lg:hidden">
-            <div class="flex justify-between items-center ">
+            <div class="flex justify-between items-center relative">
                 <a href="{{ route('home') }}" class="self-center mt-1" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
                 </a>
@@ -15,7 +15,7 @@
                 <a href="{{ route('home') }}" class="w-fit" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12 mt-1">
                 </a>
-                <div class="w-full">
+                <div class="w-full relative">
                     <livewire:components.search/>
                 </div>
             </div>

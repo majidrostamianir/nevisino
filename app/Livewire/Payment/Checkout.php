@@ -103,10 +103,6 @@ class Checkout extends Component
     public function pay()
     {
 
-        $this->dispatch('showNotification', message: ' اطلاعیه: فروشگاه از ۱۳ الی ۲۴ خرداد به دلیل انبارگردانی تعطیل می‌باشد.مشتریان عزیز می‌توانید از ۲۵ خرداد سفارشات خود را ثبت نمایید.', type: 'error' , showCartButton: false );
-        return;
-
-
         $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
         $this->postal_address = str_replace(["\r\n", "\r", "\n"], ' ', $this->postal_address);
 
