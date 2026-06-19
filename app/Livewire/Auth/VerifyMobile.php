@@ -116,19 +116,19 @@ class VerifyMobile extends Component
             $pattern_code = '15zgbzfkih0dllr';
             $to = array('98' . substr($this->user->mobile, 1));
             $input_data = array('code' => $code, 'autocode' => $code);
-//
-//            $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
-//                urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
-//                "&pattern_code=$pattern_code";
-//
-//            $handler = curl_init($url);
-//            curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "POST");
-//            curl_setopt($handler, CURLOPT_POSTFIELDS, $input_data);
-//            curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
-//            curl_setopt($handler, CURLOPT_TIMEOUT, 10);
-//
-//            curl_exec($handler);
-//            curl_close($handler);
+
+            $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
+                urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
+                "&pattern_code=$pattern_code";
+
+            $handler = curl_init($url);
+            curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($handler, CURLOPT_POSTFIELDS, $input_data);
+            curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($handler, CURLOPT_TIMEOUT, 10);
+
+            curl_exec($handler);
+            curl_close($handler);
         } catch (\Exception $e) {
             \Log::error('SMS sending failed: ' . $e->getMessage());
         }
