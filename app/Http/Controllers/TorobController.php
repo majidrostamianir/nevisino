@@ -48,7 +48,7 @@ class TorobController extends Controller
         $page = (int)$body['page'];
         $perPage = 100;
 
-        $query = Product::with('variants');
+        $query = Product::with(['variants', 'attributeValues.attribute']);
 
         if ($body['sort'] === 'date_added_desc') {
             $query->orderByDesc('created_at');
@@ -103,11 +103,12 @@ class TorobController extends Controller
         return $this->response($paginated, $page, $total);
     }
 
+
     // =============================
 
     private function handleByUniques($uniques)
     {
-        $products = Product::with('variants')->get();
+        $products = Product::with(['variants', 'attributeValues.attribute'])->get();
 
         $items = collect();
 
@@ -230,8 +231,11 @@ class TorobController extends Controller
 
     // =============================
 
+    // =============================
+// کل متد transform رو با این کد جایگزین کنین:
     private function transform($p, $v = null, $stock = 0)
     {
+
         if ($v === null) {
             $path = 'products/' . $p->id . '/large';
             $files = collect(Storage::disk('public')->files($path))
@@ -247,6 +251,22 @@ class TorobController extends Controller
             $image_address = [asset('storage/products/' . $p->id . '/large/' . $v->id . '.webp')];
             $title = $p->title . ' - ' . $p->variant . ' ' . $v->name;
         }
+
+        // ✅ ساخت spec با ساختار جدید
+        $spec = [];
+
+        // اضافه کردن variant
+        if ($p->variant && $v?->name) {
+            $spec[$p->variant] = $v->name;
+        }
+
+        // اضافه کردن attributes از ساختار جدید
+        foreach ($p->attributeValues as $attrValue) {
+            $spec[$attrValue->attribute->name] = $attrValue->value;
+        }
+
+        // اضافه کردن وزن
+        $spec['وزن'] = ceil($p->weight / 5) * 5 . ' گرم';
 
         return [
             'page_unique' => $this->makeUnique($p, $v),
@@ -269,19 +289,8 @@ class TorobController extends Controller
 
             'image_links' => $image_address,
 
-            'spec' => array_filter(array_merge(
-                $p->variant && $v?->name
-                    ? [$p->variant => $v->name]
-                    : [],
-
-                $p->attrs->mapWithKeys(function ($attr) {
-                    return [$attr->title => $attr->value];
-                })->toArray(),
-
-                [
-                    'وزن' => ceil($p->weight / 5) * 5 . ' گرم',
-                ]
-            )),
+            // ✅ استفاده از spec جدید
+            'spec' => array_filter($spec),
 
             'guarantee' => 'تصاویر اختصاصی از محصول',
 
