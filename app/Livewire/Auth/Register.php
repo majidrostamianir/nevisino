@@ -40,12 +40,14 @@ class Register extends Component
             $user->update([
                 'mobile_otp' => $otp,
                 'mobile_otp_sent_count' => ($user->mobile_otp_sent_count ?? 0) + 1,
+                'mobile_otp_sent_at' => now(),
             ]);
         } else {
             User::create([
                 'mobile' => $this->enMobile,
                 'mobile_otp' => $otp,
-                'mobile_otp_sent_count' => 0,
+                'mobile_otp_sent_count' => 1,
+                'mobile_otp_sent_at' => now(),
                 'referrer' => session('newReferer', '-'),
             ]);
         }
