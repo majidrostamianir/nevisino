@@ -8,6 +8,6 @@ class About extends Component
 {
     public function render()
     {
-        return view('livewire.home.about');
+        return view('livewire.home.about')->title('درباره ما | نویسینو');
     }
 }

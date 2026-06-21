@@ -4,7 +4,6 @@ namespace App\Livewire\Dashboard;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\Services\TorobpayService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Shetabit\Multipay\Invoice;
@@ -17,10 +16,9 @@ class Order extends Component
     public $openOrderId = null;
     public string $payment_method = 'gateway';
 
-    // ترب‌پی - یکدست با Checkout.php
-    public bool $torobpayEligible = false;
+  /*  public bool $torobpayEligible = false;
     public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
-    public string $torobpayDescription = '';
+    public string $torobpayDescription = '';*/
 
     public function mount()
     {
@@ -30,11 +28,10 @@ class Order extends Component
             ->orderByDesc('created_at')
             ->get();
 
-        // چک eligibility برای سفارش pending (همیشه حداکثر یکی هست)
-        $pendingOrder = $this->orders->firstWhere('status', 'pending');
+       /* $pendingOrder = $this->orders->firstWhere('status', 'pending');
         if ($pendingOrder) {
             $this->checkTorobpayEligibility($pendingOrder->amount);
-        }
+        }*/
     }
 
     public function toggleOrder($orderId)
@@ -48,7 +45,7 @@ class Order extends Component
     //  بررسی صلاحیت ترب‌پی برای مبلغ سفارش
     // ─────────────────────────────────────────────
 
-    private function checkTorobpayEligibility(int $amount): void
+    /*private function checkTorobpayEligibility(int $amount): void
     {
         if ($amount <= 0) {
             $this->torobpayEligible = false;
@@ -66,7 +63,7 @@ class Order extends Component
         } catch (\Exception $e) {
             $this->torobpayEligible = false;
         }
-    }
+    }*/
     // ─────────────────────────────────────────────
     //  پرداخت مجدد
     // ─────────────────────────────────────────────
@@ -105,7 +102,7 @@ class Order extends Component
                 ]);
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
-            case 'torobpay':
+            /*case 'torobpay':
                 if (!$this->torobpayEligible) {
                     abort(403 , 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
 
@@ -141,7 +138,7 @@ class Order extends Component
                     $transaction->update(['status' => 'failed']);
                     abort(403 , 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
 
-                }
+                }*/
         }
     }
 

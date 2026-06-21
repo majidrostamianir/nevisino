@@ -45,7 +45,7 @@ class Register extends Component
             User::create([
                 'mobile' => $this->enMobile,
                 'mobile_otp' => $otp,
-                'mobile_otp_sent_count' => 0,
+                'mobile_otp_sent_count' => 1,
                 'referrer' => session('newReferer', '-'),
             ]);
         }

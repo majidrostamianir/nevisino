@@ -9,6 +9,10 @@ Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
     Route::get('/trust', \App\Livewire\Home\Trust::class)->name('trust');
     Route::get('/about', \App\Livewire\Home\About::class)->name('about');
+    Route::get('/contact', \App\Livewire\Home\ContactPage::class)->name('contact');
+    Route::get('/return-policy', \App\Livewire\Home\ReturnPolicy::class)->name('return.policy');
+    Route::get('/shipping-info', \App\Livewire\Home\ShippingInfo::class)->name('shipping.info');
+    Route::get('/faq', \App\Livewire\Home\Faq::class)->name('faq');
 
 });
 
@@ -42,15 +46,17 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
     Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
-    Route::get('/admin/attr',\App\Livewire\Admin\Product\Attr::class)->name('admin.product.attr');
+    Route::get('/admin/attr',\App\Livewire\Admin\Product\AttributeManager::class)->name('admin.product.attr');
+    Route::get('/admin/brand',\App\Livewire\Admin\Brand\BrandManager::class)->name('admin.brand');
+    Route::get('/admin/contact-messages', \App\Livewire\Admin\Comment\ContactMessages::class)->name('admin.contact-messages');
 });
 
 
 //torobPay
-Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
-    ->name('torobpay.result')
-    ->middleware('auth');
-
-Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
-    ->name('torobpay.callback')
-    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر
+//Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
+//    ->name('torobpay.result')
+//    ->middleware('auth');
+//
+//Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
+//    ->name('torobpay.callback')
+//    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر

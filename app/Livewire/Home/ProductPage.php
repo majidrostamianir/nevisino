@@ -103,7 +103,6 @@ class ProductPage extends Component
 
     public function addToCart()
     {
-
         // 1. اعتبارسنجی
         $this->validate(
             [

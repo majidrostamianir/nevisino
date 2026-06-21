@@ -25,10 +25,8 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
-    public function attrs()
+    public function attributes()
     {
-        return $this->hasMany(Attr::class);
+        return $this->hasMany(Attribute::class);
     }
-
-
 }

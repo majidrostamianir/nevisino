@@ -1,4 +1,4 @@
-<div class="w-full self-center relative">
+<div class="w-full self-center ">
     <input type="text" wire:model.live.debounce.750ms="query"
            wire:focus="focus"
            @if($isFocused && ($urls->isNotEmpty() || $products->isNotEmpty()))
@@ -6,7 +6,7 @@
            @endif
            class="text-sm bg-white w-full mr-3 rounded-2xl pr-4 shadow"
            placeholder="جستجو ...">
-    <span class="absolute top-2.5 left-0  cursor-pointer" wire:click="clearSearch">
+    <span class="absolute top-4.5 lg:top-2.5 left-3 lg:left-0  cursor-pointer" wire:click="clearSearch">
         @if($query != '' )
             <svg width="16" height="16" viewBox="0 0 16 16">
             <circle cx="8" cy="8" r="7" fill="#318dc1"/>
@@ -16,11 +16,11 @@
         @endif
     </span>
     @if($isFocused && ($urls->isNotEmpty() || $products->isNotEmpty()))
-        <div class="absolute top-10 rounded right-3 w-full bg-white p-4 z-10 shadow" wire:ignore.self>
+        <div class="absolute top-12 lg:top-10  right-0 lg:right-3 rounded w-full bg-white p-4 z-10 shadow" wire:ignore.self>
             <span class="text-xs bg-pars-100 py-0.5 px-1 rounded cursor-default">محصولات</span>
             @foreach($products as $product)
                 <a wire:navigate href="{{ route('product-page', ['title' => $product->dashed_url , 'npi'=>$product->id] ) }}"
-                   class="block rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ english_to_persian_num($product->title) }}</a>
+                   class="block text-nowrap overflow-x-hidden rounded-2xl p-2 hover:bg-pars-400 hover:text-pars-500 hover:cursor-pointer">{{ english_to_persian_num($product->title) }}</a>
             @endforeach
             <hr class="my-2">
             <span class="text-xs bg-pars-100 py-0.5 px-1 rounded cursor-default">دسته بندی</span>
@@ -30,7 +30,7 @@
             @endforeach
         </div>
     @elseif($isFocused && strlen($query)>2 && $urls->isEmpty() && $products->isEmpty())
-        <span class="absolute top-10 rounded text-center right-3 w-full bg-white p-4 z-10 shadow" wire:ignore.self>
+        <span class="absolute top-12 lg:top-10  right-0 lg:right-3  rounded text-center  w-full bg-white p-4 z-10 shadow" wire:ignore.self>
             چیزی پیدا نشد!
         </span>
         @endif
