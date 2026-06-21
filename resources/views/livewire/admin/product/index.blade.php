@@ -132,6 +132,15 @@
             </div>
         </div>
 
+        {{-- کنترل درصد سود در هدر --}}
+        <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">درصد سود:</label>
+            <input type="number"
+                   wire:model.live="profitPercent"
+                   class="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                   min="0" max="1000">
+            <span class="text-xs text-gray-500">%</span>
+        </div>
         {{-- تعداد محصولات --}}
         <span class="text-sm text-gray-500 mr-auto">
             تعداد: {{ english_to_persian_num($products->count()) }} محصول
@@ -145,6 +154,7 @@
             <tr class="bg-gradient-to-r from-pars-500 to-pars-800 text-white shadow-md">
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">شناسه</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">محصول</th>
+                <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت خرید</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت اصلی</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت تخفیفی</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">عملیات</th>
@@ -198,6 +208,18 @@
                         </div>
                     </td>
 
+                    {{-- ستون قیمت خرید (ماشین حساب سریع) --}}
+                    <td class="px-4 py-3">
+                        <input type="text"
+                               wire:model="purchasePrices.{{ $product->id }}"
+                               wire:key="purchase-{{ $product->id }}"
+                               wire:change="calculatePriceFromPurchase({{ $product->id }})"
+                               class="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                               placeholder="قیمت خرید"
+                               x-data
+                               x-on:input.debounce.500ms="$wire.calculatePriceFromPurchase({{ $product->id }})">
+                    </td>
+
                     {{-- ستون قیمت اصلی --}}
                     <td class="px-4 py-3">
                         <input type="text"
@@ -215,6 +237,7 @@
                                class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                placeholder="تخفیف">
                     </td>
+
                     <td class="px-4 py-3">
                         <button wire:click="updatePrice({{ $product->id }})"
                                 wire:target="updatePrice({{ $product->id }})"
@@ -226,6 +249,7 @@
                             ذخیره
                         </button>
                     </td>
+
                     {{-- ستون موجودی --}}
                     <td class="px-4 py-3 text-sm whitespace-nowrap">
                         @if($stock > 0)
