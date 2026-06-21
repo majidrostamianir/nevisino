@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin\Product;
 
 use App\Models\Attribute;
-use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Url;

@@ -8,7 +8,7 @@
             direction: rtl;
             text-align: right;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 200px;
+            min-height: 100px;
         }
         .ql-toolbar.ql-snow {
             direction: rtl;
@@ -25,6 +25,32 @@
 @endpush
 
 <div>
+    <div class="flex justify-between w-full ">
+        @php
+            $prevId = $product->id - 1;
+            $nextId = $product->id + 1;
+            $prevProduct = \App\Models\Product::find($prevId);
+            $nextProduct = \App\Models\Product::find($nextId);
+        @endphp
+
+        <div class="bg-gray-400 rounded-2xl px-2 py-1 text-white">
+            <a href="{{ $prevProduct ? route('admin.product.save', $prevProduct->id) : '#' }}"
+               class="nav-btn prev {{ !$prevProduct ? 'disabled' : '' }}"
+               title="محصول قبلی">
+                <span class="icon">→</span>
+                <span class="label">{{ $prevProduct ? $prevProduct->title : 'محصول قبلی' }}</span>
+            </a>
+        </div>
+
+        <div class="bg-gray-400 rounded-2xl px-2 py-1 text-white">
+            <a href="{{ $nextProduct ? route('admin.product.save', $nextProduct->id) : '#' }}"
+               class="nav-btn next {{ !$nextProduct ? 'disabled' : '' }}"
+               title="محصول بعدی">
+                <span class="label">{{ $nextProduct ? $nextProduct->title : 'محصول بعدی' }}</span>
+                <span class="icon">←</span>
+            </a>
+        </div>
+    </div>
     <div class="sm:flex sm:flex-wrap justify-between">
         <div class="sm:w-3/12 p-1">
             <small class="pr-2">دسته بندی</small>
