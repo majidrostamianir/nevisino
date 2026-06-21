@@ -1,3 +1,29 @@
+@push('editor')
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-rtl@1.0.0/dist/quill-rtl.min.js"></script>
+
+    <style>
+        .ql-editor {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 200px;
+        }
+        .ql-toolbar.ql-snow {
+            direction: rtl;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        .ql-container.ql-snow {
+            border-radius: 0 0 0.75rem 0.75rem;
+        }
+        .ql-toolbar.ql-snow .ql-formats {
+            margin-left: 15px;
+            margin-right: 0;
+        }
+    </style>
+@endpush
+
 <div>
     <div class="sm:flex sm:flex-wrap justify-between">
         <div class="sm:w-3/12 p-1">
@@ -50,12 +76,13 @@
             @enderror
         </div>
 
-        <div class="sm:w-full p-1">
-            <small class="pr-2">توضیحات</small>
-            <textarea rows="3" class="w-full rounded-2xl bg-white pr-2" placeholder="توضیحات" wire:model="description"></textarea>
-            @error('description')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
+        <div class="sm:w-full p-1 pb-20" wire:ignore>
+                <small class="mr-2 text-gray-700 font-medium mb-1">توضیحات</small>
+                <div id="editor" class="bg-white rounded-xl shadow-sm"></div>
+                @error('description')
+                <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
+                @enderror
+
         </div>
 
         <div class="sm:w-3/12 p-1">
@@ -197,3 +224,36 @@
         </div>
     @endif
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            direction: 'rtl',
+            modules: {
+                toolbar: [
+                    [{ 'header': [2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['link'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'align': [] }],
+                ]
+            }
+        });
+
+        quill.root.innerHTML = `{!! $description !!}`;
+
+        quill.on('text-change', function() {
+            @this.set('description', quill.root.innerHTML);
+        });
+
+        Livewire.on('descriptionUpdated', (content) => {
+            if (quill.root.innerHTML !== content) {
+                quill.root.innerHTML = content;
+            }
+        });
+
+    });
+</script>

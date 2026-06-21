@@ -388,7 +388,7 @@
                 معرفی محصول
             </div>
             <div class="text-justify text-gray-600 leading-relaxed">
-                {{ english_to_persian_num($product->description) }}
+                {!! english_to_persian_num($product->description) !!}
             </div>
         </div>
     @endif
