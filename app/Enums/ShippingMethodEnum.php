@@ -6,8 +6,10 @@ enum ShippingMethodEnum: string
 {
     case POST_COD = 'post_cod';      // پست - پرداخت آنلاین
     case POST_CASH = 'post_cash';    // پست - پرداخت در محل
+    case POST_FREE = 'post_free';    // پست - رایگان
     case TIPAX_COD = 'tipax_cod';    // تیپاکس - پرداخت آنلاین
     case TIPAX_CASH = 'tipax_cash';  // تیپاکس - پرداخت در محل
+    case TIPAX_FREE = 'tipax_free';  // تیپاکس - رایگان
 
     /**
      * عنوان فارسی متد ارسال
@@ -17,16 +19,18 @@ enum ShippingMethodEnum: string
         return match ($this) {
             self::POST_COD => 'پست پیشتاز - پس‌کرایه',
             self::POST_CASH => 'پست پیشتاز - پیش‌کرایه',
+            self::POST_FREE => 'پست پیشتاز - رایگان',
             self::TIPAX_COD => 'تیپاکس - پس‌کرایه',
             self::TIPAX_CASH => 'تیپاکس - پیش‌کرایه',
+            self::TIPAX_FREE => 'تیپاکس - رایگان',
         };
     }
 
     public function description(): string
     {
         return match ($this) {
-            self::POST_CASH, self::POST_COD => 'زمان تحویل: ۲ تا ۵ روز',
-            self::TIPAX_CASH, self::TIPAX_COD => 'زمان تحویل: ۱ تا ۳ روز',
+            self::POST_CASH, self::POST_COD , self::POST_FREE => 'زمان تحویل: ۲ تا ۵ روز',
+            self::TIPAX_CASH, self::TIPAX_COD , self::TIPAX_FREE => 'زمان تحویل: ۱ تا ۳ روز',
         };
     }
 

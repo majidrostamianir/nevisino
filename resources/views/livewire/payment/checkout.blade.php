@@ -253,6 +253,9 @@
                                 <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_COD->description() }}</div>
                             </div>
                         </div>
+                        <div class="text-xs  text-gray-400">
+                            کرایه در مقصد
+                        </div>
                     </label>
 
                     <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
@@ -271,7 +274,7 @@
                                 <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_CASH->description() }}</div>
                             </div>
                         </div>
-                        <div class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(config('shop.post_price'))) }}
+                        <div class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(\App\Models\Setting::get('post_price'))) }}
                             تومان
                         </div>
                     </label>
@@ -292,6 +295,9 @@
                                 <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_COD->description() }}</div>
                             </div>
                         </div>
+                        <div class="text-xs  text-gray-400">
+                            کرایه در مقصد
+                        </div>
                     </label>
 
                     <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
@@ -310,7 +316,7 @@
                                 <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->description() }}</div>
                             </div>
                         </div>
-                        <div class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(config('shop.tipax_price'))) }}
+                        <div class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(\App\Models\Setting::get('tipax_price'))) }}
                             تومان
                         </div>
                     </label>
@@ -339,7 +345,27 @@
                 </div>
                 <div class="px-5 pt-5">
                     <div class="flex justify-between items-center pb-4 border-gray-100">
+                        <span class="text-gray-600">مبلغ سبد خرید</span>
+                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                        <span class="text-pars-700 ">{{ english_to_persian_num(number_format($sum)) }} <span
+                                    class="text-xs text-gray-400">تومان</span></span>
+                    </div>
+                    <div class="flex justify-between items-center pb-4 border-gray-100">
+                        <span class="text-gray-600">هزینه بسته بندی</span>
+                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                        <span class="text-pars-700 ">{{ english_to_persian_num(number_format($packaging_price)) }} <span
+                                    class="text-xs text-gray-400">تومان</span></span>
+                    </div>
+                    <div class="flex justify-between items-center pb-4 border-gray-100">
+                        <span class="text-gray-600">هزینه ارسال</span>
+                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                        <span class="text-pars-700 ">{{ english_to_persian_num(number_format($shipping_price)) }} <span
+                                    class="text-xs text-gray-400">تومان</span></span>
+                    </div>
+
+                    <div class="flex justify-between items-center pb-4 border-gray-100">
                         <span class="text-gray-600">مبلغ قابل پرداخت</span>
+                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
                         <span class="text-pars-700 font-bold text-2xl">{{ english_to_persian_num(number_format($amount)) }} <span
                                     class="text-xs text-gray-400">تومان</span></span>
                     </div>

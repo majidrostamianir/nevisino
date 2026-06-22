@@ -48,29 +48,4 @@ class Setting extends Model
         }
         return false;
     }
-
-    // ذخیره یا ایجاد تنظیمات جدید
-    /*public static function setOrCreate($key, $value, $type = 'string', $group = 'general', $description = null)
-    {
-        $setting = self::where('key', $key)->first();
-
-        if ($setting) {
-            $setting->update([
-                'value' => $value,
-                'type' => $type,
-                'group' => $group,
-                'description' => $description
-            ]);
-        } else {
-            self::create([
-                'key' => $key,
-                'value' => $value,
-                'type' => $type,
-                'group' => $group,
-                'description' => $description
-            ]);
-        }
-
-        return true;
-    }*/
 }
