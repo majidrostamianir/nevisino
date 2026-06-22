@@ -12,8 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('logo')->nullable();
-            $table->string('website')->nullable();
+            $table->string('enName')->nullable();
             $table->text('description')->nullable();
             $table->integer('order')->default(0);
             $table->boolean('status')->default(true);

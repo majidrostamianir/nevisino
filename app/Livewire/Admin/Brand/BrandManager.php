@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class BrandManager extends Component
 {
     public $brands;
-    public $name, $slug, $logo, $website, $description, $order, $status = true;
+    public $name, $slug, $enName , $description, $order, $status = true;
     public $editingId = null;
     public $searchQuery = '';
     public $manualSlug = false;
@@ -19,8 +19,7 @@ class BrandManager extends Component
         return [
             'name' => 'required|string|max:255|unique:brands,name,' . $this->editingId,
             'slug' => 'required|string|max:255|unique:brands,slug,' . $this->editingId,
-            'logo' => 'nullable|string|max:255',
-            'website' => 'nullable|url|max:255',
+            'enName' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'order' => 'nullable|integer',
             'status' => 'boolean',
@@ -61,15 +60,14 @@ class BrandManager extends Component
             [
                 'name' => $this->name,
                 'slug' => $this->slug,
-                'logo' => $this->logo,
-                'website' => $this->website,
+                'enName' => $this->enName,
                 'description' => $this->description,
                 'order' => $this->order ?? 0,
                 'status' => $this->status,
             ]
         );
 
-        $this->reset(['name', 'slug', 'logo', 'website', 'description', 'order', 'status', 'editingId', 'manualSlug']);
+        $this->reset(['name', 'slug', 'enName',  'description', 'order', 'status', 'editingId', 'manualSlug']);
         session()->flash('message', 'برند ذخیره شد.');
         $this->loadBrands();
     }
@@ -80,8 +78,7 @@ class BrandManager extends Component
         $this->editingId = $brand->id;
         $this->name = $brand->name;
         $this->slug = $brand->slug;
-        $this->logo = $brand->logo;
-        $this->website = $brand->website;
+        $this->enName = $brand->enName;
         $this->description = $brand->description;
         $this->order = $brand->order;
         $this->status = $brand->status;

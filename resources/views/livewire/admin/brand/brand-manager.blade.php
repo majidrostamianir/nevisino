@@ -18,24 +18,20 @@
                     @error('slug') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <small class="mr-2 text-gray-700 font-medium">لوگو (آدرس)</small>
-                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="logo" placeholder="/storage/brands/logo.png">
-                    @error('logo') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    <small class="mr-2 text-gray-700 font-medium">نام به انگلیسی</small>
+                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="enName" >
+                    @error('enName') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
                 <div>
-                    <small class="mr-2 text-gray-700 font-medium">وبسایت</small>
-                    <input type="text" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="website" placeholder="https://example.com">
-                    @error('website') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    <small class="mr-2 text-gray-700 font-medium">ترتیب</small>
+                    <input type="number" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="order">
                 </div>
                 <div class="md:col-span-2">
                     <small class="mr-2 text-gray-700 font-medium">توضیحات</small>
                     <textarea rows="3" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="description"></textarea>
                     @error('description') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
-                <div>
-                    <small class="mr-2 text-gray-700 font-medium">ترتیب</small>
-                    <input type="number" class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="order">
-                </div>
+
                 <div>
                     <small class="mr-2 text-gray-700 font-medium">وضعیت</small>
                     <select class="w-full border border-gray-300 rounded-xl px-3 py-2 mt-1" wire:model="status">
@@ -68,7 +64,8 @@
             <thead>
             <tr class="bg-gradient-to-r from-pars-500 to-pars-800 text-white shadow-md">
                 <th class="px-4 py-3 text-sm font-semibold">#</th>
-                <th class="px-4 py-3 text-sm font-semibold">نام برند</th>
+                <th class="px-4 py-3 text-sm font-semibold">نام فارسی</th>
+                <th class="px-4 py-3 text-sm font-semibold">نام انگلیسی</th>
                 <th class="px-4 py-3 text-sm font-semibold">slug</th>
                 <th class="px-4 py-3 text-sm font-semibold">وضعیت</th>
                 <th class="px-4 py-3 text-sm font-semibold">ترتیب</th>
@@ -80,6 +77,7 @@
                 <tr class="border-b border-gray-200 hover:bg-gray-50 {{ $loop->even ? 'bg-gray-50/50' : 'bg-white' }}">
                     <td class="px-4 py-3 text-sm">{{ english_to_persian_num($index + 1) }}</td>
                     <td class="px-4 py-3 text-sm font-medium">{{ $brand->name }}</td>
+                    <td class="px-4 py-3 text-sm font-medium">{{ $brand->enName }}</td>
                     <td class="px-4 py-3 text-sm">{{ $brand->slug }}</td>
                     <td class="px-4 py-3 text-sm">
                         <button wire:click="toggleStatus({{ $brand->id }})" class="px-2 py-1 rounded-lg text-xs font-medium {{ $brand->status ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600' }}">

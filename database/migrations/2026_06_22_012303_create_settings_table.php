@@ -23,33 +23,33 @@ return new class extends Migration
 
         $settings = [
             // ========== قیمت‌های پایه ==========
-            ['key' => 'post_price', 'value' => '190000', 'type' => 'integer', 'group' => 'shipping_prices', 'description' => 'قیمت کرایه پست'],
-            ['key' => 'tipax_price', 'value' => '170000', 'type' => 'integer', 'group' => 'shipping_prices', 'description' => 'قیمت کرایه تیپاکس'],
+            ['key' => 'post_price', 'value' => '190000', 'type' => 'integer', 'group' => 'shipping_prices', 'description' => 'قیمت کرایه پست', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'tipax_price', 'value' => '170000', 'type' => 'integer', 'group' => 'shipping_prices', 'description' => 'قیمت کرایه تیپاکس', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== قیمت کارتن‌ها ==========
-            ['key' => 'box_1', 'value' => '14000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۱'],
-            ['key' => 'box_2', 'value' => '25000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۲'],
-            ['key' => 'box_3', 'value' => '36000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۳'],
-            ['key' => 'box_4', 'value' => '46000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۴'],
-            ['key' => 'box_5', 'value' => '60000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۵'],
-            ['key' => 'box_6', 'value' => '70000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۶'],
-            ['key' => 'box_7', 'value' => '80000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۷'],
-            ['key' => 'box_8', 'value' => '140000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۸'],
-            ['key' => 'box_9', 'value' => '250000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۹'],
+            ['key' => 'box_1', 'value' => '14000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۱', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_2', 'value' => '25000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۲', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_3', 'value' => '36000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۳', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_4', 'value' => '46000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۴', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_5', 'value' => '60000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۵', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_6', 'value' => '70000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۶', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_7', 'value' => '80000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۷', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_8', 'value' => '140000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۸', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'box_9', 'value' => '250000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۹', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== تنظیمات هزینه کارتن ==========
-            ['key' => 'charge_packaging', 'value' => '1', 'type' => 'boolean', 'group' => 'packaging', 'description' => 'آیا هزینه کارتن از مشتری گرفته شود؟'],
-            ['key' => 'free_packaging_threshold', 'value' => '0', 'type' => 'integer', 'group' => 'packaging', 'description' => 'از چه مبلغی به بالا، کارتن رایگان باشد؟ (۰ یعنی هرگز)'],
+            ['key' => 'charge_packaging', 'value' => '1', 'type' => 'boolean', 'group' => 'packaging', 'description' => 'آیا هزینه کارتن از مشتری گرفته شود؟', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'free_packaging_threshold', 'value' => '0', 'type' => 'integer', 'group' => 'packaging', 'description' => 'از چه مبلغی به بالا، کارتن رایگان باشد؟ (۰ یعنی هرگز)', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== تنظیمات هزینه کرایه ==========
-            ['key' => 'charge_shipping', 'value' => '1', 'type' => 'boolean', 'group' => 'shipping', 'description' => 'آیا هزینه کرایه از مشتری گرفته شود؟'],
-            ['key' => 'free_shipping_threshold', 'value' => '0', 'type' => 'integer', 'group' => 'shipping', 'description' => 'از چه مبلغی به بالا، کرایه رایگان باشد؟ (۰ یعنی هرگز)'],
+            ['key' => 'charge_shipping', 'value' => '1', 'type' => 'boolean', 'group' => 'shipping', 'description' => 'آیا هزینه کرایه از مشتری گرفته شود؟', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'free_shipping_threshold', 'value' => '0', 'type' => 'integer', 'group' => 'shipping', 'description' => 'از چه مبلغی به بالا، کرایه رایگان باشد؟ (۰ یعنی هرگز)', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== درصد سود ==========
-            ['key' => 'profit_percent', 'value' => '20', 'type' => 'integer', 'group' => 'profit', 'description' => 'درصد سود سیستم'],
+            ['key' => 'profit_percent', 'value' => '20', 'type' => 'integer', 'group' => 'profit', 'description' => 'درصد سود سیستم', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== تنظیمات اضافی ==========
-            ['key' => 'expire_order_time_minutes', 'value' => '30', 'type' => 'integer', 'group' => 'order', 'description' => 'زمان انقضای سفارش (دقیقه)'],
+            ['key' => 'expire_order_time_minutes', 'value' => '30', 'type' => 'integer', 'group' => 'order', 'description' => 'زمان انقضای سفارش (دقیقه)'  , 'created_at' => now() , 'updated_at' => now()],
         ];
 
         DB::table('settings')->insert($settings);
