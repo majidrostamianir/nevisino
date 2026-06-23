@@ -167,7 +167,6 @@ class Checkout extends Component
 
     public function pay()
     {
-
         $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
         $this->postal_address = str_replace(["\r\n", "\r", "\n"], ' ', $this->postal_address);
 
