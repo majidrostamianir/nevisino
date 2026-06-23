@@ -22,9 +22,8 @@
                     <div wire:click.prevent="selectAddress('{{ $value->id }}')" @click="showPopup = false"
                          class="border rounded-xl p-3 cursor-pointer transition-all duration-200"
                          :class="{
-                     'border-pars-500 bg-pars-50 shadow-sm': '{{ $value->id }}' == '{{ $selectedAddress->id ?? '' }}',
-                     'border-gray-200 hover:border-pars-300 bg-white': '{{ $value->id }}' != '{{ $selectedAddress->id ?? '' }}'
-                 }">
+                             'border-pars-500 bg-pars-50 shadow-sm': '{{ $value->id }}' == '{{ $selectedAddress->id ?? '' }}',
+                             'border-gray-200 hover:border-pars-300 bg-white': '{{ $value->id }}' != '{{ $selectedAddress->id ?? '' }}'}">
                         <div class="flex gap-3">
                             <div class="w-8 h-8 bg-pars-100 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg class="w-4 h-4 text-pars-500" fill="none" stroke="currentColor"
@@ -233,114 +232,156 @@
                 </div>
 
                 <div class="p-5 space-y-3">
+                    {{-- پست پیشتاز --}}
                     <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
-                           :class="shipping_method === 'post_cod' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
+                           :class="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
-                        <input type="radio" value="post_cod" x-model="shipping_method" class="hidden"
-                               wire:click="updateShippingMethod('post_cod')">
-                        <div class="flex items-center">
-                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                          :class="shipping_method === 'post_cod' ? 'border-pars-500' : 'border-gray-400'">
-                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                              x-show="shipping_method === 'post_cod'"></span>
-                    </span>
+                        <input type="radio"
+                               name="shipping_method"
+                               value="{{ $sum >= $free_shipping_threshold ? 'post_free' : 'post_cod' }}"
+                               x-model="shipping_method"
+                               @change="$wire.updateShippingMethod('{{ $sum >= $free_shipping_threshold ? 'post_free' : 'post_cod' }}')"
+                               class="hidden">
+
+                        <div class="flex items-center flex-1">
+            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                  :class="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif ? 'border-pars-500' : 'border-gray-400'">
+                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                      x-show="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif"></span>
+            </span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm font-medium text-gray-800">
-                                        @if($sum >= $free_shipping_threshold)
-                                            {{ \App\Enums\ShippingMethodEnum::POST_FREE->label() }}
-                                        @else
-                                            {{ \App\Enums\ShippingMethodEnum::POST_COD->label() }}
-                                        @endif
-                                    </span>
-                                    <span class="text-xs text-green-600 font-bold">(پیشنهاد ما)</span>
+                    <span class="text-sm font-medium text-gray-800">
+                        @if($sum >= $free_shipping_threshold)
+                            {{ \App\Enums\ShippingMethodEnum::POST_FREE->label() }}
+                        @else
+                            {{ \App\Enums\ShippingMethodEnum::POST_COD->label() }}
+                        @endif
+                    </span>
+                                    @if($sum >= $free_shipping_threshold)
+                                        <span class="text-xs text-green-600 font-bold">(پیشنهاد ما)</span>
+                                    @endif
                                 </div>
-                                <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_COD->description() }}</div>
+                                <div class="text-xs text-gray-500">
+                                    @if($sum >= $free_shipping_threshold)
+                                        {{ \App\Enums\ShippingMethodEnum::POST_FREE->description() }}
+                                    @else
+                                        {{ \App\Enums\ShippingMethodEnum::POST_COD->description() }}
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                        @if($sum >= $free_shipping_threshold)
-                            <div class="text-xs  font-bold text-green-400">
-                                رایگان
-                            </div>
-                        @else
-                            <div class="text-xs   text-gray-400">
-                                کرایه در مقصد
-                            </div>
-                        @endif
+
+                        <div class="flex-shrink-0 mr-2">
+                            @if($sum >= $free_shipping_threshold)
+                                <span class="text-xs font-bold text-green-500">رایگان</span>
+                            @else
+                                <span class="text-xs text-gray-400">کرایه در مقصد</span>
+                            @endif
+                        </div>
                     </label>
+
+                    {{-- پست پیشتاز - پیش‌کرایه (فقط در صورت عدم احراز شرط) --}}
                     @if($sum < $free_shipping_threshold)
                         <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="shipping_method === 'post_cash' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
-                            <input type="radio" value="post_cash" x-model="shipping_method" class="hidden"
-                                   wire:click="updateShippingMethod('post_cash')">
-                            <div class="flex items-center">
-                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                          :class="shipping_method === 'post_cash' ? 'border-pars-500' : 'border-gray-400'">
-                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                              x-show="shipping_method === 'post_cash'"></span>
-                    </span>
+                            <input type="radio"
+                                   name="shipping_method"
+                                   value="post_cash"
+                                   x-model="shipping_method"
+                                   @change="$wire.updateShippingMethod('post_cash')"
+                                   class="hidden">
+
+                            <div class="flex items-center flex-1">
+                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                      :class="shipping_method === 'post_cash' ? 'border-pars-500' : 'border-gray-400'">
+                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                          x-show="shipping_method === 'post_cash'"></span>
+                </span>
                                 <div>
                                     <span class="text-sm font-medium text-gray-800">{{ \App\Enums\ShippingMethodEnum::POST_CASH->label() }}</span>
                                     <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_CASH->description() }}</div>
                                 </div>
                             </div>
-                            <div class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(\App\Models\Setting::get('post_price'))) }}
+
+                            <div class="text-sm font-bold text-pars-700 flex-shrink-0 mr-2">
+                                {{ english_to_persian_num(number_format(\App\Models\Setting::get('post_price'))) }}
                                 تومان
                             </div>
                         </label>
                     @endif
 
+                    {{-- تیپاکس --}}
                     <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
-                           :class="shipping_method === 'tipax_cod' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
+                           :class="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
-                        <input type="radio" value="tipax_cod" x-model="shipping_method" class="hidden"
-                               wire:click="updateShippingMethod('tipax_cod')">
-                        <div class="flex items-center">
-                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                          :class="shipping_method === 'tipax_cod' ? 'border-pars-500' : 'border-gray-400'">
-                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                              x-show="shipping_method === 'tipax_cod'"></span>
-                    </span>
+                        <input type="radio"
+                               name="shipping_method"
+                               value="{{ $sum >= $free_shipping_threshold ? 'tipax_free' : 'tipax_cod' }}"
+                               x-model="shipping_method"
+                               @change="$wire.updateShippingMethod('{{ $sum >= $free_shipping_threshold ? 'tipax_free' : 'tipax_cod' }}')"
+                               class="hidden">
+
+                        <div class="flex items-center flex-1">
+            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                  :class="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif ? 'border-pars-500' : 'border-gray-400'">
+                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                      x-show="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif"></span>
+            </span>
                             <div>
-                                <span class="text-sm font-medium text-gray-800">
+                <span class="text-sm font-medium text-gray-800">
+                    @if($sum >= $free_shipping_threshold)
+                        {{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->label() }}
+                    @else
+                        {{ \App\Enums\ShippingMethodEnum::TIPAX_COD->label() }}
+                    @endif
+                </span>
+                                <div class="text-xs text-gray-500">
                                     @if($sum >= $free_shipping_threshold)
-                                        {{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->label() }}
+                                        {{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->description() }}
                                     @else
-                                        {{ \App\Enums\ShippingMethodEnum::TIPAX_COD->label() }}
+                                        {{ \App\Enums\ShippingMethodEnum::TIPAX_COD->description() }}
                                     @endif
-                                </span>
-                                <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_COD->description() }}</div>
+                                </div>
                             </div>
                         </div>
-                        @if($sum >= $free_shipping_threshold)
-                            <div class="text-xs  font-bold text-green-400">
-                                رایگان
-                            </div>
-                        @else
-                            <div class="text-xs   text-gray-400">
-                                کرایه در مقصد
-                            </div>
-                        @endif
+
+                        <div class="flex-shrink-0 mr-2">
+                            @if($sum >= $free_shipping_threshold)
+                                <span class="text-xs font-bold text-green-500">رایگان</span>
+                            @else
+                                <span class="text-xs text-gray-400">کرایه در مقصد</span>
+                            @endif
+                        </div>
                     </label>
+
+                    {{-- تیپاکس - پیش‌کرایه (فقط در صورت عدم احراز شرط) --}}
                     @if($sum < $free_shipping_threshold)
                         <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="shipping_method === 'tipax_cash' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
-                            <input type="radio" value="tipax_cash" x-model="shipping_method" class="hidden"
-                                   wire:click="updateShippingMethod('tipax_cash')">
-                            <div class="flex items-center">
-                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                          :class="shipping_method === 'tipax_cash' ? 'border-pars-500' : 'border-gray-400'">
-                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                              x-show="shipping_method === 'tipax_cash'"></span>
-                    </span>
+                            <input type="radio"
+                                   name="shipping_method"
+                                   value="tipax_cash"
+                                   x-model="shipping_method"
+                                   @change="$wire.updateShippingMethod('tipax_cash')"
+                                   class="hidden">
+
+                            <div class="flex items-center flex-1">
+                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                      :class="shipping_method === 'tipax_cash' ? 'border-pars-500' : 'border-gray-400'">
+                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                          x-show="shipping_method === 'tipax_cash'"></span>
+                </span>
                                 <div>
                                     <span class="text-sm font-medium text-gray-800">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->label() }}</span>
                                     <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->description() }}</div>
                                 </div>
                             </div>
-                            <div class="text-sm font-bold text-pars-700">{{ english_to_persian_num(number_format(\App\Models\Setting::get('tipax_price'))) }}
+
+                            <div class="text-sm font-bold text-pars-700 flex-shrink-0 mr-2">
+                                {{ english_to_persian_num(number_format(\App\Models\Setting::get('tipax_price'))) }}
                                 تومان
                             </div>
                         </label>
@@ -514,9 +555,9 @@
                         <input type="radio" value="gateway" x-model="payment_method" class="hidden">
                         <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
                               :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
-                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                                  x-show="payment_method === 'gateway'"></span>
-                        </span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                                      x-show="payment_method === 'gateway'"></span>
+                            </span>
                         <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                     </label>
 
@@ -559,9 +600,9 @@
                             <input type="radio" value="card" x-model="payment_method" class="hidden">
                             <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
                                   :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-400'">
-                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
-                                      x-show="payment_method === 'card'"></span>
-                            </span>
+                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
+                                          x-show="payment_method === 'card'"></span>
+                                </span>
                             <span class="text-sm text-gray-700">پرداخت از طریق کارت به کارت</span>
                         </label>
 
@@ -610,17 +651,19 @@
                             wire:target="pay"
                             class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-2 flex items-center justify-center relative transition-all duration-300">
 
-                    <span wire:loading.remove wire:target="pay">
-                    <span x-text="payment_method === 'card' ? 'ثبت سفارش' : 'پرداخت'"></span>
-                </span>
+                            <span wire:loading.remove wire:target="pay">
+                                <span x-text="payment_method === 'card' ? 'ثبت سفارش' : 'پرداخت'"></span>
+                            </span>
                         <span wire:loading wire:target="pay" class="flex items-center justify-center">
-                    <svg class="w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                         viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                    </svg>
-                </span>
+                                <svg class="w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+                                     fill="none"
+                                     viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                            </span>
                     </button>
 
                     @if ($errors->any())

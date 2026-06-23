@@ -51,6 +51,10 @@ class Checkout extends Component
 
         $this->calculateAmount();
 
+        if ($this->sum >= $this->free_shipping_threshold) {
+            $this->shipping_method = 'post_free';
+        }
+
 //        $this->checkTorobpayEligibility();
     }
 
@@ -71,6 +75,12 @@ class Checkout extends Component
             return;
         }
 
+        ///برای جلوگیری از ارسال رایگان در مبالغ سبد خرید کمتر از حد رایگان شدن
+        ///
+        if ($this->sum < $this->free_shipping_threshold && in_array($this->shipping_method, ['post_free', 'tipax_free'])) {
+            $this->shipping_method = 'post_cod';
+        }
+
         $max_packaging_size = $this->getMaxPackagingSize($cartItems);
 
         $shipping_cost = match ($this->shipping_method) {
@@ -82,7 +92,7 @@ class Checkout extends Component
         if ($this->sum >= $this->free_shipping_threshold) {
             $this->shipping_price  = 0;
             $this->packaging_price = 0;
-        } elseif ($this->sum > $this->free_packaging_threshold) {
+        } elseif ($this->sum >= $this->free_packaging_threshold) {
             $this->shipping_price  = $shipping_cost;
             $this->packaging_price = 0;
         } else {
@@ -109,9 +119,7 @@ class Checkout extends Component
 
         return $maxSize;
     }
-    // ─────────────────────────────────────────────
-    //  بررسی صلاحیت ترب‌پی
-    // ─────────────────────────────────────────────
+
 
     /* private function checkTorobpayEligibility(): void
      {
@@ -184,6 +192,8 @@ class Checkout extends Component
                 $this->user->update(['name' => $this->recipient_name]);
             }
         }
+
+        $this->calculateAmount();
 
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
