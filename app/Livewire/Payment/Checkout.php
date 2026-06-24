@@ -30,7 +30,7 @@ class Checkout extends Component
 
     public int $free_packaging_threshold = 0, $free_shipping_threshold = 0;
 
-    public int $sum = 0, $amount = 0;
+    public int $sum = 0, $amount = 0, $maxPackagingSize = 1;
 
     /*
     // ترب‌پی
@@ -45,20 +45,16 @@ class Checkout extends Component
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
 
-        $this->free_packaging_threshold = Setting::get('free_packaging_threshold');
-        $this->free_shipping_threshold = Setting::get('free_shipping_threshold');
 
-
+        $this->calculateSum();
+        $this->calculatePackaging();
+        $this->calculateShipping();
         $this->calculateAmount();
 
-        if ($this->sum >= $this->free_shipping_threshold) {
-            $this->shipping_method = 'post_free';
-        }
-
-//        $this->checkTorobpayEligibility();
+        //        $this->checkTorobpayEligibility();
     }
 
-    public function calculateAmount()
+    private function calculateSum()
     {
         $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
         )->with('product', 'variant')->get();
@@ -67,85 +63,67 @@ class Checkout extends Component
             $price = $item->product->discounted_price ?? $item->product->price;
             return $price * $item->quantity;
         });
-
-        if ($this->sum <= 0) {
-            $this->shipping_price = 0;
-            $this->packaging_price = 0;
-            $this->amount = 0;
-            return;
+        if ($this->sum == 0) {
+            return redirect()->route('cart');
         }
 
-        ///برای جلوگیری از ارسال رایگان در مبالغ سبد خرید کمتر از حد رایگان شدن
-        ///
+        $this->maxPackagingSize = $cartItems->max(function ($item) {
+            return (int)($item->product->size ?? 1);
+        }) ?? 1;
+
+        if ($this->maxPackagingSize == 0) {
+            $this->maxPackagingSize = 1;
+        }
+
+    }
+
+    private function calculatePackaging()
+    {
+        $this->free_packaging_threshold = Setting::get('free_packaging_threshold');
+        if ($this->sum < $this->free_packaging_threshold) {
+            $this->packaging_price = Setting::get('packaging_' . $this->maxPackagingSize);
+        } else {
+            $this->packaging_price = 0;
+        }
+    }
+
+    private function calculateShipping()
+    {
+        $this->free_shipping_threshold = Setting::get('free_shipping_threshold');
+
         if ($this->sum < $this->free_shipping_threshold && in_array($this->shipping_method, ['post_free', 'tipax_free'])) {
             $this->shipping_method = 'post_cod';
         }
-
-        $max_packaging_size = $this->getMaxPackagingSize($cartItems);
-
-        $shipping_cost = match ($this->shipping_method) {
-            'post_cash'   => Setting::get('post_price'),
-            'tipax_cash'  => Setting::get('tipax_price'),
-            default       => 0,
-        };
-
-        if ($this->sum >= $this->free_shipping_threshold) {
-            $this->shipping_price  = 0;
-            $this->packaging_price = 0;
-        } elseif ($this->sum >= $this->free_packaging_threshold) {
-            $this->shipping_price  = $shipping_cost;
-            $this->packaging_price = 0;
-        } else {
-            $this->shipping_price  = $shipping_cost;
-            $this->packaging_price = Setting::get('packaging_' . $max_packaging_size);
+        if ($this->sum >= $this->free_shipping_threshold && in_array($this->shipping_method, ['post_cash', 'tipax_cash', 'post_cod', 'tipax_cod'])) {
+            $this->shipping_method = 'post_free';
         }
 
+        if ($this->sum < $this->free_shipping_threshold) {
+            $this->shipping_price = match ($this->shipping_method) {
+                'post_cash' => Setting::get('post_price'),
+                'tipax_cash' => Setting::get('tipax_price'),
+                'post_cod', 'post_free', 'tipax_cod', 'tipax_free' => 0,
+            };
+        } else {
+            $this->shipping_price = 0;
+        }
+    }
+
+    public function calculateAmount()
+    {
         $this->amount = $this->sum + $this->shipping_price + $this->packaging_price;
     }
 
-    private function getMaxPackagingSize($cartItems)
-    {
-        $maxSize = 1; // سایز پیش‌فرض
-
-        foreach ($cartItems as $item) {
-            $product = $item->product;
-            $size = (int)($product->size ?? 1);
-
-            // اگر سایز این محصول بزرگتر بود، به‌روزرسانی کن
-            if ($size > $maxSize) {
-                $maxSize = $size;
-            }
-        }
-
-        return $maxSize;
-    }
-
-
-    /* private function checkTorobpayEligibility(): void
-     {
-         if ($this->amount <= 0) {
-             $this->torobpayEligible = false;
-             return;
-         }
-         try {
-             $service = app(TorobpayService::class);
-             $result = $service->checkEligible($this->amount);
-             $this->torobpayEligible = $result['eligible'];
-
-             if ($result['eligible']) {
-                 $this->torobpayTitle = $result['message_title'] ?? 'پرداخت اقساطی با ترب پی';
-                 $this->torobpayDescription = $result['description'] ?? '';
-             }
-         } catch (\Exception $e) {
-             $this->torobpayEligible = false;
-         }
-     }*/
 
     public function updateShippingMethod($method)
     {
         $this->shipping_method = $method;
+        $this->calculateSum();
+        $this->calculatePackaging();
+        $this->calculateShipping();
         $this->calculateAmount();
-//        $this->checkTorobpayEligibility();
+
+        //        $this->checkTorobpayEligibility();
     }
 
     public function selectAddress($value)
@@ -169,7 +147,7 @@ class Checkout extends Component
         'postal_address' => 'required|string|min:10|max:200',
         'zipcode' => 'required|digits:10',
         'description' => 'nullable|string|max:200',
-        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash',
+        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash,post_free,tipax_free',
         'shipping_price' => 'required|integer',
     ];
 
@@ -193,15 +171,16 @@ class Checkout extends Component
             }
         }
 
+        $this->calculateSum();
+        $this->calculatePackaging();
+        $this->calculateShipping();
         $this->calculateAmount();
+
 
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
             ->first();
 
-        if (!$cart || $cart->items->isEmpty()) {
-            return $this->redirect('/cart', navigate: true);
-        }
 
         Auth::user()->orders()->where('status', 'pending')->update(['status' => 'canceled']);
         $orderParams = $this->getOrderParams();
