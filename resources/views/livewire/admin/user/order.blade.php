@@ -47,16 +47,20 @@
                                     @break
                                 @case('paid')
                                     <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
-                                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M5 13l4 4L19 7"/>
                                         </svg>
                                         <span class="text-green-600 font-bold text-sm">پرداخت شده</span>
                                     </div>
                                     @break
                                 @case('canceled')
                                     <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full">
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                         <span class="text-gray-500 font-bold text-sm">لغو شده</span>
                                     </div>
@@ -66,8 +70,10 @@
                             {{-- اطلاعات متا (تاریخ، کد پیگیری، مبلغ، روش ارسال) --}}
                             <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600">
                                 <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     <span>{{ english_to_persian_num(verta($order->created_at)->format('%d %B %Y')) }}</span>
                                     <span class="text-gray-300">|</span>
@@ -77,8 +83,10 @@
                                 <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
 
                                 <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
                                     </svg>
                                     <span>کد پیگیری: {{ english_to_persian_num($order->order_number) }}</span>
                                 </div>
@@ -86,16 +94,38 @@
                                 <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
 
                                 <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>جمع کل: <strong class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($order->total_price)) }}</strong> تومان</span>
+                                    <span>جمع سبد خرید: <strong
+                                                class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($order->total_price)) }}</strong> تومان</span>
                                 </div>
 
                                 <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    @if($order->packaging_price > 0)
+                                        <span>هزینه بسته بندی: <strong
+                                                    class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($order->packaging_price)) }}</strong> تومان</span>
+
+                                    @else
+                                        <span>هزینه بسته بندی: <strong
+                                                    class="text-green-500 font-bold">رایگان</strong></span>
+                                    @endif
+                                </div>
+                                <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
+                                {{ \App\Models\Setting::query()->where('key' , $order->packaging_size)->first()->description }}
+                                <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
 
                                 <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24" stroke-width="1.8">
                                         <rect x="1" y="8" width="13" height="11" rx="1.5"/>
                                         <path d="M14 10h4l3 4v5h-7V10z"/>
                                         <circle cx="5.5" cy="19.5" r="1.5"/>
@@ -115,7 +145,8 @@
                                 <svg x-bind:class="{'rotate-180': openOrderNumber === '{{ $order->order_number }}'}"
                                      class="w-5 h-5 text-gray-600 transition-transform duration-300"
                                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </button>
                         </div>
@@ -143,20 +174,25 @@
                         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                             <h3 class="text-pars-700 font-bold mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                                 اطلاعات تحویل گیرنده
                             </h3>
                             <div class="space-y-3 text-sm">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-500">نام و نام خانوادگی:</span>
-                                    <span @click="copyName()" :class="copiedName ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
-                                          class="font-medium" x-text="copiedName ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_name) }}'"></span>
+                                    <span @click="copyName()"
+                                          :class="copiedName ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium"
+                                          x-text="copiedName ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_name) }}'"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-500">شماره موبایل:</span>
-                                    <span @click="copyMobile()" :class="copiedMobile ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
-                                          class="font-medium" x-text="copiedMobile ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_mobile) }}'"></span>
+                                    <span @click="copyMobile()"
+                                          :class="copiedMobile ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium"
+                                          x-text="copiedMobile ? 'کپی شد!' : '{{ english_to_persian_num($order->recipient_mobile) }}'"></span>
                                 </div>
                             </div>
                         </div>
@@ -165,8 +201,10 @@
                         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                             <h3 class="text-pars-700 font-bold mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 </svg>
                                 آدرس ارسال
                             </h3>
@@ -177,19 +215,25 @@
                                 </div>
                                 <div class="flex justify-between gap-4 items-start">
                                     <span class="text-gray-500 flex-shrink-0">آدرس پستی:</span>
-                                    <span @click="copyAddress()" :class="copiedAddress ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
-                                          class="font-medium text-left leading-relaxed" x-text="copiedAddress ? 'کپی شد!' : '{{ english_to_persian_num($order->postal_address) }}'"></span>
+                                    <span @click="copyAddress()"
+                                          :class="copiedAddress ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium text-left leading-relaxed"
+                                          x-text="copiedAddress ? 'کپی شد!' : '{{ english_to_persian_num($order->postal_address) }}'"></span>
                                 </div>
                                 <div class="flex justify-between gap-4 items-center">
                                     <span class="text-gray-500 flex-shrink-0">کد پستی:</span>
-                                    <span @click="copyZipcode()" :class="copiedZipcode ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
-                                          class="font-medium" x-text="copiedZipcode ? 'کپی شد!' : '{{ english_to_persian_num($order->zipcode) }}'"></span>
+                                    <span @click="copyZipcode()"
+                                          :class="copiedZipcode ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                          class="font-medium"
+                                          x-text="copiedZipcode ? 'کپی شد!' : '{{ english_to_persian_num($order->zipcode) }}'"></span>
                                 </div>
                                 @if($order->description)
                                     <div class="flex justify-between gap-4 items-start">
                                         <span class="text-gray-500 flex-shrink-0">توضیحات:</span>
-                                        <span @click="copyDescription()" :class="copiedDescription ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
-                                              class="font-medium text-left" x-text="copiedDescription ? 'کپی شد!' : '{{ english_to_persian_num($order->description) }}'"></span>
+                                        <span @click="copyDescription()"
+                                              :class="copiedDescription ? 'text-green-600' : 'text-pars-700 cursor-pointer hover:underline'"
+                                              class="font-medium text-left"
+                                              x-text="copiedDescription ? 'کپی شد!' : '{{ english_to_persian_num($order->description) }}'"></span>
                                     </div>
                                 @endif
                             </div>
@@ -200,7 +244,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
                             <h3 class="text-pars-700 font-bold flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                     stroke-width="1.8">
                                     <rect x="1" y="8" width="13" height="11" rx="1.5"/>
                                     <path d="M14 10h4l3 4v5h-7V10z"/>
                                     <circle cx="5.5" cy="19.5" r="1.5"/>
@@ -236,19 +281,34 @@
                             @endif
 
                             @foreach($orderSteps as $i => $step)
-                                <div class="relative flex flex-col items-center gap-1.5 z-10" style="width: {{ 100 / count($orderSteps) }}%">
+                                <div class="relative flex flex-col items-center gap-1.5 z-10"
+                                     style="width: {{ 100 / count($orderSteps) }}%">
                                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300
-                                        @if($i < $currentIdx) bg-green-500 border-green-500 text-white
-                                        @elseif($i === $currentIdx)
-                                            @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
-                                            @else bg-white border-green-500 text-green-600 shadow-sm
-                                            @endif
-                                        @else bg-white border-gray-200 text-gray-300 @endif">
-                                        @if($i <= $currentIdx)
+    @if($i < $currentIdx) bg-green-500 border-green-500 text-white
+    @elseif($i === $currentIdx)
+        @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
+        @else bg-amber-50 border-amber-400 text-amber-500 shadow-sm
+        @endif
+    @else bg-white border-gray-200 text-gray-300 @endif">
+                                        @if($i < $currentIdx)
+                                            {{-- مرحله انجام شده: تیک سبز --}}
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                      d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        @elseif($i === $currentIdx && $currentStatus !== 'delivered')
+                                            {{-- مرحله جاری: ساعت شنی نارنجی --}}
+                                            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M6 2h12v6l-4 4 4 4v6H6v-6l4-4-4-4V2zm2 2v3.17L12 11.17l4-4V4H8zm0 16v-3.17L12 12.83l4 4V20H8z"/>
+                                            </svg>
+                                        @elseif($i === $currentIdx && $currentStatus === 'delivered')
+                                            {{-- مرحله تحویل: تیک سبز --}}
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                      d="M5 13l4 4L19 7"/>
                                             </svg>
                                         @else
+                                            {{-- مراحل آینده: شماره --}}
                                             {{ english_to_persian_num($i + 1) }}
                                         @endif
                                     </div>
@@ -269,7 +329,8 @@
                                         <button wire:click.prevent="nextStep('{{ $order->id }}')"
                                                 class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm flex items-center gap-2">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M9 5l7 7-7 7"/>
                                             </svg>
                                             مرحله بعد
                                         </button>
@@ -288,15 +349,19 @@
                                             </div>
                                             <button wire:click.prevent="saveTrackingCode('{{ $order->id }}')"
                                                     class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm whitespace-nowrap flex items-center gap-2">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                     viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2" d="M5 13l4 4L19 7"/>
                                                 </svg>
                                                 ثبت و ارسال پیامک
                                             </button>
                                             <button wire:click.prevent="nextStep('{{ $order->id }}')"
                                                     class="bg-pars-500 hover:bg-pars-600 active:scale-95 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all duration-200 shadow-sm flex items-center gap-2">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                     viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2" d="M9 5l7 7-7 7"/>
                                                 </svg>
                                                 مرحله بعد
                                             </button>
@@ -311,7 +376,8 @@
                                        target="_blank" rel="nofollow noopener noreferrer"
                                        class="inline-flex items-center gap-2 text-sm text-pars-600 hover:text-pars-700 underline">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                         </svg>
                                         کد پیگیری مرسوله: {{ english_to_persian_num($order->tracking_code) }}
                                     </a>
@@ -325,7 +391,8 @@
                         <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
                             <h3 class="text-pars-700 font-bold flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                                 </svg>
                                 تاریخچه تراکنش‌ها
                             </h3>
@@ -334,8 +401,10 @@
                         <div class="p-5">
                             @if(!$order->transactions()->exists())
                                 <div class="text-center py-8 text-gray-400">
-                                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                     <span>هیچ تراکنشی انجام نشده است.</span>
                                 </div>
@@ -406,8 +475,11 @@
 
                                             <div class="flex flex-wrap items-center justify-between mt-3 pt-2 border-t border-gray-200">
                                                 <div class="flex items-center gap-1.5 text-xs text-gray-400">
-                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                                         viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                              stroke-width="2"
+                                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                                     </svg>
                                                     <span>{{ english_to_persian_num(verta($value->created_at)->format('%d %B %Y ساعت H:i:s')) }}</span>
                                                 </div>
@@ -416,7 +488,7 @@
                                                     <div class="flex gap-2">
                                                         <button wire:click.prevent="verifyTransaction('{{ $value->id }}')"
                                                                 class="cursor-pointer rounded-xl px-3 py-1.5 bg-green-500 hover:bg-green-600 active:scale-95 text-white text-xs font-medium transition-all duration-200">
-                                                            ✓  چک کردن موجودی و تایید تراکنش و کاهش موجودی
+                                                            ✓ چک کردن موجودی و تایید تراکنش و کاهش موجودی
                                                         </button>
                                                         <button wire:click.prevent="failedTransaction('{{ $value->id }}')"
                                                                 class="cursor-pointer rounded-xl px-3 py-1.5 bg-red-400 hover:bg-red-500 active:scale-95 text-white text-xs font-medium transition-all duration-200">
@@ -437,7 +509,8 @@
                         <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-3">
                             <h3 class="text-pars-700 font-bold flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                 </svg>
                                 محصولات سفارش
                             </h3>

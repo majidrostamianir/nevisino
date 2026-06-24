@@ -97,7 +97,7 @@ class Checkout extends Component
             $this->packaging_price = 0;
         } else {
             $this->shipping_price  = $shipping_cost;
-            $this->packaging_price = Setting::get('box_' . $max_packaging_size);
+            $this->packaging_price = Setting::get('packaging_' . $max_packaging_size);
         }
 
         $this->amount = $this->sum + $this->shipping_price + $this->packaging_price;
@@ -282,6 +282,7 @@ class Checkout extends Component
             'description' => $this->description,
             'shipping_method' => $this->shipping_method,
             'shipping_price' => $this->shipping_price,
+            'packaging_price' => $this->packaging_price,
         ];
     }
 

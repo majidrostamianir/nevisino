@@ -96,8 +96,26 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <span>جمع کل: <strong
+                                    <span>جمع سبد خرید: <strong
                                                 class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($order->total_price)) }}</strong> تومان</span>
+                                </div>
+                                <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    @if($order->packaging_price > 0)
+                                        <span>هزینه بسته بندی: <strong
+                                                    class="text-pars-700 font-bold">{{ english_to_persian_num(number_format($order->packaging_price)) }}</strong> تومان</span>
+
+                                    @else
+                                        <span>هزینه بسته بندی: <strong
+                                                    class="text-green-500 font-bold">رایگان</strong></span>
+
+                                    @endif
                                 </div>
 
                                 <div class="w-px h-4 bg-gray-200 hidden sm:block"></div>
@@ -241,26 +259,38 @@
                                 <div class="relative flex flex-col items-center gap-1.5 z-10"
                                      style="width: {{ 100 / count($orderSteps) }}%">
                                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300
-                @if($i < $currentIdx) bg-green-500 border-green-500 text-white
-                @elseif($i === $currentIdx)
-                    @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
-                    @else bg-white border-green-500 text-green-600 shadow-sm
-                    @endif
-                @else bg-white border-gray-200 text-gray-300 @endif">
-                                        @if($i <= $currentIdx)
-                                            {{-- تیک برای وضعیت‌های قبلی و همچنین وضعیت فعلی اگر تحویل شده باشد --}}
+    @if($i < $currentIdx) bg-green-500 border-green-500 text-white
+    @elseif($i === $currentIdx)
+        @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
+        @else bg-amber-50 border-amber-400 text-amber-500 shadow-sm
+        @endif
+    @else bg-white border-gray-200 text-gray-300 @endif">
+                                        @if($i < $currentIdx)
+                                            {{-- مرحله انجام شده: تیک سبز --}}
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                      d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        @elseif($i === $currentIdx && $currentStatus !== 'delivered')
+                                            {{-- مرحله جاری: ساعت شنی نارنجی --}}
+                                            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M6 2h12v6l-4 4 4 4v6H6v-6l4-4-4-4V2zm2 2v3.17L12 11.17l4-4V4H8zm0 16v-3.17L12 12.83l4 4V20H8z"/>
+                                            </svg>
+                                        @elseif($i === $currentIdx && $currentStatus === 'delivered')
+                                            {{-- مرحله تحویل: تیک سبز --}}
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                                       d="M5 13l4 4L19 7"/>
                                             </svg>
                                         @else
+                                            {{-- مراحل آینده: شماره --}}
                                             {{ english_to_persian_num($i + 1) }}
                                         @endif
                                     </div>
                                     <span class="text-center text-xs leading-tight px-1
                 @if($i <= $currentIdx) text-gray-700 font-semibold @else text-gray-300 @endif">
-                {{ $step['label'] }}
-            </span>
+                                        {{ $step['label'] }}
+                                    </span>
                                 </div>
                             @endforeach
                         </div>

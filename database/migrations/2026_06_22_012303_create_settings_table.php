@@ -27,15 +27,15 @@ return new class extends Migration
             ['key' => 'tipax_price', 'value' => '170000', 'type' => 'integer', 'group' => 'shipping_prices', 'description' => 'قیمت کرایه تیپاکس', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== قیمت کارتن‌ها ==========
-            ['key' => 'box_1', 'value' => '14000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۱', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_2', 'value' => '25000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۲', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_3', 'value' => '36000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۳', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_4', 'value' => '46000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۴', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_5', 'value' => '60000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۵', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_6', 'value' => '70000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۶', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_7', 'value' => '80000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۷', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_8', 'value' => '140000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۸', 'created_at' => now() , 'updated_at' => now()],
-            ['key' => 'box_9', 'value' => '250000', 'type' => 'integer', 'group' => 'box_prices', 'description' => 'قیمت کارتن سایز ۹', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_1', 'value' => '14000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۱', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_2', 'value' => '25000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۲', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_3', 'value' => '36000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۳', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_4', 'value' => '46000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۴', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_5', 'value' => '60000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۵', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_6', 'value' => '70000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۶', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_7', 'value' => '80000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۷', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_8', 'value' => '140000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۸', 'created_at' => now() , 'updated_at' => now()],
+            ['key' => 'packaging_9', 'value' => '250000', 'type' => 'integer', 'group' => 'packaging_price', 'description' => 'قیمت کارتن سایز ۹', 'created_at' => now() , 'updated_at' => now()],
 
             // ========== تنظیمات هزینه کارتن ==========
             ['key' => 'charge_packaging', 'value' => '1', 'type' => 'boolean', 'group' => 'packaging', 'description' => 'آیا هزینه کارتن از مشتری گرفته شود؟', 'created_at' => now() , 'updated_at' => now()],

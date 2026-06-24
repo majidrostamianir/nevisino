@@ -244,20 +244,20 @@
                                class="hidden">
 
                         <div class="flex items-center flex-1">
-            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
-                  :class="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif ? 'border-pars-500' : 'border-gray-400'">
-                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                      x-show="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif"></span>
-            </span>
+                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                                  :class="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif ? 'border-pars-500' : 'border-gray-400'">
+                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                                      x-show="shipping_method === @if($sum >= $free_shipping_threshold) 'post_free' @else 'post_cod' @endif"></span>
+                            </span>
                             <div>
                                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-gray-800">
-                        @if($sum >= $free_shipping_threshold)
-                            {{ \App\Enums\ShippingMethodEnum::POST_FREE->label() }}
-                        @else
-                            {{ \App\Enums\ShippingMethodEnum::POST_COD->label() }}
-                        @endif
-                    </span>
+                                    <span class="text-sm font-medium text-gray-800">
+                                        @if($sum >= $free_shipping_threshold)
+                                            {{ \App\Enums\ShippingMethodEnum::POST_FREE->label() }}
+                                        @else
+                                            {{ \App\Enums\ShippingMethodEnum::POST_COD->label() }}
+                                        @endif
+                                    </span>
                                     @if($sum >= $free_shipping_threshold)
                                         <span class="text-xs text-green-600 font-bold">(پیشنهاد ما)</span>
                                     @endif
@@ -294,11 +294,11 @@
                                    class="hidden">
 
                             <div class="flex items-center flex-1">
-                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
-                      :class="shipping_method === 'post_cash' ? 'border-pars-500' : 'border-gray-400'">
-                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                          x-show="shipping_method === 'post_cash'"></span>
-                </span>
+                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                                      :class="shipping_method === 'post_cash' ? 'border-pars-500' : 'border-gray-400'">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                                          x-show="shipping_method === 'post_cash'"></span>
+                                </span>
                                 <div>
                                     <span class="text-sm font-medium text-gray-800">{{ \App\Enums\ShippingMethodEnum::POST_CASH->label() }}</span>
                                     <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::POST_CASH->description() }}</div>
@@ -324,19 +324,19 @@
                                class="hidden">
 
                         <div class="flex items-center flex-1">
-            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
-                  :class="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif ? 'border-pars-500' : 'border-gray-400'">
-                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                      x-show="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif"></span>
-            </span>
+                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                                  :class="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif ? 'border-pars-500' : 'border-gray-400'">
+                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                                      x-show="shipping_method === @if($sum >= $free_shipping_threshold) 'tipax_free' @else 'tipax_cod' @endif"></span>
+                            </span>
                             <div>
-                <span class="text-sm font-medium text-gray-800">
-                    @if($sum >= $free_shipping_threshold)
-                        {{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->label() }}
-                    @else
-                        {{ \App\Enums\ShippingMethodEnum::TIPAX_COD->label() }}
-                    @endif
-                </span>
+                                <span class="text-sm font-medium text-gray-800">
+                                    @if($sum >= $free_shipping_threshold)
+                                        {{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->label() }}
+                                    @else
+                                        {{ \App\Enums\ShippingMethodEnum::TIPAX_COD->label() }}
+                                    @endif
+                                </span>
                                 <div class="text-xs text-gray-500">
                                     @if($sum >= $free_shipping_threshold)
                                         {{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->description() }}
@@ -369,11 +369,11 @@
                                    class="hidden">
 
                             <div class="flex items-center flex-1">
-                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
-                      :class="shipping_method === 'tipax_cash' ? 'border-pars-500' : 'border-gray-400'">
-                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                          x-show="shipping_method === 'tipax_cash'"></span>
-                </span>
+                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200 flex-shrink-0"
+                                      :class="shipping_method === 'tipax_cash' ? 'border-pars-500' : 'border-gray-400'">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                                          x-show="shipping_method === 'tipax_cash'"></span>
+                                </span>
                                 <div>
                                     <span class="text-sm font-medium text-gray-800">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->label() }}</span>
                                     <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_CASH->description() }}</div>
@@ -389,9 +389,9 @@
                 </div>
             </div>
         </div>
-        <div class="lg:sticky top-20 w-full h-fit lg:w-1/3 mt-2 lg:mt-0 lg:mr-2">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden "
-                 x-data="{
+            <div class="lg:sticky top-20 w-full h-fit lg:w-1/3 mt-2 lg:mt-0 lg:mr-2">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden "
+                     x-data="{
                     payment_method: @entangle('payment_method').live,
                     copied: false,
                     copyCard() {
@@ -400,18 +400,18 @@
                         setTimeout(() => this.copied = false, 1500);
                     }
                  }">
-                <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-4">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-pars-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                        </svg>
-                        <strong class="text-pars-700 font-bold">انتخاب روش پرداخت</strong>
+                    <div class="border-b border-gray-100 bg-gray-50/50 px-5 py-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-pars-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                            </svg>
+                            <strong class="text-pars-700 font-bold">انتخاب روش پرداخت</strong>
+                        </div>
                     </div>
-                </div>
-                <div class="px-5 pt-10">
-                    {{-- progress bar --}}
-                    <div class="px-5 pb-4" x-data="{
+                    <div class="px-5 pt-10">
+                        {{-- progress bar --}}
+                        <div class="px-5 pb-4" x-data="{
                         sum: {{ $sum }},
                         freePack: {{ $free_packaging_threshold }},
                         freeShip: {{ $free_shipping_threshold }},
@@ -422,239 +422,239 @@
                         get remainPack() { return this.freePack - this.sum; },
                         get remainShip() { return this.freeShip - this.sum; }
                     }">
-                        <div class="relative h-3 bg-gray-100 rounded-full border border-gray-200 overflow-visible mb-16">
-                            {{-- پر شدن نوار --}}
-                            <div class="h-full rounded-full transition-all duration-500"
-                                 :style="`width: ${Math.min(pct * 100, 100)}%`"
-                                 :class="reachedShip ? 'bg-green-600' : (reachedPack ? 'bg-green-400' : 'bg-orange-400')">
-                            </div>
-
-                            {{-- مبلغ سبد --}}
-                            <div class="absolute -top-6  text-[10px] text-gray-400 font-medium text-nowrap"
-                                 :style="`right: ${Math.min(pct * 100, 100)-10}%`">
-                                {{ english_to_persian_num(number_format($sum)) }} تومان
-                            </div>
-
-                            {{-- نقطه بسته‌بندی رایگان --}}
-                            <div class="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-md border-2 border-white shadow-md transition-all duration-300 z-10 flex items-center justify-center"
-                                 :style="`right: ${packPct * 100}%; transform: translate(50%, -15%);`"
-                                 :class="reachedPack ? 'bg-green-500' : 'bg-gray-300'">
-                                <svg x-show="reachedPack" class="w-3 h-3 text-white" fill="none" stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                          d="M5 13l4 4L19 7"/>
-                                </svg>
-                            </div>
-
-                            {{-- لیبل بسته‌بندی رایگان --}}
-                            <div class="absolute text-center transition-all whitespace-nowrap text-xs"
-                                 :style="`right: ${packPct * 100}%; transform: translateX(50%); top: 20px;`"
-                                 :class="reachedPack ? 'text-green-700 font-bold' : 'text-green-300'">
-                                بسته‌بندی رایگان
-                                <div class="text-[9px] font-normal"
-                                     :class="reachedPack ? 'text-green-600' : 'text-gray-500'">
-                                    {{ english_to_persian_num(number_format($free_packaging_threshold)) }} تومان
+                            <div class="relative h-3 bg-gray-100 rounded-full border border-gray-200 overflow-visible mb-16">
+                                {{-- پر شدن نوار --}}
+                                <div class="h-full rounded-full transition-all duration-500"
+                                     :style="`width: ${Math.min(pct * 100, 100)}%`"
+                                     :class="reachedShip ? 'bg-green-600' : (reachedPack ? 'bg-green-400' : 'bg-orange-400')">
                                 </div>
-                            </div>
 
-                            {{-- نقطه ارسال رایگان (سمت چپ) --}}
-                            {{-- نقطه ارسال رایگان --}}
-                            <div class="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-md border-2 border-white shadow-md transition-all duration-300 z-10 flex items-center justify-center"
-                                 style="right: 100%; transform: translate(50%, -15%);"
-                                 :class="reachedShip ? 'bg-green-500' : 'bg-gray-300'">
-                                <svg x-show="reachedShip" class="w-3 h-3 text-white" fill="none" stroke="currentColor"
-                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                          d="M5 13l4 4L19 7"/>
-                                </svg>
-                            </div>
-
-                            {{-- لیبل ارسال رایگان --}}
-                            <div class="absolute text-center transition-all whitespace-nowrap text-xs"
-                                 style="right: 100%; transform: translateX(50%); top: 20px;"
-                                 :class="reachedShip ? 'text-green-700 font-bold' : 'text-green-300'">
-                                ارسال رایگان
-                                <div class="text-[9px] font-normal"
-                                     :class="reachedShip ? 'text-green-600' : 'text-gray-500'">
-                                    {{ english_to_persian_num(number_format($free_shipping_threshold)) }} تومان
+                                {{-- مبلغ سبد --}}
+                                <div class="absolute -top-6  text-[10px] text-gray-400 font-medium text-nowrap"
+                                     :style="`right: ${Math.min(pct * 100, 100)-10}%`">
+                                    {{ english_to_persian_num(number_format($sum)) }} تومان
                                 </div>
-                            </div>
-                        </div>
 
-                        {{-- پیام وضعیت --}}
-                        <div class="text-xs rounded-xl px-3 py-2 mt-2 leading-relaxed transition-all text-right"
-                             :class="reachedShip ? 'bg-green-50 text-green-700 border border-green-200' : reachedPack ? 'bg-gray-50 text-gray-600 border border-gray-200' : 'bg-orange-50 text-orange-700 border border-orange-200'">
-
-                            <template x-if="reachedShip">
-                                <div class="space-y-1">
-                                    <div>بسته‌بندی و ارسال رایگان است.</div>
+                                {{-- نقطه بسته‌بندی رایگان --}}
+                                <div class="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-md border-2 border-white shadow-md transition-all duration-300 z-10 flex items-center justify-center"
+                                     :style="`right: ${packPct * 100}%; transform: translate(50%, -15%);`"
+                                     :class="reachedPack ? 'bg-green-500' : 'bg-gray-300'">
+                                    <svg x-show="reachedPack" class="w-3 h-3 text-white" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                              d="M5 13l4 4L19 7"/>
+                                    </svg>
                                 </div>
-                            </template>
 
-                            <template x-if="!reachedShip && reachedPack">
-                                <div class="space-y-1">
-                                    <div class="text-green-500">بسته‌بندی رایگان شد.</div>
-                                    <div class="text-xs text-orange-700">
-                                        <strong x-text="Number(remainShip).toLocaleString('fa-IR')"></strong> تومان تا
-                                        ارسال رایگان مانده.
+                                {{-- لیبل بسته‌بندی رایگان --}}
+                                <div class="absolute text-center transition-all whitespace-nowrap text-xs"
+                                     :style="`right: ${packPct * 100}%; transform: translateX(50%); top: 20px;`"
+                                     :class="reachedPack ? 'text-green-700 font-bold' : 'text-green-300'">
+                                    بسته‌بندی رایگان
+                                    <div class="text-[9px] font-normal"
+                                         :class="reachedPack ? 'text-green-600' : 'text-gray-500'">
+                                        {{ english_to_persian_num(number_format($free_packaging_threshold)) }} تومان
                                     </div>
                                 </div>
-                            </template>
 
-                            <template x-if="!reachedShip && !reachedPack">
-                                <div class="space-y-1">
-                                    <div>خرید <span x-text="Number(remainPack).toLocaleString('fa-IR')"></span> تومانِ
-                                        دیگر تا <strong>بسته‌بندی رایگان</strong></div>
-                                    <div>خرید <span x-text="Number(remainShip).toLocaleString('fa-IR')"></span> تومانِ
-                                        دیگر تا <strong>ارسال رایگان</strong></div>
+                                {{-- نقطه ارسال رایگان (سمت چپ) --}}
+                                {{-- نقطه ارسال رایگان --}}
+                                <div class="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-md border-2 border-white shadow-md transition-all duration-300 z-10 flex items-center justify-center"
+                                     style="right: 100%; transform: translate(50%, -15%);"
+                                     :class="reachedShip ? 'bg-green-500' : 'bg-gray-300'">
+                                    <svg x-show="reachedShip" class="w-3 h-3 text-white" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                              d="M5 13l4 4L19 7"/>
+                                    </svg>
                                 </div>
-                            </template>
+
+                                {{-- لیبل ارسال رایگان --}}
+                                <div class="absolute text-center transition-all whitespace-nowrap text-xs"
+                                     style="right: 100%; transform: translateX(50%); top: 20px;"
+                                     :class="reachedShip ? 'text-green-700 font-bold' : 'text-green-300'">
+                                    ارسال رایگان
+                                    <div class="text-[9px] font-normal"
+                                         :class="reachedShip ? 'text-green-600' : 'text-gray-500'">
+                                        {{ english_to_persian_num(number_format($free_shipping_threshold)) }} تومان
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- پیام وضعیت --}}
+                            <div class="text-xs rounded-xl px-3 py-2 mt-2 leading-relaxed transition-all text-right"
+                                 :class="reachedShip ? 'bg-green-50 text-green-700 border border-green-200' : reachedPack ? 'bg-gray-50 text-gray-600 border border-gray-200' : 'bg-orange-50 text-orange-700 border border-orange-200'">
+
+                                <template x-if="reachedShip">
+                                    <div class="space-y-1">
+                                        <div>بسته‌بندی و ارسال رایگان است.</div>
+                                    </div>
+                                </template>
+
+                                <template x-if="!reachedShip && reachedPack">
+                                    <div class="space-y-1">
+                                        <div class="text-green-500">بسته‌بندی رایگان شد.</div>
+                                        <div class="text-xs text-orange-700">
+                                            <strong x-text="Number(remainShip).toLocaleString('fa-IR')"></strong> تومان تا
+                                            ارسال رایگان مانده.
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template x-if="!reachedShip && !reachedPack">
+                                    <div class="space-y-1">
+                                        <div>خرید <span x-text="Number(remainPack).toLocaleString('fa-IR')"></span> تومانِ
+                                            دیگر تا <strong>بسته‌بندی رایگان</strong></div>
+                                        <div>خرید <span x-text="Number(remainShip).toLocaleString('fa-IR')"></span> تومانِ
+                                            دیگر تا <strong>ارسال رایگان</strong></div>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="px-5 pt-5">
-                    <div class="flex justify-between items-center pb-4 border-gray-100">
-                        <span class="text-gray-600">مبلغ سبد خرید</span>
-                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
-                        <span class="text-pars-700 ">{{ english_to_persian_num(number_format($sum)) }} <span
-                                    class="text-xs text-gray-400">تومان</span></span>
-                    </div>
-                    <div class="flex justify-between items-center pb-4 border-gray-100">
-                        <span class="text-gray-600">هزینه بسته بندی</span>
-                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
-                        @if($sum >= $free_packaging_threshold)
-                            <span class="text-green-500 font-bold ">رایگان</span>
-                        @else
-                            <span class="text-pars-700 ">{{ english_to_persian_num(number_format($packaging_price)) }} <span
+                    <div class="px-5 pt-5">
+                        <div class="flex justify-between items-center pb-4 border-gray-100">
+                            <span class="text-gray-600">مبلغ سبد خرید</span>
+                            <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                            <span class="text-pars-700 ">{{ english_to_persian_num(number_format($sum)) }} <span
                                         class="text-xs text-gray-400">تومان</span></span>
-                        @endif
-                    </div>
-                    <div class="flex justify-between items-center pb-4 border-gray-100">
-                        <span class="text-gray-600">هزینه ارسال</span>
-                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
-                        @if($sum >= $free_shipping_threshold)
-                            <span class="text-green-500 font-bold ">رایگان</span>
-                        @elseif($shipping_method == 'post_cod' || $shipping_method == 'tipax_cod')
-                            <span class="text-pars-700 text-sm">کرایه در مقصد</span>
-                        @else
-                            <span class="text-pars-700 ">{{ english_to_persian_num(number_format($shipping_price)) }} <span
-                                        class="text-xs text-gray-400">تومان</span></span>
-                        @endif
-                    </div>
+                        </div>
+                        <div class="flex justify-between items-center pb-4 border-gray-100">
+                            <span class="text-gray-600">هزینه بسته بندی</span>
+                            <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                            @if($sum >= $free_packaging_threshold)
+                                <span class="text-green-500 font-bold ">رایگان</span>
+                            @else
+                                <span class="text-pars-700 ">{{ english_to_persian_num(number_format($packaging_price)) }} <span
+                                            class="text-xs text-gray-400">تومان</span></span>
+                            @endif
+                        </div>
+                        <div class="flex justify-between items-center pb-4 border-gray-100">
+                            <span class="text-gray-600">هزینه ارسال</span>
+                            <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                            @if($sum >= $free_shipping_threshold)
+                                <span class="text-green-500 font-bold ">رایگان</span>
+                            @elseif($shipping_method == 'post_cod' || $shipping_method == 'tipax_cod')
+                                <span class="text-pars-700 text-sm">کرایه در مقصد</span>
+                            @else
+                                <span class="text-pars-700 ">{{ english_to_persian_num(number_format($shipping_price)) }} <span
+                                            class="text-xs text-gray-400">تومان</span></span>
+                            @endif
+                        </div>
 
-                    <div class="flex justify-between items-center pb-4 border-gray-100">
-                        <span class="text-gray-600">مبلغ قابل پرداخت</span>
-                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
-                        <span class="text-pars-700 font-bold text-2xl">{{ english_to_persian_num(number_format($amount)) }} <span
-                                    class="text-xs text-gray-400">تومان</span></span>
+                        <div class="flex justify-between items-center pb-4 border-gray-100">
+                            <span class="text-gray-600">مبلغ قابل پرداخت</span>
+                            <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
+                            <span class="text-pars-700 font-bold text-2xl">{{ english_to_persian_num(number_format($amount)) }} <span
+                                        class="text-xs text-gray-400">تومان</span></span>
+                        </div>
                     </div>
-                </div>
-                <div class="p-5 space-y-3">
-                    <label class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
-                           :class="payment_method === 'gateway' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
-                        <input type="radio" value="gateway" x-model="payment_method" class="hidden">
-                        <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                              :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
+                    <div class="p-5 space-y-3">
+                        <label class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                               :class="payment_method === 'gateway' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
+                            <input type="radio" value="gateway" x-model="payment_method" class="hidden">
+                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
+                                  :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
                                 <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
                                       x-show="payment_method === 'gateway'"></span>
                             </span>
-                        <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
-                    </label>
+                            <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
+                        </label>
 
-                    {{--                    @if($torobpayEligible)--}}
-                    {{--                        <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"--}}
-                    {{--                               :class="payment_method === 'torobpay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">--}}
-                    {{--                            <div class="flex items-center">--}}
-                    {{--                                <input type="radio" value="torobpay" x-model="payment_method" class="hidden">--}}
-                    {{--                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"--}}
-                    {{--                                      :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">--}}
-                    {{--                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"--}}
-                    {{--                                          x-show="payment_method === 'torobpay'"></span>--}}
-                    {{--                                </span>--}}
-                    {{--                                <div>--}}
-                    {{--                                    <span class="text-sm font-medium text-gray-800">{{ $torobpayTitle }}</span>--}}
-                    {{--                                    <div class="text-xs text-gray-500">{{ $torobpayDescription }}</div>--}}
-                    {{--                                </div>--}}
-                    {{--                            </div>--}}
-                    {{--                            <img class="w-12 rounded-full shadow-sm" src="{{ asset('images/torobpay.png') }}"--}}
-                    {{--                                 alt="ترب پی">--}}
-                    {{--                        </label>--}}
-                    {{--                    @else--}}
-                    {{--                        <label class="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">--}}
-                    {{--                            <div class="flex items-center">--}}
-                    {{--                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>--}}
-                    {{--                                <div>--}}
-                    {{--                                    <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با ترب پی</span>--}}
-                    {{--                                    <div class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان--}}
-                    {{--                                    </div>--}}
-                    {{--                                </div>--}}
-                    {{--                            </div>--}}
-                    {{--                            <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}"--}}
-                    {{--                                 alt="ترب پی">--}}
-                    {{--                        </label>--}}
-                    {{--                    @endif--}}
+                        {{--                    @if($torobpayEligible)--}}
+                        {{--                        <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"--}}
+                        {{--                               :class="payment_method === 'torobpay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">--}}
+                        {{--                            <div class="flex items-center">--}}
+                        {{--                                <input type="radio" value="torobpay" x-model="payment_method" class="hidden">--}}
+                        {{--                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"--}}
+                        {{--                                      :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">--}}
+                        {{--                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"--}}
+                        {{--                                          x-show="payment_method === 'torobpay'"></span>--}}
+                        {{--                                </span>--}}
+                        {{--                                <div>--}}
+                        {{--                                    <span class="text-sm font-medium text-gray-800">{{ $torobpayTitle }}</span>--}}
+                        {{--                                    <div class="text-xs text-gray-500">{{ $torobpayDescription }}</div>--}}
+                        {{--                                </div>--}}
+                        {{--                            </div>--}}
+                        {{--                            <img class="w-12 rounded-full shadow-sm" src="{{ asset('images/torobpay.png') }}"--}}
+                        {{--                                 alt="ترب پی">--}}
+                        {{--                        </label>--}}
+                        {{--                    @else--}}
+                        {{--                        <label class="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">--}}
+                        {{--                            <div class="flex items-center">--}}
+                        {{--                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>--}}
+                        {{--                                <div>--}}
+                        {{--                                    <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با ترب پی</span>--}}
+                        {{--                                    <div class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان--}}
+                        {{--                                    </div>--}}
+                        {{--                                </div>--}}
+                        {{--                            </div>--}}
+                        {{--                            <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}"--}}
+                        {{--                                 alt="ترب پی">--}}
+                        {{--                        </label>--}}
+                        {{--                    @endif--}}
 
-                    <div class="bg-white rounded-xl border-2 transition-all duration-200 overflow-hidden"
-                         :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-200'">
-                        <label class="flex items-center px-4 py-3 cursor-pointer">
-                            <input type="radio" value="card" x-model="payment_method" class="hidden">
-                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                                  :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-400'">
+                        <div class="bg-white rounded-xl border-2 transition-all duration-200 overflow-hidden"
+                             :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-200'">
+                            <label class="flex items-center px-4 py-3 cursor-pointer">
+                                <input type="radio" value="card" x-model="payment_method" class="hidden">
+                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
+                                      :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-400'">
                                     <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
                                           x-show="payment_method === 'card'"></span>
                                 </span>
-                            <span class="text-sm text-gray-700">پرداخت از طریق کارت به کارت</span>
-                        </label>
+                                <span class="text-sm text-gray-700">پرداخت از طریق کارت به کارت</span>
+                            </label>
 
-                        <div
-                                class="transition-all duration-500 ease-in-out overflow-hidden"
-                                :style="payment_method === 'card'
+                            <div
+                                    class="transition-all duration-500 ease-in-out overflow-hidden"
+                                    :style="payment_method === 'card'
                             ? 'max-height:500px; opacity:1; padding:12px;'
                             : 'max-height:0; opacity:0; padding:0 12px;'">
 
-                            <div
-                                    class="w-full max-w-xs mx-auto bg-black rounded-2xl relative text-white overflow-visible  border"
-                                    style="aspect-ratio:1.7;">
-                                <div x-show="copied"
-                                     x-transition.opacity
-                                     class="absolute top-5 left-5 -translate-x-5 font-bold text-[11px] bg-black text-shadow-white px-3 py-1 rounded-full shadow-md">
-                                    کپی شد ✓
-                                </div>
-                                <img src="{{ asset('images/Pasargad.png') }}"
-                                     class="absolute top-3 right-3 w-10 opacity-90">
                                 <div
-                                        class="absolute top-4 left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide">
-                                    بانک پاسارگاد
-                                </div>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <button type="button"
-                                            @click.stop="copyCard"
-                                            class="font-mono text-lg tracking-[0.3em] cursor-pointer transition duration-200">
-                                        5022&nbsp;2915&nbsp;3361&nbsp;0273
-                                    </button>
-                                </div>
-                                <div class="absolute top-[60%] right-4 text-xs font-semibold">
-                                    مجید رستمیان
-                                </div>
-                                <div class="absolute bottom-3 right-4 left-4 text-[10px] text-yellow-300 leading-tight">
-                                    لطفاً مبلغ {{ english_to_persian_num(number_format($amount)) }} تومان را به شماره
-                                    کارت بالا واریز نموده، سپس با استفاده از دکمه زیر سفارش خود را ثبت کنید.
+                                        class="w-full max-w-xs mx-auto bg-black rounded-2xl relative text-white overflow-visible  border"
+                                        style="aspect-ratio:1.7;">
+                                    <div x-show="copied"
+                                         x-transition.opacity
+                                         class="absolute top-5 left-5 -translate-x-5 font-bold text-[11px] bg-black text-shadow-white px-3 py-1 rounded-full shadow-md">
+                                        کپی شد ✓
+                                    </div>
+                                    <img src="{{ asset('images/Pasargad.png') }}"
+                                         class="absolute top-3 right-3 w-10 opacity-90">
+                                    <div
+                                            class="absolute top-4 left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide">
+                                        بانک پاسارگاد
+                                    </div>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <button type="button"
+                                                @click.stop="copyCard"
+                                                class="font-mono text-lg tracking-[0.3em] cursor-pointer transition duration-200">
+                                            5022&nbsp;2915&nbsp;3361&nbsp;0273
+                                        </button>
+                                    </div>
+                                    <div class="absolute top-[60%] right-4 text-xs font-semibold">
+                                        مجید رستمیان
+                                    </div>
+                                    <div class="absolute bottom-3 right-4 left-4 text-[10px] text-yellow-300 leading-tight">
+                                        لطفاً مبلغ {{ english_to_persian_num(number_format($amount)) }} تومان را به شماره
+                                        کارت بالا واریز نموده، سپس با استفاده از دکمه زیر سفارش خود را ثبت کنید.
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="w-full p-2"
-                     x-data="{ payment_method: @entangle('payment_method').live }">
-                    <button
-                            wire:click.prevent="pay"
-                            wire:target="pay"
-                            class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-2 flex items-center justify-center relative transition-all duration-300">
+                    <div class="w-full p-2"
+                         x-data="{ payment_method: @entangle('payment_method').live }">
+                        <button
+                                wire:click.prevent="pay"
+                                wire:target="pay"
+                                class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-2 flex items-center justify-center relative transition-all duration-300">
 
                             <span wire:loading.remove wire:target="pay">
                                 <span x-text="payment_method === 'card' ? 'ثبت سفارش' : 'پرداخت'"></span>
                             </span>
-                        <span wire:loading wire:target="pay" class="flex items-center justify-center">
+                            <span wire:loading wire:target="pay" class="flex items-center justify-center">
                                 <svg class="w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
                                      fill="none"
                                      viewBox="0 0 24 24">
@@ -664,19 +664,19 @@
                                           d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                 </svg>
                             </span>
-                    </button>
+                        </button>
 
-                    @if ($errors->any())
-                        <div class="mt-4 bg-red-50 text-red-600 rounded-xl p-3 text-sm">
-                            <ul class="list-disc list-inside">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ english_to_persian_num($error) }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                        @if ($errors->any())
+                            <div class="mt-4 bg-red-50 text-red-600 rounded-xl p-3 text-sm">
+                                <ul class="list-disc list-inside">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ english_to_persian_num($error) }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
 </div>

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->unsignedBigInteger('total_price')->default(0);
             $table->unsignedBigInteger('shipping_price')->default(0);
             $table->enum('shipping_method',['post_cod' , 'post_cash' , 'tipax_cod','tipax_cash','post_free','tipax_free'])->default('post_cod');
+            $table->enum('packaging_size',['packaging_1' , 'packaging_2' , 'packaging_3','packaging_4','packaging_5','packaging_6','packaging_7','packaging_8','packaging_9','packaging_10'])->default('packaging_1');
+            $table->unsignedBigInteger('packaging_price')->default(0);
             $table->unsignedBigInteger('amount')->default(0);
             $table->string('recipient_name');
             $table->string('recipient_mobile');

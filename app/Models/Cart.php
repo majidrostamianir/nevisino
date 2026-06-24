@@ -32,6 +32,7 @@ class Cart extends Model
             $description = $orderData['description'] ?? null;
             $shipping_method = $orderData['shipping_method'] ?? 'post_cod';
             $shipping_price = $orderData['shipping_price'] ?? 0;
+            $packaging_price = $orderData['packaging_price'] ?? 0;
 
             $totalPrice = $this->items->sum(function ($item) {
                 return ($item->product->discounted_price ?? $item->product->price) * $item->quantity;
@@ -49,7 +50,8 @@ class Cart extends Model
                 'total_price' => $totalPrice,
                 'shipping_method' => $shipping_method,
                 'shipping_price' => $shipping_price,
-                'amount' => $totalPrice + $shipping_price,
+                'packaging_price' => $packaging_price,
+                'amount' => $totalPrice + $shipping_price + $packaging_price,
                 'recipient_name' => $recipient_name,
                 'recipient_mobile' => $recipient_mobile,
                 'postal_address' => $postal_address,

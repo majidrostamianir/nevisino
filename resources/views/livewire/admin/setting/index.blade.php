@@ -127,7 +127,7 @@
                                         <label class="block text-[10px] text-gray-500 text-center mb-1">سایز {{ english_to_persian_num($i) }}</label>
                                         <input type="number"
                                                x-on:wheel.prevent
-                                               wire:model="settings.box_{{$i}}"
+                                               wire:model="settings.packaging_{{$i}}"
                                                class="w-full px-2 py-1.5 border border-gray-200 rounded-lg text-center text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                                                placeholder="۰">
                                     </div>
