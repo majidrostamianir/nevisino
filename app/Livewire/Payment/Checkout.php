@@ -19,7 +19,7 @@ class Checkout extends Component
     public $recipient_name, $recipient_mobile, $province_id, $city_id, $postal_address, $zipcode, $description;
     public User $user;
     public Address|null $selectedAddress = null;
-    public array|null $cart = [];
+//    public array|null $cart = [];
     public Collection $addresses;
     public $cities = [];
     public $showPopup = false;
@@ -51,6 +51,9 @@ class Checkout extends Component
         $this->calculateShipping();
         $this->calculateAmount();
 
+        if ($this->sum == 0) {
+            return redirect()->route('cart');
+        }
         //        $this->checkTorobpayEligibility();
     }
 
@@ -63,9 +66,6 @@ class Checkout extends Component
             $price = $item->product->discounted_price ?? $item->product->price;
             return $price * $item->quantity;
         });
-        if ($this->sum == 0) {
-            return redirect()->route('cart');
-        }
 
         $this->maxPackagingSize = $cartItems->max(function ($item) {
             return (int)($item->product->size ?? 1);
@@ -129,14 +129,16 @@ class Checkout extends Component
     public function selectAddress($value)
     {
         $this->dispatch('close-popup');
-        $this->selectedAddress = Address::query()->find($value);
+        $this->selectedAddress = Address::query()
+            ->where('user_id', Auth::id())
+            ->findOrFail($value);
     }
 
     public function changeAddress()
     {
         $this->dispatch('close-popup');
         $this->selectedAddress = null;
-        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
+        $this->recipient_mobile = $this->user->mobile;
     }
 
     protected $rules = [
@@ -147,14 +149,17 @@ class Checkout extends Component
         'postal_address' => 'required|string|min:10|max:200',
         'zipcode' => 'required|digits:10',
         'description' => 'nullable|string|max:200',
-        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash,post_free,tipax_free',
-        'shipping_price' => 'required|integer',
+//        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash,post_free,tipax_free',
+//        'shipping_price' => 'required|integer',
     ];
 
     public function pay()
     {
         $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
         $this->postal_address = str_replace(["\r\n", "\r", "\n"], ' ', $this->postal_address);
+
+        $this->validateOnly('description');
+
 
         if ($this->selectedAddress == null) {
             $this->validate();
@@ -175,24 +180,27 @@ class Checkout extends Component
         $this->calculatePackaging();
         $this->calculateShipping();
         $this->calculateAmount();
+        $finalAmount = $this->amount; // snapshot بگیر
 
 
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
             ->first();
+        if (!$cart) {
+            return redirect()->route('cart');
+        }
 
-
-        Auth::user()->orders()->where('status', 'pending')->update(['status' => 'canceled']);
+        Auth::user()->orders()->where('user_id', Auth::id())->where('status', 'pending')->update(['status' => 'canceled']);
         $orderParams = $this->getOrderParams();
 
         switch ($this->payment_method) {
             case 'gateway':
                 $order = $cart->convertToOrder($orderParams);
-                $invoice = (new Invoice)->amount($this->amount);
-                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
+                $invoice = (new Invoice)->amount($finalAmount);
+                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($finalAmount, $order) {
                     Transaction::query()->create([
                         'order_id' => $order->id,
-                        'amount' => $this->amount,
+                        'amount' => $finalAmount,
                         'status' => 'pending',
                         'payment_gateway' => 'zibal',
                         'authority' => (string)$transactionId,
@@ -204,7 +212,7 @@ class Checkout extends Component
                 $order = $cart->convertToOrder($orderParams);
                 Transaction::query()->create([
                     'order_id' => $order->id,
-                    'amount' => $this->amount,
+                    'amount' => $finalAmount,
                     'status' => 'pending',
                     'payment_gateway' => 'card',
                     'authority' => '5022291533610273',
@@ -267,7 +275,7 @@ class Checkout extends Component
 
     public function render()
     {
-        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
+//        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
         return view('livewire.payment.checkout');
     }
 }
