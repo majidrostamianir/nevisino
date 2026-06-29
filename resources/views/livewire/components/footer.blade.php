@@ -66,6 +66,10 @@
                         <img src="{{ asset('images/zibal.png') }}"
                              class="h-16 hover:scale-105 transition-all cursor-pointer">
                     </a>
+                    <a href="{{ route('trust') }}" wire:navigate>
+                        <img src="{{ asset('images/ecunion.png') }}"
+                             class="h-16 hover:scale-105 transition-all cursor-pointer">
+                    </a>
                 </div>
             </div>
         

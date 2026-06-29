@@ -20,15 +20,16 @@ return new class extends Migration
             $table->string('variant')->nullable()->default(null);
             $table->unsignedBigInteger('price');
             $table->unsignedBigInteger('discounted_price');
+            $table->unsignedBigInteger('previous_price')->nullable();
             $table->unsignedBigInteger('stock')->nullable();
             $table->unsignedBigInteger('sold_quantity')->default(0);
             $table->string('size');
             $table->unsignedInteger('weight');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
+            $table->string('torob_url')->nullable();
+            $table->timestamp('price_updated_at')->nullable();
             $table->timestamps();
-
-
         });
 
         Schema::create('product_url', function (Blueprint $table) {

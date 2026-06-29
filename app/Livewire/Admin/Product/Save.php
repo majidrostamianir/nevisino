@@ -28,6 +28,9 @@ class Save extends Component
     public array $variants = [];
     public $brandId = null;
 
+    public string|null $torob_url = null;
+    public int|null $previous_price = null;
+    public $price_updated_at = null;
 
     public function mount($product = null): void
     {
@@ -38,9 +41,9 @@ class Save extends Component
             $this->code = $product->code;
             $this->description = $product->description;
             $this->variant = $product->variant;
+            $this->torob_url = $product->torob_url; // اضافه شد
             $this->selectedUrls = $product->urls->pluck('title_tag', 'id')->toArray();
 
-            // تبدیل ساختار جدید به selectedAttrs
             $this->selectedAttrs = $product->attributes()
                 ->withPivot('attribute_value_id')
                 ->get()
@@ -61,6 +64,8 @@ class Save extends Component
             $this->discounted_price = $product->discounted_price;
             $this->weight = $product->weight;
             $this->stock = $product->stock;
+            $this->previous_price = $product->previous_price; // اضافه شد
+            $this->price_updated_at = $product->price_updated_at; // اضافه شد
 
             $this->variants = $product->variants->map(function ($v) {
                 return [
@@ -77,6 +82,7 @@ class Save extends Component
             $this->urls = [];
             $this->attrs = [];
             $this->size = 0;
+            $this->torob_url = null; // مقدار پیش‌فرض
         }
     }
 
@@ -99,6 +105,7 @@ class Save extends Component
             'code' => 'nullable|string|min:1|max:255',
             'description' => 'nullable|string|min:1|max:1000',
             'brandId' => 'nullable|exists:brands,id',
+            'torob_url' => 'nullable|url|max:255', // اضافه شد
         ];
     }
 
@@ -118,6 +125,12 @@ class Save extends Component
         }
 
         $this->validate();
+        if ($this->product->exists) {
+            if ($this->price != $this->product->price ) {
+                $this->product->previous_price = $this->product->price;
+                $this->product->price_updated_at = now();
+            }
+        }
         $this->product->title = $this->title;
         $this->product->dashed_url = $dashed_url;
         $this->product->variant = $this->variant;
@@ -130,6 +143,8 @@ class Save extends Component
         $this->product->stock = $this->stock;
         $this->product->code = $this->code;
         $this->product->description = $this->description;
+        $this->product->torob_url = $this->torob_url; // اضافه شد
+
         $this->product->save();
 
         $this->product->urls()->sync(array_keys($this->selectedUrls));
