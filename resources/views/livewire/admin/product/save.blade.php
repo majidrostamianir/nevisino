@@ -42,6 +42,84 @@
             font-size: 18px;
             line-height: 1;
         }
+
+        /* استایل برای کامبوباکس جستجو */
+        .searchable-select {
+            position: relative;
+        }
+        .searchable-select .dropdown-menu {
+            position: absolute;
+            z-index: 50;
+            width: 100%;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            max-height: 200px;
+            overflow: hidden;
+        }
+        .searchable-select .dropdown-search {
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .searchable-select .dropdown-search input {
+            width: 100%;
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            outline: none;
+        }
+        .searchable-select .dropdown-search input:focus {
+            border-color: #8B5CF6;
+            ring: 1px solid #8B5CF6;
+        }
+        .searchable-select .dropdown-options {
+            overflow-y: auto;
+            max-height: 150px;
+        }
+        .searchable-select .dropdown-options .option-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.15s;
+        }
+        .searchable-select .dropdown-options .option-item:hover {
+            background-color: #f3f4f6;
+        }
+        .searchable-select .dropdown-options .option-item.selected {
+            background-color: #EDE9FE;
+            color: #5B21B6;
+        }
+        .searchable-select .dropdown-options .no-result {
+            padding: 8px 16px;
+            text-align: center;
+            color: #9CA3AF;
+            font-size: 0.875rem;
+        }
+        .searchable-select .selected-display {
+            width: 100%;
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        .searchable-select .selected-display:focus {
+            border-color: #8B5CF6;
+            ring: 1px solid #8B5CF6;
+        }
+        .searchable-select .selected-display .arrow {
+            transition: transform 0.2s;
+        }
+        .searchable-select .selected-display .arrow.open {
+            transform: rotate(180deg);
+        }
     </style>
 @endpush
 
@@ -75,29 +153,125 @@
     </div>
 
     <div class="sm:flex sm:flex-wrap justify-between">
-        {{-- دسته بندی --}}
+        {{-- دسته بندی با جستجو --}}
         <div class="sm:w-3/12 p-1">
             <small class="pr-2">دسته بندی</small>
-            <select class="w-full rounded-2xl border border-gray-300" wire:model.live="categoryId">
-                <option value="{{ null }}">دسته بندی</option>
-                @foreach(\App\Models\Category::query()->whereNotNull('parent_id')->get() as $value)
-                    <option value="{{ $value->id }}">{{ $value->title }}</option>
-                @endforeach
-            </select>
+            <div class="searchable-select" x-data="{
+                open: false,
+                search: '',
+                selected: @entangle('categoryId').defer,
+                options: @js(\App\Models\Category::whereNotNull('parent_id')->pluck('title', 'id')->prepend('دسته بندی', '')->toArray()),
+                get filteredOptions() {
+                    if (!this.search) return this.options;
+                    return Object.fromEntries(
+                        Object.entries(this.options).filter(([key, value]) =>
+                            value.toLowerCase().includes(this.search.toLowerCase())
+                        )
+                    );
+                },
+                selectOption(key) {
+                    this.selected = key;
+                    this.search = '';
+                    this.open = false;
+                    $wire.set('categoryId', key);
+                }
+            }">
+                <div class="relative">
+                    <div @click="open = !open"
+                         class="selected-display">
+                        <span x-text="options[selected] || 'انتخاب کنید'"></span>
+                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+
+                    <div x-show="open" @click.away="open = false"
+                         class="dropdown-menu">
+                        <div class="dropdown-search">
+                            <input type="text"
+                                   x-model="search"
+                                   @click.stop
+                                   placeholder="جستجوی دسته بندی..."
+                                   class="w-full rounded-xl border border-gray-300 px-3 py-1.5 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500">
+                        </div>
+                        <div class="dropdown-options">
+                            <template x-for="(label, key) in filteredOptions" :key="key">
+                                <div @click="selectOption(key)"
+                                     class="option-item"
+                                     :class="selected === key ? 'selected' : ''">
+                                    <span x-text="label"></span>
+                                </div>
+                            </template>
+                            <div x-show="Object.keys(filteredOptions).length === 0"
+                                 class="no-result">
+                                موردی یافت نشد
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             @error('categoryId')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
 
-        {{-- برند --}}
+        {{-- برند با جستجو --}}
         <div class="sm:w-3/12 p-1">
             <small class="pr-2">برند</small>
-            <select class="w-full rounded-2xl border border-gray-300" wire:model="brandId">
-                <option value="">انتخاب برند</option>
-                @foreach(\App\Models\Brand::where('status', true)->orderBy('order')->get() as $brand)
-                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                @endforeach
-            </select>
+            <div class="searchable-select" x-data="{
+                open: false,
+                search: '',
+                selected: @entangle('brandId').defer,
+                options: @js(\App\Models\Brand::where('status', true)->orderBy('order')->pluck('name', 'id')->prepend('انتخاب برند', '')->toArray()),
+                get filteredOptions() {
+                    if (!this.search) return this.options;
+                    return Object.fromEntries(
+                        Object.entries(this.options).filter(([key, value]) =>
+                            value.toLowerCase().includes(this.search.toLowerCase())
+                        )
+                    );
+                },
+                selectOption(key) {
+                    this.selected = key;
+                    this.search = '';
+                    this.open = false;
+                    $wire.set('brandId', key);
+                }
+            }">
+                <div class="relative">
+                    <div @click="open = !open"
+                         class="selected-display">
+                        <span x-text="options[selected] || 'انتخاب کنید'"></span>
+                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+
+                    <div x-show="open" @click.away="open = false"
+                         class="dropdown-menu">
+                        <div class="dropdown-search">
+                            <input type="text"
+                                   x-model="search"
+                                   @click.stop
+                                   placeholder="جستجوی برند..."
+                                   class="w-full rounded-xl border border-gray-300 px-3 py-1.5 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500">
+                        </div>
+                        <div class="dropdown-options">
+                            <template x-for="(label, key) in filteredOptions" :key="key">
+                                <div @click="selectOption(key)"
+                                     class="option-item"
+                                     :class="selected === key ? 'selected' : ''">
+                                    <span x-text="label"></span>
+                                </div>
+                            </template>
+                            <div x-show="Object.keys(filteredOptions).length === 0"
+                                 class="no-result">
+                                موردی یافت نشد
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             @error('brandId')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -148,21 +322,74 @@
             @enderror
         </div>
 
-        {{-- اندازه کارتن --}}
+        {{-- اندازه کارتن با جستجو --}}
         <div class="sm:w-3/12 p-1">
             <small class="pr-2">حداقل اندازه کارتن پستی</small>
-            <select class="w-full rounded-2xl border border-gray-300" wire:model="size">
-                <option value="0">انتخاب کنید</option>
-                <option value="1">کارتن پستی سایز 1</option>
-                <option value="2">کارتن پستی سایز 2</option>
-                <option value="3">کارتن پستی سایز 3</option>
-                <option value="4">کارتن پستی سایز 4</option>
-                <option value="5">کارتن پستی سایز 5</option>
-                <option value="6">کارتن پستی سایز 6</option>
-                <option value="7">کارتن پستی سایز 7</option>
-                <option value="8">کارتن پستی سایز 8</option>
-                <option value="9">کارتن پستی سایز 9</option>
-            </select>
+            <div class="searchable-select" x-data="{
+                open: false,
+                search: '',
+                selected: @entangle('size').defer,
+                options: {
+                    '0': 'انتخاب کنید',
+                    '1': 'کارتن پستی سایز 1',
+                    '2': 'کارتن پستی سایز 2',
+                    '3': 'کارتن پستی سایز 3',
+                    '4': 'کارتن پستی سایز 4',
+                    '5': 'کارتن پستی سایز 5',
+                    '6': 'کارتن پستی سایز 6',
+                    '7': 'کارتن پستی سایز 7',
+                    '8': 'کارتن پستی سایز 8',
+                    '9': 'کارتن پستی سایز 9'
+                },
+                get filteredOptions() {
+                    if (!this.search) return this.options;
+                    return Object.fromEntries(
+                        Object.entries(this.options).filter(([key, value]) =>
+                            value.toLowerCase().includes(this.search.toLowerCase())
+                        )
+                    );
+                },
+                selectOption(key) {
+                    this.selected = key;
+                    this.search = '';
+                    this.open = false;
+                    $wire.set('size', key);
+                }
+            }">
+                <div class="relative">
+                    <div @click="open = !open"
+                         class="selected-display">
+                        <span x-text="options[selected] || 'انتخاب کنید'"></span>
+                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+
+                    <div x-show="open" @click.away="open = false"
+                         class="dropdown-menu">
+                        <div class="dropdown-search">
+                            <input type="text"
+                                   x-model="search"
+                                   @click.stop
+                                   placeholder="جستجوی سایز کارتن..."
+                                   class="w-full rounded-xl border border-gray-300 px-3 py-1.5 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500">
+                        </div>
+                        <div class="dropdown-options">
+                            <template x-for="(label, key) in filteredOptions" :key="key">
+                                <div @click="selectOption(key)"
+                                     class="option-item"
+                                     :class="selected === key ? 'selected' : ''">
+                                    <span x-text="label"></span>
+                                </div>
+                            </template>
+                            <div x-show="Object.keys(filteredOptions).length === 0"
+                                 class="no-result">
+                                موردی یافت نشد
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             @error('size')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
