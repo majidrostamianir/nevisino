@@ -104,7 +104,7 @@ class Save extends Component
             'stock' => 'nullable|integer|min:0',
             'code' => 'nullable|string|min:1|max:255',
             'description' => 'nullable|string|min:1|max:1000',
-            'brandId' => 'nullable|exists:brands,id',
+            'brandId' => 'required|exists:brands,id',
             'torob_url' => 'nullable|url|max:255', // اضافه شد
         ];
     }
