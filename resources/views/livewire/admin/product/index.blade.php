@@ -157,6 +157,9 @@
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت خرید</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت اصلی</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت تخفیفی</th>
+                <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت عمده</th>
+                <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت اقساطی</th>
+                <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">اقساطی تخفیف</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">عملیات</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">موجودی</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">تصویر</th>
@@ -247,13 +250,15 @@
                                    wire:key="price-{{ $product->id }}"
                                    class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                    placeholder="قیمت">
-                            {{-- نمایش قیمت قبلی با اطلاعات کامل --}}
-                            @if(isset($previousPrices[$product->id]) && $previousPrices[$product->id]['previous_price'])
+                            {{-- نمایش قیمت قبلی --}}
+                            @if(isset($previousPrices[$product->id]['price_previous']) && $previousPrices[$product->id]['price_previous'])
                                 <div class="text-xs text-gray-500 flex flex-col">
-                                    <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['previous_price'])) }} تومان</span>
-                                    <span class="text-[10px] text-gray-400">
-                    {{ english_to_persian_num(verta($previousPrices[$product->id]['price_updated_at'])->format('H:i - Y/m/d')) }}
-                </span>
+                                    <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['price_previous'])) }} تومان</span>
+                                    @if(isset($priceUpdates[$product->id]['price_updated_at']) && $priceUpdates[$product->id]['price_updated_at'])
+                                        <span class="text-[10px] text-gray-400">
+                                            {{ english_to_persian_num(verta($priceUpdates[$product->id]['price_updated_at'])->format('H:i - Y/m/d')) }}
+                                        </span>
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -261,19 +266,75 @@
 
                     {{-- ستون قیمت تخفیفی --}}
                     <td class="px-4 py-3">
-                        <input type="text"
-                               wire:model="prices.{{ $product->id }}.discounted_price"
-                               wire:key="discount-{{ $product->id }}"
-                               class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
-                               placeholder="تخفیف">
+                        <div class="flex flex-col gap-1">
+                            <input type="text"
+                                   wire:model="prices.{{ $product->id }}.discounted_price"
+                                   wire:key="discount-{{ $product->id }}"
+                                   class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                                   placeholder="تخفیف">
+                            @if(isset($previousPrices[$product->id]['discounted_price_previous']) && $previousPrices[$product->id]['discounted_price_previous'])
+                                <div class="text-xs text-gray-500">
+                                    قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['discounted_price_previous'])) }} تومان
+                                </div>
+                            @endif
+                        </div>
                     </td>
 
+                    {{-- ستون قیمت عمده --}}
+                    <td class="px-4 py-3">
+                        <div class="flex flex-col gap-1">
+                            <input type="text"
+                                   wire:model="prices.{{ $product->id }}.bulk_price"
+                                   wire:key="bulk-{{ $product->id }}"
+                                   class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                                   placeholder="عمده">
+                            @if(isset($previousPrices[$product->id]['bulk_price_previous']) && $previousPrices[$product->id]['bulk_price_previous'])
+                                <div class="text-xs text-gray-500">
+                                    قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['bulk_price_previous'])) }} تومان
+                                </div>
+                            @endif
+                        </div>
+                    </td>
+
+                    {{-- ستون قیمت اقساطی --}}
+                    <td class="px-4 py-3">
+                        <div class="flex flex-col gap-1">
+                            <input type="text"
+                                   wire:model="prices.{{ $product->id }}.installment_price"
+                                   wire:key="installment-{{ $product->id }}"
+                                   class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                                   placeholder="اقساطی">
+                            @if(isset($previousPrices[$product->id]['installment_price_previous']) && $previousPrices[$product->id]['installment_price_previous'])
+                                <div class="text-xs text-gray-500">
+                                    قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['installment_price_previous'])) }} تومان
+                                </div>
+                            @endif
+                        </div>
+                    </td>
+
+                    {{-- ستون قیمت اقساطی تخفیفی --}}
+                    <td class="px-4 py-3">
+                        <div class="flex flex-col gap-1">
+                            <input type="text"
+                                   wire:model="prices.{{ $product->id }}.discounted_installment_price"
+                                   wire:key="discount-installment-{{ $product->id }}"
+                                   class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                                   placeholder="اقساطی تخفیف">
+                            @if(isset($previousPrices[$product->id]['discounted_installment_price_previous']) && $previousPrices[$product->id]['discounted_installment_price_previous'])
+                                <div class="text-xs text-gray-500">
+                                    قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['discounted_installment_price_previous'])) }} تومان
+                                </div>
+                            @endif
+                        </div>
+                    </td>
+
+                    {{-- ستون عملیات --}}
                     <td class="px-4 py-3">
                         <button wire:click="updatePrice({{ $product->id }})"
                                 wire:target="updatePrice({{ $product->id }})"
                                 wire:loading.attr="disabled"
                                 wire:key="save-{{ $product->id }}"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium  border border-green-400 text-green-500 cursor-pointer hover:bg-green-100  disabled:opacity-50 disabled:cursor-not-allowed">
+                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-green-400 text-green-500 cursor-pointer hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span wire:loading.remove wire:target="updatePrice({{ $product->id }})">💾</span>
                             <span wire:loading wire:target="updatePrice({{ $product->id }})" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                             ذخیره
@@ -297,6 +358,7 @@
                         @endif
                     </td>
 
+                    {{-- ستون تصویر --}}
                     <td class="px-4 py-3">
                         @if(Storage::disk('public')->exists('products/' . $product->id . '/small/1.webp'))
                             <img width="50" height="50" class="rounded-lg object-cover shadow-sm"

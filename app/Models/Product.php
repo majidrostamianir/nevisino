@@ -9,6 +9,27 @@ class Product extends Model
 {
     use Searchable;
 
+    protected $casts = [
+        'price' => 'integer',
+        'price_previous' => 'integer',
+        'bulk_price' => 'integer',
+        'bulk_price_previous' => 'integer',
+        'installment_price' => 'integer',
+        'installment_price_previous' => 'integer',
+        'discounted_price' => 'integer',
+        'discounted_price_previous' => 'integer',
+        'discounted_installment_price' => 'integer',
+        'discounted_installment_price_previous' => 'integer',
+        'price_updated_at' => 'datetime',
+        'bulk_price_updated_at' => 'datetime',
+        'installment_price_updated_at' => 'datetime',
+        'discounted_price_updated_at' => 'datetime',
+        'discounted_installment_price_updated_at' => 'datetime',
+        'stock' => 'integer',
+        'sold_quantity' => 'integer',
+        'weight' => 'integer',
+    ];
+
     public function urls()
     {
         return $this->belongsToMany(Url::class)->withTimestamps();

@@ -120,6 +120,21 @@
         .searchable-select .selected-display .arrow.open {
             transform: rotate(180deg);
         }
+
+        .price-history {
+            font-size: 0.7rem;
+            color: #6B7280;
+            margin-top: 2px;
+            padding-right: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+        }
+        .price-history span {
+            background: #F3F4F6;
+            padding: 1px 8px;
+            border-radius: 12px;
+        }
     </style>
 @endpush
 
@@ -321,9 +336,103 @@
             <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
             @enderror
         </div>
+    </div>
+
+    {{-- بخش قیمت‌ها --}}
+    <div class="sm:flex sm:flex-wrap justify-between mt-4 border-t border-gray-200 pt-4">
+        <h3 class="w-full text-lg font-bold text-gray-700 mb-3 pr-2">💰 قیمت‌ها</h3>
+
+        {{-- قیمت اصلی --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">قیمت اصلی <span class="text-red-500">*</span></small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اصلی به تومان" wire:model="prices.price">
+            @error('prices.price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+            @if($product->exists && $product->price)
+                <div class="price-history">
+                    <span>قبلی: {{ english_to_persian_num(number_format($product->price_previous ?? 0)) }} تومان</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->price_updated_at)->format('Y-m-d H:i:s')) }}</span>
+                </div>
+            @endif
+        </div>
+
+        {{-- قیمت عمده --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">قیمت عمده</small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت عمده به تومان" wire:model="prices.bulk_price">
+            @error('prices.bulk_price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+            @if($product->exists && $product->bulk_price)
+                <div class="price-history">
+                    <span>قبلی: {{ english_to_persian_num(number_format($product->bulk_price_previous ?? 0)) }} تومان</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->bulk_price_updated_at)->format('H:i:s')) }}</span>
+                </div>
+            @endif
+        </div>
+
+        {{-- قیمت اقساطی --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">قیمت اقساطی</small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اقساطی به تومان" wire:model="prices.installment_price">
+            @error('prices.installment_price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+            @if($product->exists && $product->installment_price)
+                <div class="price-history">
+                    <span>قبلی: {{ english_to_persian_num(number_format($product->installment_price_previous ?? 0)) }} تومان</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->installment_price_updated_at)->format('H:i:s')) }}</span>
+                </div>
+            @endif
+        </div>
+
+        {{-- قیمت تخفیف‌خورده --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">قیمت تخفیف‌خورده</small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت تخفیف‌خورده به تومان" wire:model="prices.discounted_price">
+            @error('prices.discounted_price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+            @if($product->exists && $product->discounted_price)
+                <div class="price-history">
+                    <span>قبلی: {{ english_to_persian_num(number_format($product->discounted_price_previous ?? 0)) }} تومان</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->discounted_price_updated_at)->format('H:i:s')) }}</span>
+                </div>
+            @endif
+        </div>
+
+        {{-- قیمت اقساطی تخفیف‌خورده --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">قیمت اقساطی تخفیف‌خورده</small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اقساطی تخفیف‌خورده به تومان" wire:model="prices.discounted_installment_price">
+            @error('prices.discounted_installment_price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+            @if($product->exists && $product->discounted_installment_price)
+                <div class="price-history">
+                    <span>قبلی: {{ english_to_persian_num(number_format($product->discounted_installment_price_previous ?? 0)) }} تومان</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->discounted_installment_price_updated_at)->format('H:i:s')) }}</span>
+                </div>
+            @endif
+        </div>
+
+        {{-- موجودی --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">موجودی</small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="موجودی" wire:model="stock" @if($variant) disabled @endif>
+            @error('stock')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+        </div>
+    </div>
+
+    {{-- بخش اندازه و وزن --}}
+    <div class="sm:flex sm:flex-wrap justify-between mt-4 border-t border-gray-200 pt-4">
+        <h3 class="w-full text-lg font-bold text-gray-700 mb-3 pr-2">📦 ابعاد و وزن</h3>
 
         {{-- اندازه کارتن با جستجو --}}
-        <div class="sm:w-3/12 p-1">
+        <div class="sm:w-6/12 p-1">
             <small class="pr-2">حداقل اندازه کارتن پستی</small>
             <div class="searchable-select" x-data="{
                 open: false,
@@ -396,52 +505,21 @@
         </div>
 
         {{-- وزن --}}
-        <div class="sm:w-3/12 p-1">
-            <small class="pr-2">وزن به گرم</small>
+        <div class="sm:w-6/12 p-1">
+            <small class="pr-2">وزن به گرم <span class="text-red-500">*</span></small>
             <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="وزن به گرم" wire:model="weight">
             @error('weight')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
         </div>
+    </div>
 
-        {{-- قیمت --}}
-        <div class="sm:w-3/12 p-1">
-            <small class="pr-2">قیمت به تومان</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت به تومان" wire:model="price">
-            @error('price')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-
-            {{-- نمایش قیمت قبلی و تاریخ بروزرسانی --}}
-            @if($product->exists && $product->previous_price)
-                <div class="text-xs text-gray-500 mt-1 pr-2">
-                    <span>قیمت قبلی: {{ english_to_persian_num(number_format($product->previous_price)) }} تومان</span>
-                    <span class="mx-1">|</span>
-                    <span>آخرین بروزرسانی: {{ english_to_persian_num(verta($product->price_updated_at)->format('H:i:s'))  }}</span>
-                </div>
-            @endif
-        </div>
-
-        {{-- قیمت با تخفیف --}}
-        <div class="sm:w-3/12 p-1">
-            <small class="pr-2">قیمت با تخفیف به تومان</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت با تخفیف به تومان" wire:model="discounted_price">
-            @error('discounted_price')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-        </div>
-
-        {{-- موجودی --}}
-        <div class="sm:w-3/12 p-1">
-            <small class="pr-2">موجودی</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="موجودی" wire:model="stock" @if($variant) disabled @endif>
-            @error('stock')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-        </div>
+    {{-- ویژگی‌ها و صفحات --}}
+    <div class="sm:flex sm:flex-wrap justify-between mt-4 border-t border-gray-200 pt-4">
+        <h3 class="w-full text-lg font-bold text-gray-700 mb-3 pr-2">🏷️ ویژگی‌ها و صفحات</h3>
 
         {{-- ویژگی های محصول --}}
-        <div class="relative sm:w-1/3 p-1">
+        <div class="relative sm:w-1/2 p-1">
             <small class="pr-2">ویژگی های محصول</small>
             <div class="w-full relative rounded-2xl bg-white border border-gray-300">
                 <div class="px-2 flex flex-wrap items-center gap-1 min-h-[42px]">
@@ -466,8 +544,8 @@
         </div>
 
         {{-- صفحات نمایش دهنده --}}
-        <div class="relative sm:w-1/3 p-1">
-            <small class="pr-2">صفحات نمایش دهنده این محصول</small>
+        <div class="relative sm:w-1/2 p-1">
+            <small class="pr-2">صفحات نمایش دهنده این محصول <span class="text-red-500">*</span></small>
             <div class="w-full relative rounded-2xl bg-white border border-gray-300">
                 <div class="px-2 flex flex-wrap items-center gap-1 min-h-[42px]">
                     @foreach ($selectedUrls as $key => $value)
@@ -497,10 +575,10 @@
     {{-- ویژگی‌های تنوع --}}
     @if($variant)
         <div class="w-full rounded-2xl p-2 mt-4 border border-gray-200">
-            <h3 class="font-bold text-gray-700 mb-2">ویژگی‌های تنوع</h3>
+            <h3 class="font-bold text-gray-700 mb-2">🔹 ویژگی‌های تنوع</h3>
             @foreach($variants as $i => $variantItem)
                 <div class="flex flex-wrap gap-2 items-center mb-2">
-                    <span class="w-8">{{ $i+1 }} .</span>
+                    <span class="w-8 text-gray-500">{{ $i+1 }} .</span>
                     <input type="text" class="rounded-2xl flex-1 min-w-[150px] pr-2 border border-gray-300" placeholder="نام ویژگی (مثلاً قرمز، بتمن)" wire:model="variants.{{ $i }}.name">
                     @error('variants.' . $i . '.name')
                     <span class="text-xs text-red-500 font-semibold w-full">{{ $message }}</span>
