@@ -50,7 +50,7 @@
                 <a href="{{ route('shipping.info') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">نحوه بسته‌بندی و
                     ارسال</a>
             </div>
-            
+
             <div class="flex flex-col gap-3">
                 <span class="font-bold text-pars-700 mb-1">مجوزهای ما</span>
                 <div class="flex flex-wrap gap-2">

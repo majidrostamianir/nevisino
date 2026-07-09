@@ -247,12 +247,13 @@
                                    wire:key="price-{{ $product->id }}"
                                    class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                    placeholder="قیمت">
-                            {{-- نمایش قیمت قبلی زیر قیمت اصلی --}}
-                            @if($product->previous_price)
-                                <div class="text-xs text-gray-500">
-                                    <span>قبلی: {{ english_to_persian_num(number_format($product->previous_price)) }}</span>
-                                    <span class="mx-1">|</span>
-                                    <span>{{ english_to_persian_num(verta($product->price_updated_at)->format('H:i - Y/m/d')) }}</span>
+                            {{-- نمایش قیمت قبلی با اطلاعات کامل --}}
+                            @if(isset($previousPrices[$product->id]) && $previousPrices[$product->id]['previous_price'])
+                                <div class="text-xs text-gray-500 flex flex-col">
+                                    <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['previous_price'])) }} تومان</span>
+                                    <span class="text-[10px] text-gray-400">
+                    {{ english_to_persian_num(verta($previousPrices[$product->id]['price_updated_at'])->format('H:i - Y/m/d')) }}
+                </span>
                                 </div>
                             @endif
                         </div>

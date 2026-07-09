@@ -1,3 +1,6 @@
+@push('meta')
+    <meta name="robots" content="noindex, follow">
+@endpush
 <div class="space-y-6">
     {{-- سفارشات در انتظار پرداخت --}}
     @if($orders->isNotEmpty())

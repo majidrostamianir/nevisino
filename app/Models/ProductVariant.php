@@ -15,10 +15,12 @@ class ProductVariant extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    // اگر قیمت نداشت، قیمت محصول رو برگردونه
-//    public function getFinalPriceAttribute(): int
-//    {
-//        return $this->price ?? $this->product->price;
-//    }
+    // در مدل Product
+    public function getVariantName($variantId): string
+    {
+        $variant = ProductVariant::find($variantId);
+        return $variant ? $variant->name : '';
+    }
+
 
 }

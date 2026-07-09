@@ -175,6 +175,7 @@
                      x-on:error="imageLoaded = true; isLoading = false;"
                      wire:loading.remove
                      wire:target="setImage"
+                     alt="{{ english_to_persian_num($product->title) }}"
                      :class="{
                         'scale-200': isZoomed,
                         'scale-100': !isZoomed
@@ -196,20 +197,28 @@
             </div>
             <div class="flex flex-wrap justify-center mt-4">
                 @foreach($images as $image)
+                    @php
+                        $variant = \App\Models\ProductVariant::find($image);
+                        $altText = english_to_persian_num($product->title);
+                        if($variant) {
+                            $altText .= ' - ' . english_to_persian_num($variant->name);
+                        }
+                    @endphp
                     <div>
                         <img
-                            @click="if (selected != '{{ $image }}') { selected = '{{ $image }}'; $wire.setImage('{{ $image }}'); }"
-                            class="w-16 h-16 cursor-pointer rounded transition-all border-2 border-transparent mx-2"
-                            :class="{
+                                @click="if (selected != '{{ $image }}') { selected = '{{ $image }}'; $wire.setImage('{{ $image }}'); }"
+                                class="w-16 h-16 cursor-pointer rounded transition-all border-2 border-transparent mx-2"
+                                :class="{
                                 'border-pars-600 ring-2 ring-offset-2 ring-pars-600': selected == '{{ $image }}'
                             }"
-                             src="{{ asset('storage/products/' . $product->id. '/small/' . $image . '.webp') }}">
-                        @if(\App\Models\ProductVariant::query()->find($image))
+                                src="{{ asset('storage/products/' . $product->id. '/small/' . $image . '.webp') }}"
+                                alt="{{ $altText }}">
+                        @if($variant)
                             <div
-                                :class="{
+                                    :class="{
                                  'font-bold text-pars-600': selected == '{{ $image }}'
                              }"
-                                 class="text-center mt-1 text-xs transition-all">{{ english_to_persian_num(\App\Models\ProductVariant::query()->find($image)->name) }}</div>
+                                    class="text-center mt-1 text-xs transition-all">{{ english_to_persian_num($variant->name) }}</div>
                         @endif
                     </div>
                 @endforeach
