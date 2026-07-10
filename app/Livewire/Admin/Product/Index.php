@@ -8,13 +8,14 @@ use App\Models\Url;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\DB;
 class Index extends Component
 {
     public $products;
     public $prices = [];
     public $purchasePrices = [];
-    public $profitPercent = 20;
+    public $profitPercent = 20;       // درصد سود
+    public $gatewayFeePercent = 13;   // درصد کارمزد درگاه
     public $selectedCategory = 'all';
     public $selectedUrl = 'all';
 
@@ -28,10 +29,10 @@ class Index extends Component
     public function mount()
     {
         $this->profitPercent = Session::get('profit_percent', 20);
-        $this->loadProducts();
-        $this->calculatePriceFromBulk();
-    }
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 20);
 
+        $this->loadProducts();
+    }
     public function loadProducts()
     {
         $query = Product::query();
@@ -49,9 +50,19 @@ class Index extends Component
         $query->orderBy('id', 'desc');
 
         $this->products = $query->get();
+
+        // خالی کردن آرایه‌ها قبل از پر کردن مجدد
+        $this->prices = [];
+        $this->purchasePrices = [];
+        $this->previousPrices = [];
+        $this->priceUpdates = [];
+        $this->price_for_show = [];
+        $this->installment_price_for_show = [];
+
         $this->initPrices();
         $this->initPreviousPrices();
         $this->initPriceUpdates();
+        $this->calculatePriceFromBulk();
     }
 
     public function initPrices()
@@ -110,16 +121,60 @@ class Index extends Component
     {
         Session::put('profit_percent', (int)$value);
         $this->profitPercent = Session::get('profit_percent', 20);
-        $this->calculatePriceFromBulk();
+        $this->calculatePriceFromBulk(); // بدون آرگومان = همه‌ی محصولات
     }
 
-
-    public function calculatePriceFromBulk()
+    public function updatedGatewayFeePercent($value)
     {
-        foreach ($this->products as $product) {
-            $bulk = $this->prices[$product->id]['bulk_price'];
-            $this->price_for_show[$product->id] = (int)$bulk * (1 + ($this->profitPercent / 100));
-            $this->installment_price_for_show[$product->id] = (int)$this->price_for_show[$product->id] * (1 + ($this->profitPercent / 100));
+        Session::put('gateway_fee_percent', (float)$value);
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 20);
+        $this->calculatePriceFromBulk(); // همه‌ی محصولات
+    }
+
+    public function updatedPrices($value, $key)
+    {
+        if (str_ends_with($key, '.bulk_price')) {
+            // فقط همون محصول
+            $productId = (int) explode('.', $key)[0];
+            $this->calculatePriceFromBulk($productId);
+        }
+    }
+    // محاسبه برای یک محصول یا همه‌ی محصولات
+    public function calculatePriceFromBulk($productId = null)
+    {
+        $productIds = $productId !== null
+            ? [$productId]
+            : $this->products->pluck('id')->all();
+
+        foreach ($productIds as $id) {
+
+            $bulk = $this->prices[$id]['bulk_price'] ?? 0;
+
+            // حذف جداکننده‌ها
+            $bulk = (int) str_replace(
+                [',', '،', ' ', '_'],
+                '',
+                $bulk
+            );
+
+            if ($bulk <= 0) {
+                $this->price_for_show[$id] = 0;
+                $this->installment_price_for_show[$id] = 0;
+                continue;
+            }
+
+            // قیمت نقدی
+            $cashPrice = $bulk * (1 + ($this->profitPercent / 100));
+            $this->price_for_show[$id] = (int) $cashPrice;
+
+            // قیمت اقساطی
+            if ($this->gatewayFeePercent >= 100 || $this->gatewayFeePercent <= 0) {
+                $this->installment_price_for_show[$id] = 0;
+            } else {
+                $this->installment_price_for_show[$id] = (int) round(
+                    $cashPrice / (1 - ($this->gatewayFeePercent / 100))
+                );
+            }
         }
     }
 
@@ -139,28 +194,61 @@ class Index extends Component
             $discountedInstallmentPrice = $this->prices[$productId]['discounted_installment_price'] ?? null;
 
             // پاکسازی اعداد
-            $price = str_replace([',', '،', ' ', '_'], '', $price);
-            $discountedPrice = $discountedPrice ? str_replace([',', '،', ' ', '_'], '', $discountedPrice) : null;
-            $bulkPrice = $bulkPrice ? str_replace([',', '،', ' ', '_'], '', $bulkPrice) : null;
-            $installmentPrice = $installmentPrice ? str_replace([',', '،', ' ', '_'], '', $installmentPrice) : null;
-            $discountedInstallmentPrice = $discountedInstallmentPrice ? str_replace([',', '،', ' ', '_'], '', $discountedInstallmentPrice) : null;
+            $price = $this->cleanNumber($price);
+            $bulkPrice = $this->cleanNumber($bulkPrice);
+            $installmentPrice = $this->cleanNumber($installmentPrice);
+            $discountedPrice = $this->cleanNumber($discountedPrice);
+            $discountedInstallmentPrice = $this->cleanNumber($discountedInstallmentPrice);
 
             // اعتبارسنجی قیمت اصلی
-            if (!is_numeric($price) || $price < 0) {
-                session()->flash('error', 'قیمت باید عدد مثبت باشد.');
+            if (!is_numeric($price) || (int)$price <= 0) {
+                session()->flash('error', 'قیمت اصلی باید عددی بزرگتر از صفر باشد.');
                 return;
             }
+            if ($bulkPrice !== null && $bulkPrice !== '') {
+                if (!is_numeric($bulkPrice) || (int)$bulkPrice <= 0) {
+                    session()->flash('error', 'قیمت عمده باید عددی بزرگتر از صفر باشد.');
+                    return;
+                }
+            }
+            if ($installmentPrice !== null && $installmentPrice !== '') {
 
+                if (!is_numeric($installmentPrice) || (int)$installmentPrice <= 0) {
+                    session()->flash('error', 'قیمت اقساطی باید عددی بزرگتر از صفر باشد.');
+                    return;
+                }
+            }
             // اعتبارسنجی قیمت تخفیفی
-            if ($discountedPrice !== null && $discountedPrice !== '' && $discountedPrice >= $price) {
-                session()->flash('error', 'قیمت تخفیفی باید کمتر از قیمت اصلی باشد.');
-                return;
-            }
+            if ($discountedPrice !== null && $discountedPrice !== '') {
 
+                if (!is_numeric($discountedPrice) || (int)$discountedPrice <= 0) {
+                    session()->flash('error', 'قیمت تخفیفی باید عددی بزرگتر از صفر باشد.');
+                    return;
+                }
+
+                if ((int)$discountedPrice >= (int)$price) {
+                    session()->flash('error', 'قیمت تخفیفی باید کمتر از قیمت اصلی باشد.');
+                    return;
+                }
+
+            }
             // اعتبارسنجی قیمت اقساطی تخفیفی
-            if ($discountedInstallmentPrice !== null && $discountedInstallmentPrice !== '' && $installmentPrice !== null && $discountedInstallmentPrice >= $installmentPrice) {
-                session()->flash('error', 'قیمت اقساطی تخفیفی باید کمتر از قیمت اقساطی باشد.');
-                return;
+            if ($discountedInstallmentPrice !== null && $discountedInstallmentPrice !== '') {
+
+                if (!is_numeric($discountedInstallmentPrice) || (int)$discountedInstallmentPrice <= 0) {
+                    session()->flash('error', 'قیمت اقساطی تخفیفی باید عددی بزرگتر از صفر باشد.');
+                    return;
+                }
+
+                if ($installmentPrice === null || $installmentPrice === '') {
+                    session()->flash('error', 'ابتدا قیمت اقساطی را وارد کنید.');
+                    return;
+                }
+
+                if ((int)$discountedInstallmentPrice >= (int)$installmentPrice) {
+                    session()->flash('error', 'قیمت اقساطی تخفیفی باید کمتر از قیمت اقساطی باشد.');
+                    return;
+                }
             }
 
             // ذخیره قیمت‌های قبلی و به‌روزرسانی تاریخ‌ها
@@ -186,6 +274,18 @@ class Index extends Component
         }
     }
 
+    private function cleanNumber($value)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return str_replace(
+            [',', '،', ' ', '_'],
+            '',
+            $value
+        );
+    }
     // متد کمکی برای به‌روزرسانی تاریخچه قیمت‌ها
     private function updatePriceHistory($product, $newPrice, $newBulkPrice, $newInstallmentPrice, $newDiscountedPrice, $newDiscountedInstallmentPrice)
     {

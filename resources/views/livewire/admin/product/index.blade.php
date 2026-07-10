@@ -141,6 +141,18 @@
                    min="0" max="1000">
             <span class="text-xs text-gray-500">%</span>
         </div>
+        <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                کارمزد درگاه:
+            </label>
+            <input
+                    type="number"
+                    wire:model.live.debounce.1000ms="gatewayFeePercent"
+                    class="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm"
+                    min="0"
+                    max="100">
+            <span class="text-xs text-gray-500">%</span>
+        </div>
         {{-- تعداد محصولات --}}
         <span class="text-sm text-gray-500 mr-auto">
             تعداد: {{ english_to_persian_num($products->count()) }} محصول
@@ -239,9 +251,8 @@
                     <td class="px-4 py-3">
                         <small class="text-blue-400">&nbsp;</small>
                         <input type="text"
-                               wire:model="prices.{{ $product->id }}.bulk_price"
+                               wire:model.live.debounce.1000ms="prices.{{ $product->id }}.bulk_price"
                                wire:key="bulk-{{ $product->id }}"
-                               wire:keydown.debounce.1000ms="calculatePriceFromBulk()"
                                class="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                placeholder="قیمت عمده">
                         <div class="text-xs text-gray-500 flex flex-col">
