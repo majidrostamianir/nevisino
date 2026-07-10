@@ -23,11 +23,13 @@ class Index extends Component
 
     // آرایه برای ذخیره تاریخ‌های بروزرسانی
     public $priceUpdates = [];
+    public $price_for_show = [], $installment_price_for_show = [];
 
     public function mount()
     {
         $this->profitPercent = Session::get('profit_percent', 20);
         $this->loadProducts();
+        $this->calculatePriceFromBulk();
     }
 
     public function loadProducts()
@@ -108,23 +110,20 @@ class Index extends Component
     {
         Session::put('profit_percent', (int)$value);
 
-        foreach ($this->products as $product) {
-            $this->calculatePriceFromPurchase($product->id);
-        }
+//        foreach ($this->products as $product) {
+//            $this->calculatePriceFromPurchase($product->id);
+//        }
     }
 
-    public function calculatePriceFromPurchase($productId)
+
+    public function calculatePriceFromBulk()
     {
-        $purchasePrice = $this->purchasePrices[$productId] ?? '';
-
-        $purchasePrice = str_replace([',', '،', ' ', '_'], '', $purchasePrice);
-
-        if (is_numeric($purchasePrice) && $purchasePrice > 0) {
-            $calculatedPrice = $purchasePrice * (1 + ($this->profitPercent / 100));
-            $this->prices[$productId]['price'] = (string)round($calculatedPrice);
-        } else {
-            $this->prices[$productId]['price'] = '';
+        foreach ($this->products as $product) {
+            $bulk = $this->prices[$product->id]['bulk_price'];
+            $this->price_for_show[$product->id] = (int)$bulk * (1 + ($this->profitPercent / 100));
+            $this->installment_price_for_show[$product->id] = (int)$this->price_for_show[$product->id] * (1 + ($this->profitPercent / 100));
         }
+
     }
 
     public function updatePrice($productId)
