@@ -109,10 +109,8 @@ class Index extends Component
     public function updatedProfitPercent($value)
     {
         Session::put('profit_percent', (int)$value);
-
-//        foreach ($this->products as $product) {
-//            $this->calculatePriceFromPurchase($product->id);
-//        }
+        $this->profitPercent = Session::get('profit_percent', 20);
+        $this->calculatePriceFromBulk();
     }
 
 
@@ -123,10 +121,9 @@ class Index extends Component
             $this->price_for_show[$product->id] = (int)$bulk * (1 + ($this->profitPercent / 100));
             $this->installment_price_for_show[$product->id] = (int)$this->price_for_show[$product->id] * (1 + ($this->profitPercent / 100));
         }
-
     }
 
-    public function updatePrice($productId)
+    public function savePrice($productId)
     {
         try {
             $product = Product::find($productId);

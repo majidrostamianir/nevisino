@@ -136,7 +136,7 @@
         <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
             <label class="text-sm font-medium text-gray-700 whitespace-nowrap">درصد سود:</label>
             <input type="number"
-                   wire:model.live="profitPercent"
+                   wire:model.live.debounce.1000ms="profitPercent"
                    class="w-16 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                    min="0" max="1000">
             <span class="text-xs text-gray-500">%</span>
@@ -241,7 +241,7 @@
                         <input type="text"
                                wire:model="prices.{{ $product->id }}.bulk_price"
                                wire:key="bulk-{{ $product->id }}"
-                               wire:keydown.debounce.1000ms="calculatePriceFromBulk({{ $product->id }})"
+                               wire:keydown.debounce.1000ms="calculatePriceFromBulk()"
                                class="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                placeholder="قیمت عمده">
                         <div class="text-xs text-gray-500 flex flex-col">
@@ -328,13 +328,13 @@
 
                     {{-- ستون عملیات --}}
                     <td class="px-4 py-3">
-                        <button wire:click="updatePrice({{ $product->id }})"
-                                wire:target="updatePrice({{ $product->id }})"
+                        <button wire:click="savePrice({{ $product->id }})"
+                                wire:target="savePrice({{ $product->id }})"
                                 wire:loading.attr="disabled"
                                 wire:key="save-{{ $product->id }}"
                                 class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-green-400 text-green-500 cursor-pointer hover:bg-green-100 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <span wire:loading.remove wire:target="updatePrice({{ $product->id }})">💾</span>
-                            <span wire:loading wire:target="updatePrice({{ $product->id }})"
+                            <span wire:loading.remove wire:target="savePrice({{ $product->id }})">💾</span>
+                            <span wire:loading wire:target="savePrice({{ $product->id }})"
                                   class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                             ذخیره
                         </button>
