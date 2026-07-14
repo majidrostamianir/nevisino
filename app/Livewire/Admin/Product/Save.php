@@ -253,14 +253,6 @@ class Save extends Component
 
     private function updatePriceHistory(): void
     {
-//        if (!$this->product->exists) {
-//            // برای محصول جدید، تاریخ فعلی رو ثبت کن
-//            foreach (array_keys($this->price_updates) as $field) {
-//                $this->price_updates[$field] = now();
-//            }
-//            return;
-//        }
-
         // لیست قیمت‌ها و تاریخ‌های مربوطه
         $priceMappings = [
             'price' => 'price_updated_at',

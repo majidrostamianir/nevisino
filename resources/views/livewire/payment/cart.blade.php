@@ -130,6 +130,15 @@
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
                 <div class="text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
             </div>
+
+
+
+
+<livewire:payment.free-progress :sum="$sum" />
+
+
+
+
             <div class="w-full mb-4 flex justify-between">
                 <div><strong>روش‌های ارسال</strong></div>
                 <span>

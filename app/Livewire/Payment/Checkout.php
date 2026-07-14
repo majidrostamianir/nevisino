@@ -149,8 +149,6 @@ class Checkout extends Component
         'postal_address' => 'required|string|min:10|max:200',
         'zipcode' => 'required|digits:10',
         'description' => 'nullable|string|max:200',
-//        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash,post_free,tipax_free',
-//        'shipping_price' => 'required|integer',
     ];
 
     public function pay()

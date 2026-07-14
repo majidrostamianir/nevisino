@@ -8,7 +8,6 @@ use App\Models\Url;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
 class Index extends Component
 {
     public $products;
@@ -29,7 +28,7 @@ class Index extends Component
     public function mount()
     {
         $this->profitPercent = Session::get('profit_percent', 20);
-        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 20);
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 13);
 
         $this->loadProducts();
     }

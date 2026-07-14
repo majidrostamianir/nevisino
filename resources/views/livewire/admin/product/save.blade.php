@@ -352,7 +352,7 @@
             @if($product->exists && $product->price)
                 <div class="price-history">
                     <span>قبلی: {{ english_to_persian_num(number_format($product->price_previous ?? 0)) }} تومان</span>
-                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->price_updated_at)->format('Y-m-d H:i:s')) }}</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->price_updated_at)->format('H:i - Y/m/d')) }}</span>
                 </div>
             @endif
         </div>
@@ -367,7 +367,7 @@
             @if($product->exists && $product->bulk_price)
                 <div class="price-history">
                     <span>قبلی: {{ english_to_persian_num(number_format($product->bulk_price_previous ?? 0)) }} تومان</span>
-                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->bulk_price_updated_at)->format('H:i:s')) }}</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->bulk_price_updated_at)->format('H:i - Y/m/d')) }}</span>
                 </div>
             @endif
         </div>
@@ -382,7 +382,7 @@
             @if($product->exists && $product->installment_price)
                 <div class="price-history">
                     <span>قبلی: {{ english_to_persian_num(number_format($product->installment_price_previous ?? 0)) }} تومان</span>
-                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->installment_price_updated_at)->format('H:i:s')) }}</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->installment_price_updated_at)->format('H:i - Y/m/d')) }}</span>
                 </div>
             @endif
         </div>
@@ -397,7 +397,7 @@
             @if($product->exists && $product->discounted_price)
                 <div class="price-history">
                     <span>قبلی: {{ english_to_persian_num(number_format($product->discounted_price_previous ?? 0)) }} تومان</span>
-                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->discounted_price_updated_at)->format('H:i:s')) }}</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->discounted_price_updated_at)->format('H:i - Y/m/d')) }}</span>
                 </div>
             @endif
         </div>
@@ -412,7 +412,7 @@
             @if($product->exists && $product->discounted_installment_price)
                 <div class="price-history">
                     <span>قبلی: {{ english_to_persian_num(number_format($product->discounted_installment_price_previous ?? 0)) }} تومان</span>
-                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->discounted_installment_price_updated_at)->format('H:i:s')) }}</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->discounted_installment_price_updated_at)->format('H:i - Y/m/d')) }}</span>
                 </div>
             @endif
         </div>

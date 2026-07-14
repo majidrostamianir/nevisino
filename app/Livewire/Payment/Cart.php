@@ -4,6 +4,7 @@ namespace App\Livewire\Payment;
 
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ class Cart extends Component
     protected $listeners = ['cart-updated' => 'updateCart'];
     public ?User $user = null;
     public Collection $orders;
+    public int $free_packaging_threshold = 0, $free_shipping_threshold = 0;
 
     public function mount()
     {
@@ -34,6 +36,8 @@ class Cart extends Component
                 ->get();
         }
         $this->updateCart();
+
+
     }
 
     public function updateCart()
@@ -68,8 +72,7 @@ class Cart extends Component
     public function sumPriceProducts()
     {
         if (Auth::check()) {
-            $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) =>
-            $q->where('user_id', Auth::id())
+            $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
             )->with('product', 'variant')->get();
 
             $this->sum = $cartItems->sum(function ($item) {
@@ -108,8 +111,7 @@ class Cart extends Component
             $productId = Str::before($id, '-');
             $variantId = Str::after($id, '-') === 'default' ? null : Str::after($id, '-');
 
-            $cartItem = \App\Models\CartItem::query()->whereHas('cart', fn($q) =>
-            $q->where('user_id', Auth::id())
+            $cartItem = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
             )->where('product_id', $productId)->where('variant_id', $variantId)->first();
 
             if ($cartItem) $cartItem->delete();
