@@ -259,12 +259,12 @@
                                 <div class="relative flex flex-col items-center gap-1.5 z-10"
                                      style="width: {{ 100 / count($orderSteps) }}%">
                                     <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300
-    @if($i < $currentIdx) bg-green-500 border-green-500 text-white
-    @elseif($i === $currentIdx)
-        @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
-        @else bg-amber-50 border-amber-400 text-amber-500 shadow-sm
-        @endif
-    @else bg-white border-gray-200 text-gray-300 @endif">
+                                        @if($i < $currentIdx) bg-green-500 border-green-500 text-white
+                                        @elseif($i === $currentIdx)
+                                            @if($currentStatus === 'delivered') bg-green-500 border-green-500 text-white
+                                            @else bg-amber-50 border-amber-400 text-amber-500 shadow-sm
+                                            @endif
+                                        @else bg-white border-gray-200 text-gray-300 @endif">
                                         @if($i < $currentIdx)
                                             {{-- مرحله انجام شده: تیک سبز --}}
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -351,6 +351,38 @@
                                         </span>
                                         <span class="text-sm">پرداخت از طریق کارت به کارت</span>
                                     </label>
+                                    @if($torobpayEligible)
+                                        <label class="flex flex-1 items-center justify-between bg-white px-4 py-2 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                                               :class="payment_method === 'torobpay' ? 'border-pars-500 shadow-md' : 'border-gray-200'">
+                                            <input type="radio" value="torobpay" x-model="payment_method"
+                                                   class="hidden">
+                                            <div class="flex items-center">
+                                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3"
+                                                      :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-300'">
+                                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
+                                                          x-show="payment_method === 'torobpay'"></span>
+                                                </span>
+                                                <div class="flex flex-col">
+                                                    <span class="text-sm font-medium">{{ $torobpayTitle }}</span>
+                                                    <span class="text-xs text-gray-500">{{ $torobpayDescription }}</span>
+                                                </div>
+                                            </div>
+                                            <img class="w-10 rounded-full shadow-md"
+                                                 src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                        </label>
+                                    @else
+                                        <label class="flex flex-1 items-center justify-between bg-gray-50 px-4 py-2 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
+                                            <div class="flex items-center">
+                                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 border-gray-300 ml-3"></span>
+                                                <div class="flex flex-col">
+                                                    <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
+                                                    <span class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان</span>
+                                                </div>
+                                            </div>
+                                            <img class="w-10 rounded-full shadow-md"
+                                                 src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                        </label>
+                                    @endif
 
                                 </div>
 
