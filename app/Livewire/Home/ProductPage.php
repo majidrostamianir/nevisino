@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Home;
 
+use App\Helpers\PriceHelper;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
@@ -20,6 +21,10 @@ class ProductPage extends Component
     public Collection $images;
     public int $selectedVariant = 1;
     public int $stock;
+
+    public $finalPrice;
+    public $basePrice;
+    public $hasDiscount;
 
     public function mount(): void
     {
@@ -43,6 +48,10 @@ class ProductPage extends Component
 
         $this->src = asset('storage/products/' . $this->product->id . '/large/' . $this->selectedVariant . '.webp' ?? $this->images[0] . '.webp');
         $this->stock = $this->stockCheck();
+
+        $this->finalPrice = PriceHelper::getProductPrice($this->product);
+        $this->basePrice = PriceHelper::getBasePrice($this->product);
+        $this->hasDiscount = PriceHelper::hasDiscount($this->product);
     }
 
     public function updatedSelectedVariant($id): void

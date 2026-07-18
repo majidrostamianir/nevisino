@@ -38,7 +38,9 @@
             "Firebase\\JWT\\": "vendor/firebase/php-jwt/src"
         },
         "files": [
-            "app/Helpers/convertNumber.php"
+            "app/Helpers/convertNumber.php",
+            "app/Helpers/PriceHelper.php"
+
         ]
     },
     "autoload-dev": {

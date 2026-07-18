@@ -145,10 +145,12 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">دریافت هزینه کارتن</label>
                                     <select wire:model="settings.charge_packaging"
-                                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition text-sm">
+                                            disabled
+                                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition text-sm bg-gray-100 cursor-not-allowed opacity-60">
                                         <option value="1">✅ بله</option>
                                         <option value="0">❌ خیر</option>
                                     </select>
+                                    <p class="text-[10px] text-gray-400 mt-1">⛔ این قابلیت غیرفعال شده است</p>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">از چه مبلغی به بالا کارتن رایگان باشد؟</label>
@@ -175,10 +177,12 @@
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">دریافت هزینه کرایه</label>
                                     <select wire:model="settings.charge_shipping"
-                                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition text-sm">
+                                            disabled
+                                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition text-sm bg-gray-100 cursor-not-allowed opacity-60">
                                         <option value="1">✅ بله</option>
                                         <option value="0">❌ خیر</option>
                                     </select>
+                                    <p class="text-[10px] text-gray-400 mt-1">⛔ این قابلیت غیرفعال شده است</p>
                                 </div>
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">از چه مبلغی به بالا کرایه رایگان باشد؟</label>
@@ -191,6 +195,27 @@
                                         <span class="absolute left-3 top-2.5 text-xs text-gray-400">تومان</span>
                                     </div>
                                     <p class="text-[10px] text-gray-400 mt-1">اگر مبلغ سفارش از این مقدار بیشتر باشد، کرایه رایگان می‌شود</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ============================================ --}}
+                        {{-- بخش جدید: تنظیمات نمایش قیمت --}}
+                        {{-- ============================================ --}}
+                        <div>
+                            <h5 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                <span class="w-1 h-5 bg-indigo-500 rounded-full"></span>
+                                💰 تنظیمات نمایش قیمت
+                            </h5>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">نوع قیمت نمایشی در سایت</label>
+                                    <select wire:model="settings.display_price_type"
+                                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-sm">
+                                        <option value="cash">💰 نقدی</option>
+                                        <option value="installment">📆 قسطی </option>
+                                    </select>
+                                    <p class="text-[10px] text-gray-400 mt-1">با تغییر این تنظیم، تمام قیمت‌های سایت بر اساس نوع انتخابی نمایش داده می‌شوند</p>
                                 </div>
                             </div>
                         </div>

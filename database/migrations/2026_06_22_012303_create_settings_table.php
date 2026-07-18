@@ -50,7 +50,12 @@ return new class extends Migration
 
             // ========== تنظیمات اضافی ==========
             ['key' => 'expire_order_time_minutes', 'value' => '30', 'type' => 'integer', 'group' => 'order', 'description' => 'زمان انقضای سفارش (دقیقه)'  , 'created_at' => now() , 'updated_at' => now()],
-        ];
+
+
+            // ========== تنظیمات نمایش قیمت ==========
+            ['key' => 'display_price_type', 'value' => 'installment', 'type' => 'string', 'group' => 'display', 'description' => 'نوع قیمت در سایت (نقدی یا قسطی)', 'created_at' => now() , 'updated_at' => now()],
+
+            ];
 
         DB::table('settings')->insert($settings);
     }

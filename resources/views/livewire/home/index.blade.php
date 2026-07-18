@@ -3,8 +3,7 @@
 
     <div class="flex gap-4 mb-8">
         <!-- باکس سفید: سبد تخفیف -->
-        <div
-            class="w-3/12 aspect-[2.5] hidden lg:flex bg-yellow-300 shadow-md overflow-hidden rounded-xl text-center flex-col">
+        <div class="w-3/12 aspect-[2.5] hidden lg:flex bg-yellow-300 shadow-md overflow-hidden rounded-xl text-center flex-col">
             <div class="w-full py-4 font-bold ">
                 سبد تخفیف
             </div>
@@ -12,44 +11,47 @@
                  class="relative flex-1 min-h-[50vh] flex flex-col justify-center">
                 <div class="absolute top-0 left-0 right-0 h-0.5  overflow-hidden z-10">
                     <div
-                        x-ref="progress"
-                        class="h-full bg-red-500 transition-none"
-                        style="width: 0%;"
-                        x-bind:style="progressWidth"
+                            x-ref="progress"
+                            class="h-full bg-red-500 transition-none"
+                            style="width: 0%;"
+                            x-bind:style="progressWidth"
                     ></div>
                 </div>
 
-                <!-- محتوای محصول — کل آیتم قابل کلیک -->
                 <div class="relative w-[90%] h-[90%] mx-auto flex items-center justify-center ">
                     <template x-for="(product, index) in products" :key="index">
                         <a
-                            x-show="currentIndex === index"
-                            x-transition:enter="transition duration-500"
-                            x-transition:enter-start="opacity-0"
-                            x-transition:enter-end="opacity-100"
-                            x-transition:leave="transition duration-300"
-                            x-transition:leave-start="opacity-100"
-                            x-transition:leave-end="opacity-0"
-                            class="absolute inset-0 flex flex-col items-center justify-center px-4 cursor-pointer"
-                            :href="product.link"
-                            wire:navigate
+                                x-show="currentIndex === index"
+                                x-transition:enter="transition duration-500"
+                                x-transition:enter-start="opacity-0"
+                                x-transition:enter-end="opacity-100"
+                                x-transition:leave="transition duration-300"
+                                x-transition:leave-start="opacity-100"
+                                x-transition:leave-end="opacity-0"
+                                class="absolute inset-0 flex flex-col items-center justify-center px-4 cursor-pointer"
+                                :href="product.link"
+                                wire:navigate
                         >
-                            <!-- عکس محصول — بزرگتر -->
                             <div class="block w-[80%] h-auto mx-auto mb-5 rounded-2xl overflow-hidden shadow-2xl">
                                 <img :src="product.image" alt=""
                                      class="w-full h-full rounded-2xl border border-gray-300">
                             </div>
 
-                            <!-- نام محصول -->
                             <div class="block font-bold text-base line-clamp-2 max-w-full " x-text="product.name"></div>
 
-                            <!-- قیمت اصلی (خط خورده) -->
-                            <div class="text-sm line-through text-gray-400 mt-4"
-                                 x-text="formatPrice(product.price)"></div>
-
-                            <!-- قیمت تخفیفی -->
-                            <div class="text-lg font-bold text-green-600"
-                                 x-text="formatPrice(product.discounted_price)"></div>
+                            <!-- نمایش قیمت بر اساس تخفیف -->
+                            <template x-if="product.has_discount">
+                                <div>
+                                    <div class="text-sm line-through text-gray-400 mt-4"
+                                         x-text="formatPrice(product.base_price)"></div>
+                                    <div class="text-lg font-bold text-green-600"
+                                         x-text="formatPrice(product.final_price)"></div>
+                                </div>
+                            </template>
+                            <template x-if="!product.has_discount">
+                                <div class="text-lg font-bold text-gray-700 mt-4"
+                                     x-text="formatPrice(product.final_price)"></div>
+                            </template>
                         </a>
                     </template>
                 </div>
@@ -67,14 +69,14 @@
                 <div class="relative h-full">
                     <template x-for="(slide, index) in slides" :key="index">
                         <div
-                            x-show="currentIndex === index"
-                            x-transition:enter="transition ease-out duration-700"
-                            x-transition:enter-start="opacity-0 translate-x-full"
-                            x-transition:enter-end="opacity-100 translate-x-0"
-                            x-transition:leave="transition ease-in duration-500"
-                            x-transition:leave-start="opacity-100 translate-x-0"
-                            x-transition:leave-end="opacity-0 -translate-x-full"
-                            class="absolute inset-0 w-full h-full"
+                                x-show="currentIndex === index"
+                                x-transition:enter="transition ease-out duration-700"
+                                x-transition:enter-start="opacity-0 translate-x-full"
+                                x-transition:enter-end="opacity-100 translate-x-0"
+                                x-transition:leave="transition ease-in duration-500"
+                                x-transition:leave-start="opacity-100 translate-x-0"
+                                x-transition:leave-end="opacity-0 -translate-x-full"
+                                class="absolute inset-0 w-full h-full"
                         >
                             <a :href="slide[1]">
                                 <img :src="slide[0]" alt="" class="w-full h-full object-cover" loading="lazy">
@@ -150,7 +152,7 @@
     </div>
 
     <div class="relative bg-gradient-to-r from-purple-300 to-purple-600 mb-8  shadow-lg px-4 rounded-2xl"
-        x-data="{
+         x-data="{
             scrollLeft(container) {
                 container.scrollBy({ left: -280, behavior: 'smooth' });
             },
@@ -159,9 +161,9 @@
             }
         }">
         <button
-            @click="scrollRight($refs.sliderContainer)"
-            class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollRight($refs.sliderContainer)"
+                class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"/>
@@ -169,9 +171,9 @@
         </button>
 
         <button
-            @click="scrollLeft($refs.sliderContainer)"
-            class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollLeft($refs.sliderContainer)"
+                class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
@@ -204,10 +206,13 @@
                 </div>
 
                 <div class="mt-auto pt-2 pb-3">
-                    <a href="{{ route('category-page' , 'مداد-رنگی-اتودی') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
+                    <a href="{{ route('category-page' , 'مداد-رنگی-اتودی') }}"
+                       class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
-                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5l-7 7 7 7"></path>
+                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 5l-7 7 7 7"></path>
                         </svg>
                     </a>
                 </div>
@@ -229,7 +234,7 @@
                                          alt="{{ $product->title }} - {{ $variant->name }}">
                                     @if($product->discounted_price)
                                         <div
-                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                                class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                             تخفیف ویژه!
                                         </div>
                                     @endif
@@ -242,15 +247,17 @@
                                         : {{ $variant->name }}</p>
                                     @if($product->discounted_price)
                                         <h5 class="text-xs text-gray-400 line-through">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+                                            تومان
                                         </h5>
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->discounted_price)) }}
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
                                             تومان
                                         </h5>
                                     @else
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+                                            تومان
                                         </h5>
                                     @endif
                                 </div>
@@ -271,7 +278,7 @@
                                      alt="{{ $product->title }}">
                                 @if($product->discounted_price)
                                     <div
-                                        class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                         تخفیف ویژه!
                                     </div>
                                 @endif
@@ -280,18 +287,21 @@
                                 <h5 class="text-md font-semibold mb-1">
                                     {{ english_to_persian_num($product->title) }}
                                 </h5>
-                                @if($product->discounted_price)
-                                    <h5 class="text-xs text-gray-400 line-through">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->discounted_price)) }} تومان
-                                    </h5>
-                                @else
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                @endif
+                                @if(\App\Helpers\PriceHelper::hasDiscount($product))
+    <h5 class="text-xs text-gray-400 line-through">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+        تومان
+    </h5>
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@else
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@endif
                             </div>
                         </a>
                     </div>
@@ -301,20 +311,20 @@
         </div>
     </div>
 
-{{--    <div class="grid grid-cols-2 gap-4 px-4 mb-8 lg:grid-cols-4">--}}
-{{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
-{{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
-{{--        </a>--}}
-{{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
-{{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
-{{--        </a>--}}
-{{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
-{{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
-{{--        </a>--}}
-{{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
-{{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
-{{--        </a>--}}
-{{--    </div>--}}
+    {{--    <div class="grid grid-cols-2 gap-4 px-4 mb-8 lg:grid-cols-4">--}}
+    {{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
+    {{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
+    {{--        </a>--}}
+    {{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
+    {{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
+    {{--        </a>--}}
+    {{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
+    {{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
+    {{--        </a>--}}
+    {{--        <a href="" class="rounded-2xl overflow-hidden ">--}}
+    {{--            <img src="{{ asset('images/test.jpg') }}" class=" transition w-full" alt="">--}}
+    {{--        </a>--}}
+    {{--    </div>--}}
 
     <div class="relative bg-radial from-orange-300 to-orange-500 mb-8 shadow-lg  px-4 rounded-2xl"
          x-data="{
@@ -326,9 +336,9 @@
             }
         }">
         <button
-            @click="scrollRight($refs.sliderContainer)"
-            class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollRight($refs.sliderContainer)"
+                class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"/>
@@ -336,9 +346,9 @@
         </button>
 
         <button
-            @click="scrollLeft($refs.sliderContainer)"
-            class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollLeft($refs.sliderContainer)"
+                class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
@@ -374,10 +384,13 @@
                 </div>
 
                 <div class="mt-auto pt-2 pb-3">
-                    <a href="{{ route('category-page' , 'مداد-رنگی-آریا-آرتیست') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
+                    <a href="{{ route('category-page' , 'مداد-رنگی-آریا-آرتیست') }}"
+                       class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
-                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5l-7 7 7 7"></path>
+                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 5l-7 7 7 7"></path>
                         </svg>
                     </a>
                 </div>
@@ -399,7 +412,7 @@
                                          alt="{{ $product->title }} - {{ $variant->name }}">
                                     @if($product->discounted_price)
                                         <div
-                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                                class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                             تخفیف ویژه!
                                         </div>
                                     @endif
@@ -412,15 +425,17 @@
                                         : {{ $variant->name }}</p>
                                     @if($product->discounted_price)
                                         <h5 class="text-xs text-gray-400 line-through">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+                                            تومان
                                         </h5>
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->discounted_price)) }}
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
                                             تومان
                                         </h5>
                                     @else
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+                                            تومان
                                         </h5>
                                     @endif
                                 </div>
@@ -441,7 +456,7 @@
                                      alt="{{ $product->title }}">
                                 @if($product->discounted_price)
                                     <div
-                                        class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                         تخفیف ویژه!
                                     </div>
                                 @endif
@@ -450,18 +465,21 @@
                                 <h5 class="text-md font-semibold mb-1">
                                     {{ english_to_persian_num($product->title) }}
                                 </h5>
-                                @if($product->discounted_price)
-                                    <h5 class="text-xs text-gray-400 line-through">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->discounted_price)) }} تومان
-                                    </h5>
-                                @else
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                @endif
+                                @if(\App\Helpers\PriceHelper::hasDiscount($product))
+    <h5 class="text-xs text-gray-400 line-through">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+        تومان
+    </h5>
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@else
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@endif
                             </div>
                         </a>
                     </div>
@@ -471,10 +489,10 @@
         </div>
     </div>
 
-{{--    <div class="bg-gray-300 rounded-2xl p-6 flex mb-8">--}}
-{{--        <span class="font-bold text-red-400">نحوه بسته بندی و ارسال در نویسینو</span>--}}
-{{--        <img src="{{ asset('images/post.png') }}" class="w-8 h-8 mx-4" alt="">--}}
-{{--    </div>--}}
+    {{--    <div class="bg-gray-300 rounded-2xl p-6 flex mb-8">--}}
+    {{--        <span class="font-bold text-red-400">نحوه بسته بندی و ارسال در نویسینو</span>--}}
+    {{--        <img src="{{ asset('images/post.png') }}" class="w-8 h-8 mx-4" alt="">--}}
+    {{--    </div>--}}
 
     <div class="relative bg-gradient-to-l from-black/80 to-black/50 mb-8 shadow-lg  px-4 rounded-2xl"
          x-data="{
@@ -486,9 +504,9 @@
             }
         }">
         <button
-            @click="scrollRight($refs.sliderContainer)"
-            class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollRight($refs.sliderContainer)"
+                class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"/>
@@ -496,9 +514,9 @@
         </button>
 
         <button
-            @click="scrollLeft($refs.sliderContainer)"
-            class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollLeft($refs.sliderContainer)"
+                class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
@@ -534,10 +552,13 @@
                 </div>
 
                 <div class="mt-auto pt-2 pb-3">
-                    <a href="{{ route('category-page' , 'دفتر-مشق') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
+                    <a href="{{ route('category-page' , 'دفتر-مشق') }}"
+                       class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
-                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5l-7 7 7 7"></path>
+                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 5l-7 7 7 7"></path>
                         </svg>
                     </a>
                 </div>
@@ -559,7 +580,7 @@
                                          alt="{{ $product->title }} - {{ $variant->name }}">
                                     @if($product->discounted_price)
                                         <div
-                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                                class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                             تخفیف ویژه!
                                         </div>
                                     @endif
@@ -572,15 +593,17 @@
                                         : {{ $variant->name }}</p>
                                     @if($product->discounted_price)
                                         <h5 class="text-xs text-gray-400 line-through">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+                                            تومان
                                         </h5>
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->discounted_price)) }}
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
                                             تومان
                                         </h5>
                                     @else
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+                                            تومان
                                         </h5>
                                     @endif
                                 </div>
@@ -601,7 +624,7 @@
                                      alt="{{ $product->title }}">
                                 @if($product->discounted_price)
                                     <div
-                                        class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                         تخفیف ویژه!
                                     </div>
                                 @endif
@@ -610,18 +633,21 @@
                                 <h5 class="text-md font-semibold mb-1">
                                     {{ english_to_persian_num($product->title) }}
                                 </h5>
-                                @if($product->discounted_price)
-                                    <h5 class="text-xs text-gray-400 line-through">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->discounted_price)) }} تومان
-                                    </h5>
-                                @else
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                @endif
+                                @if(\App\Helpers\PriceHelper::hasDiscount($product))
+    <h5 class="text-xs text-gray-400 line-through">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+        تومان
+    </h5>
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@else
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@endif
                             </div>
                         </a>
                     </div>
@@ -631,10 +657,10 @@
         </div>
     </div>
 
-{{--    <div class="bg-gray-300 rounded-2xl p-6 flex mb-8">--}}
-{{--        <span class="font-bold text-red-400">نحوه بسته بندی و ارسال در نویسینو</span>--}}
-{{--        <img src="{{ asset('images/post.png') }}" class="w-8 h-8 mx-4" alt="">--}}
-{{--    </div>--}}
+    {{--    <div class="bg-gray-300 rounded-2xl p-6 flex mb-8">--}}
+    {{--        <span class="font-bold text-red-400">نحوه بسته بندی و ارسال در نویسینو</span>--}}
+    {{--        <img src="{{ asset('images/post.png') }}" class="w-8 h-8 mx-4" alt="">--}}
+    {{--    </div>--}}
 
     <div class="relative bg-radial from-green-100 to-green-500 mb-8 shadow-lg  px-4 rounded-2xl"
          x-data="{
@@ -646,9 +672,9 @@
             }
         }">
         <button
-            @click="scrollRight($refs.sliderContainer)"
-            class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollRight($refs.sliderContainer)"
+                class="hidden lg:flex absolute right-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18l6-6-6-6"/>
@@ -656,9 +682,9 @@
         </button>
 
         <button
-            @click="scrollLeft($refs.sliderContainer)"
-            class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
-            style="top: 55%; transform: translateY(-50%);">
+                @click="scrollLeft($refs.sliderContainer)"
+                class="hidden lg:flex absolute left-2 top-1/2 z-10 bg-white rounded-full shadow-lg p-2 hover:bg-gray-100 transition-all cursor-pointer border border-gray-300"
+                style="top: 55%; transform: translateY(-50%);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
@@ -671,7 +697,7 @@
             <div class="min-w-[180px] md:min-w-[230px] h-auto flex flex-col py-8 text-center">
                 <div class="flex-grow py-4">
                     <p class="text-md lg:text-xl font-bold mb-2 text-white text-shadow-black text-shadow-sm ">
-                         لوازم اداری
+                        لوازم اداری
                     </p>
                     <p class="text-md lg:text-xl font-bold mb-2 text-white text-shadow-black text-shadow-sm ">
                         انواع چسب
@@ -691,10 +717,13 @@
                 </div>
 
                 <div class="mt-auto pt-2 pb-3">
-                    <a href="{{ route('category-page' , 'لوازم-اداری') }}" class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
+                    <a href="{{ route('category-page' , 'لوازم-اداری') }}"
+                       class="inline-flex items-center gap-1 text-sm font-bold  text-white group">
                         <span>مشاهده همه</span>
-                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5l-7 7 7 7"></path>
+                        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 5l-7 7 7 7"></path>
                         </svg>
                     </a>
                 </div>
@@ -716,7 +745,7 @@
                                          alt="{{ $product->title }} - {{ $variant->name }}">
                                     @if($product->discounted_price)
                                         <div
-                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                                class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                             تخفیف ویژه!
                                         </div>
                                     @endif
@@ -729,15 +758,17 @@
                                         : {{ $variant->name }}</p>
                                     @if($product->discounted_price)
                                         <h5 class="text-xs text-gray-400 line-through">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+                                            تومان
                                         </h5>
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->discounted_price)) }}
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
                                             تومان
                                         </h5>
                                     @else
                                         <h5 class="text-sm font-bold mt-1">
-                                            {{ english_to_persian_num(number_format($product->price)) }} تومان
+                                            {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+                                            تومان
                                         </h5>
                                     @endif
                                 </div>
@@ -758,7 +789,7 @@
                                      alt="{{ $product->title }}">
                                 @if($product->discounted_price)
                                     <div
-                                        class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                                            class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
                                         تخفیف ویژه!
                                     </div>
                                 @endif
@@ -767,18 +798,21 @@
                                 <h5 class="text-md font-semibold mb-1">
                                     {{ english_to_persian_num($product->title) }}
                                 </h5>
-                                @if($product->discounted_price)
-                                    <h5 class="text-xs text-gray-400 line-through">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->discounted_price)) }} تومان
-                                    </h5>
-                                @else
-                                    <h5 class="text-sm font-bold mt-1">
-                                        {{ english_to_persian_num(number_format($product->price)) }} تومان
-                                    </h5>
-                                @endif
+                                @if(\App\Helpers\PriceHelper::hasDiscount($product))
+    <h5 class="text-xs text-gray-400 line-through">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getBasePrice($product))) }}
+        تومان
+    </h5>
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@else
+    <h5 class="text-sm font-bold mt-1">
+        {{ english_to_persian_num(number_format(\App\Helpers\PriceHelper::getProductPrice($product))) }}
+        تومان
+    </h5>
+@endif
                             </div>
                         </a>
                     </div>

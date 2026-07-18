@@ -4,13 +4,12 @@ namespace App\Livewire\Payment;
 
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\Setting;
 use App\Models\User;
+use App\Helpers\PriceHelper; // <-- اضافه کن
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
-
 
 class Cart extends Component
 {
@@ -36,8 +35,6 @@ class Cart extends Component
                 ->get();
         }
         $this->updateCart();
-
-
     }
 
     public function updateCart()
@@ -53,7 +50,7 @@ class Cart extends Component
                 $this->cart[$key] = [
                     'id' => $item->product_id,
                     'title' => $item->product->title,
-                    'price' => $item->product->discounted_price ?? $item->product->price,
+                    'price' => PriceHelper::getProductPrice($item->product), // <-- اصلاح شده
                     'code' => $item->product->code,
                     'quantity' => $item->quantity,
                     'variant' => $item->variant_id,
@@ -62,6 +59,17 @@ class Cart extends Component
             }
         } else {
             $this->cart = session('cart');
+
+            // برای کاربران مهمان هم قیمت‌ها رو به‌روز کن (اگه قبلاً با قیمت اشتباه ذخیره شده)
+            if ($this->cart) {
+                foreach ($this->cart as $key => &$item) {
+                    $product = Product::find($item['id']);
+                    if ($product) {
+                        $item['price'] = PriceHelper::getProductPrice($product);
+                    }
+                }
+                session()->put('cart', $this->cart);
+            }
         }
 
         if ($this->cart) {
@@ -72,11 +80,11 @@ class Cart extends Component
     public function sumPriceProducts()
     {
         if (Auth::check()) {
-            $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
-            )->with('product', 'variant')->get();
+            $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
+                ->with('product', 'variant')->get();
 
             $this->sum = $cartItems->sum(function ($item) {
-                $price = $item->product->discounted_price ?? $item->product->price;
+                $price = PriceHelper::getProductPrice($item->product); // <-- اصلاح شده
                 return $price * $item->quantity;
             });
         } else {
@@ -111,8 +119,8 @@ class Cart extends Component
             $productId = Str::before($id, '-');
             $variantId = Str::after($id, '-') === 'default' ? null : Str::after($id, '-');
 
-            $cartItem = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
-            )->where('product_id', $productId)->where('variant_id', $variantId)->first();
+            $cartItem = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
+                ->where('product_id', $productId)->where('variant_id', $variantId)->first();
 
             if ($cartItem) $cartItem->delete();
         } else {

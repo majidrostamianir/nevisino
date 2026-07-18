@@ -101,5 +101,8 @@ class Product extends Model
         // اگر واریانت ندارد
         return $this->stock > 0;
     }
-
+    public function getFinalPriceAttribute()
+    {
+        return \App\Helpers\PriceHelper::getProductPrice($this);
+    }
 }

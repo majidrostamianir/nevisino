@@ -15,7 +15,7 @@
                 <img class="w-full aspect-square group-hover:scale-105 transition-transform duration-300"
                      src="{{ asset('storage/products/' . $product->id . '/small/1.webp') }}"
                      alt="{{ $product->title }}">
-                @if($product->discounted_price)
+                @if($hasDiscount)
                     <div class="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-2 py-1 rounded-full text-[10px] sm:text-xs font-bold shadow-md">
                         🔥 تخفیف
                     </div>
@@ -31,23 +31,25 @@
 
             @if((is_null($product->variant) && $product->stock > 0) || (!is_null($product->variant) && $product->variants->sum('stock') > 0))
                 <div class="mt-2">
-                    @if($product->discounted_price)
+                    @if($hasDiscount)
                         <div class="flex items-center justify-center gap-2 flex-wrap">
                             <span class="text-xs text-gray-400 line-through">
-                                {{ english_to_persian_num(number_format($product->price)) }}
+                                {{ english_to_persian_num(number_format($basePrice)) }}
                             </span>
                             <span class="text-pars-700 font-bold text-sm sm:text-base">
-                                {{ english_to_persian_num(number_format($product->discounted_price)) }}
+                                {{ english_to_persian_num(number_format($finalPrice)) }}
                             </span>
                             <span class="text-xs text-gray-400">تومان</span>
                         </div>
-                        <div class="inline-block mt-1 bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                            {{ english_to_persian_num(round((($product->price - $product->discounted_price) / $product->price) * 100)) }}% تخفیف
-                        </div>
+                        @if($discountPercent > 0)
+                            <div class="inline-block mt-1 bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                {{ english_to_persian_num($discountPercent) }}% تخفیف
+                            </div>
+                        @endif
                     @else
                         <div class="flex items-center justify-center gap-1">
                             <span class="text-gray-700 font-bold text-sm sm:text-base">
-                                {{ english_to_persian_num(number_format($product->price)) }}
+                                {{ english_to_persian_num(number_format($finalPrice)) }}
                             </span>
                             <span class="text-xs text-gray-400">تومان</span>
                         </div>

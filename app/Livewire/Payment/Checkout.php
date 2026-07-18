@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TorobpayService;
+use App\Helpers\PriceHelper; // <-- اضافه کن
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -78,11 +79,11 @@ class Checkout extends Component
 
     private function calculateSum()
     {
-        $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
-        )->with('product', 'variant')->get();
+        $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
+            ->with('product', 'variant')->get();
 
         $this->sum = $cartItems->sum(function ($item) {
-            $price = $item->product->discounted_price ?? $item->product->price;
+            $price = PriceHelper::getProductPrice($item->product); // <-- اصلاح شده
             return $price * $item->quantity;
         });
 
@@ -93,7 +94,6 @@ class Checkout extends Component
         if ($this->maxPackagingSize == 0) {
             $this->maxPackagingSize = 1;
         }
-
     }
 
     private function calculatePackaging()
@@ -177,7 +177,6 @@ class Checkout extends Component
 
         $this->validateOnly('description');
 
-
         if ($this->selectedAddress == null) {
             $this->validate();
             $this->selectedAddress = $this->user->addresses()->create([
@@ -198,7 +197,6 @@ class Checkout extends Component
         $this->calculateShipping();
         $this->calculateAmount();
         $finalAmount = $this->amount; // snapshot بگیر
-
 
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
@@ -237,7 +235,6 @@ class Checkout extends Component
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
             case 'torobpay':
-                // اگر کاربر به هر طریقی گزینه غیرفعال رو bypass کرد
                 if (!$this->torobpayEligible) {
                     abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
                 }
@@ -259,7 +256,6 @@ class Checkout extends Component
                     return redirect()->away($result['paymentPageUrl']);
 
                 } catch (\Exception $e) {
-                    // اگر توکن گرفته نشد، تراکنش رو failed میکنیم
                     $transaction->update(['status' => 'failed']);
                     Log::error($e->getMessage());
                     abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
@@ -272,7 +268,6 @@ class Checkout extends Component
         $this->cities = \App\Models\City::where('province_id', $provinceId)->get();
         $this->city_id = null;
     }
-
 
     private function getOrderParams(): array
     {

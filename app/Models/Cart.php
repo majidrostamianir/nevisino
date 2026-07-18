@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\PriceHelper; // <-- اضافه کن
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -34,8 +35,9 @@ class Cart extends Model
             $shipping_price = $orderData['shipping_price'] ?? 0;
             $packaging_price = $orderData['packaging_price'] ?? 0;
 
+            // اصلاح شده: استفاده از PriceHelper
             $totalPrice = $this->items->sum(function ($item) {
-                return ($item->product->discounted_price ?? $item->product->price) * $item->quantity;
+                return PriceHelper::getProductPrice($item->product) * $item->quantity;
             });
 
             $lastOrderNumber = \App\Models\Order::max('order_number');
@@ -63,7 +65,8 @@ class Cart extends Model
             ]);
 
             foreach ($this->items as $item) {
-                $priceSnapshot =$item->product->discounted_price ?? $item->product->price;
+                // اصلاح شده: استفاده از PriceHelper
+                $priceSnapshot = PriceHelper::getProductPrice($item->product);
 
                 $order->items()->create([
                     'product_id' => $item->product_id,
@@ -71,7 +74,6 @@ class Cart extends Model
                     'quantity' => $item->quantity,
                     'price_snapshot' => $priceSnapshot,
                 ]);
-
             }
 
             $this->items()->delete();
