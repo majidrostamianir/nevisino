@@ -9,15 +9,6 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public \App\Models\Url $url;
-    public string $title_tag = '', $dashed_url = '';
-    public null|string $meta_description = '', $article = '' , $title_h1 = '' , $mini_article = '';
-    public int $categoryId = 0;
-
-    public function mount(): void
-    {
-        $this->url = new \App\Models\Url();
-    }
 
     public function toggleIndexing($id)
     {
@@ -100,7 +91,6 @@ class Index extends Component
     public function render()
     {
         $urls = \App\Models\Url::query()->orderBy('in_menu', 'desc')->get();
-        $categories = \App\Models\Category::query()->whereNotNull('parent_id')->get();
-        return view('livewire.admin.url.index', compact('urls', 'categories'))->layout('components.layouts.admin');
+        return view('livewire.admin.url.index', compact('urls'))->layout('components.layouts.admin');
     }
 }

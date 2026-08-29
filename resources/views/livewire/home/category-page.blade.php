@@ -28,18 +28,18 @@
     </div>
     <div class="w-full lg:w-9/12 ">
         @if($url->title_h1)
-            <div class="bg-white rounded shadow-md py-2 px-4 mb-4 article">
+            <div class="bg-white rounded-xl shadow-md p-4 mb-8 article">
                 <h1 class="text-gray-700">
                     {{ $url->title_h1 }}
                 </h1>
-                <div class="p-4">
+                <div class="p-4 text-justify text-xl">
                     {!! $url->mini_article !!}
                 </div>
             </div>
         @endif
 
         @if($products->isNotEmpty())
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
                 @foreach($products as $product)
                     <livewire:components.product-card :product="$product"/>
                 @endforeach
@@ -54,7 +54,7 @@
         @endif
 
         @if($url->article)
-            <div class="bg-white rounded shadow-md py-2 px-4 mb-4 article">
+            <div class="bg-white rounded-xl text-xl shadow-md p-8 mb-4 article text-justify">
                 {!! $url->article !!}
             </div>
         @endif

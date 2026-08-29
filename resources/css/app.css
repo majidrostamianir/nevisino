@@ -101,5 +101,11 @@
         color: #04b6e7;
 
     }
-
+    .article-image {
+        display: block;
+        margin: 24px auto;
+        border-radius: 12px;
+        max-width: 100%;
+        height: auto;
+    }
 }

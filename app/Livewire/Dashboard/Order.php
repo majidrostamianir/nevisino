@@ -48,7 +48,12 @@ class Order extends Component
 
     private function checkTorobpayEligibility(int $amount): void
     {
-        if ($amount <= 0) {
+
+
+        $this->torobpayEligible = false;
+
+
+       /* if ($amount <= 0) {
             $this->torobpayEligible = false;
             return;
         }
@@ -63,7 +68,7 @@ class Order extends Component
             }
         } catch (\Exception $e) {
             $this->torobpayEligible = false;
-        }
+        }*/
     }
     // ─────────────────────────────────────────────
     //  پرداخت مجدد

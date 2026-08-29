@@ -7,7 +7,9 @@ use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TorobpayService;
-use App\Helpers\PriceHelper; // <-- اضافه کن
+use App\Helpers\PriceHelper;
+
+// <-- اضافه کن
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -59,7 +61,11 @@ class Checkout extends Component
 
     private function checkTorobpayEligibility(): void
     {
-        if ($this->amount <= 0) {
+
+        $this->torobpayEligible = false;
+
+
+       /* if ($this->amount <= 0) {
             $this->torobpayEligible = false;
             return;
         }
@@ -74,7 +80,7 @@ class Checkout extends Component
             }
         } catch (\Exception $e) {
             $this->torobpayEligible = false;
-        }
+        }*/
     }
 
     private function calculateSum()

@@ -37,6 +37,7 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/category', \App\Livewire\Admin\Category\Index::class)->name('admin.category.index');
     Route::get('/admin/url', \App\Livewire\Admin\Url\Index::class)->name('admin.url.index');
     Route::get('/admin/url-product/{url}', \App\Livewire\Admin\Url\UrlProduct::class)->name('admin.url.product');
+    Route::get('/admin/url-article/{url}', \App\Livewire\Admin\Url\UrlArticle::class)->name('admin.url.article');
     Route::get('/admin/product', \App\Livewire\Admin\Product\Index::class)->name('admin.product.index');
     Route::get('/admin/product/save/{product?}', \App\Livewire\Admin\Product\Save::class)->name('admin.product.save');
     Route::get('/admin/user', \App\Livewire\Admin\User\Index::class)->name('admin.user.index');
@@ -52,11 +53,10 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
 });
 
 
-//torobPay
-Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
+/*Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
     ->name('torobpay.result')
     ->middleware('auth');
 
 Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
     ->name('torobpay.callback')
-    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر
+    ->withoutMiddleware('auth'); */

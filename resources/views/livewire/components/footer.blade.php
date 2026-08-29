@@ -38,7 +38,7 @@
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-اتودی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی اتودی</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-جعبه-فلزی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی جعبه فلزی</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-آریا-آرتیست']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی آریا آرتیست</a>
-                <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-50-رنگ']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی ۵۰ رنگ</a>
+                <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-36-رنگ']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی ۳۶ رنگ</a>
             </div>
             
             <div class="flex flex-col gap-3">

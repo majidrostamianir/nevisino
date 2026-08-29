@@ -140,13 +140,13 @@
 
 
             <div class="w-full mb-4 flex justify-between">
-                <div><strong>روش‌های ارسال</strong></div>
+                <div><strong>روش ارسال</strong></div>
                 <span>
                     <livewire:components.tooltip
-                            text="در بخش تکمیل سفارش، شما می‌توانید روش ارسال دلخواه خود را انتخاب کنید. گزینه‌های موجود شامل تیپاکس (ارسال سریع‌تر) و پست پیشتاز (ارسال اقتصادی) می‌باشد." position="left"/>
+                            text="ارسال سریع و مطمعن با سرویس پیشتاز شرکت ملی پست ایران." position="left"/>
                 </span>
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class="text-left">پست پیشتاز یا تیپاکس</div>
+                <div class="text-left">پست پیشتاز</div>
             </div>
             <div class="w-full mb-4 flex justify-between">
                 <div><strong>هزینه ارسال</strong></div>

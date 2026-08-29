@@ -231,7 +231,7 @@
                     </div>
                 </div>
 
-                <div class="p-5 space-y-3">
+                <div class="p-5 space-y-3 min-h-[180px]">
                     @if($sum < $free_shipping_threshold)
                         {{-- حالت: حد نصاب نرسیده - نمایش ۴ گزینه اول --}}
 
@@ -295,8 +295,8 @@
                             </div>
                         </label>
 
-                        {{-- ۳. تیپاکس کرایه در مقصد (tipax_cod) --}}
-                        <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+{{--                         ۳. تیپاکس کرایه در مقصد (tipax_cod) --}}
+                        {{--<label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="shipping_method === 'tipax_cod' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
                             <input type="radio"
@@ -323,7 +323,7 @@
                             </div>
                         </label>
 
-                        {{-- ۴. تیپاکس پیش کرایه (tipax_cash) --}}
+                         ۴. تیپاکس پیش کرایه (tipax_cash)
                         <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="shipping_method === 'tipax_cash' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
@@ -350,12 +350,9 @@
                                 {{ english_to_persian_num(number_format(\App\Models\Setting::get('tipax_price'))) }}
                                 تومان
                             </div>
-                        </label>
+                        </label>--}}
 
                     @else
-                        {{-- حالت: حد نصاب رسیده - نمایش ۲ گزینه آخر (رایگان) --}}
-
-                        {{-- ۵. پست رایگان (post_free) --}}
                         <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="shipping_method === 'post_free' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
@@ -386,7 +383,7 @@
                             </div>
                         </label>
 
-                        {{-- ۶. تیپاکس رایگان (tipax_free) --}}
+                       {{--  ۶. تیپاکس رایگان (tipax_free)
                         <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="shipping_method === 'tipax_free' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
 
@@ -408,11 +405,10 @@
                                     <div class="text-xs text-gray-500">{{ \App\Enums\ShippingMethodEnum::TIPAX_FREE->description() }}</div>
                                 </div>
                             </div>
-
                             <div class="flex-shrink-0 mr-2">
                                 <span class="text-xs font-bold text-green-500">رایگان</span>
                             </div>
-                        </label>
+                        </label>--}}
                     @endif
                 </div>
             </div>
@@ -513,8 +509,8 @@
                                 <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با ترب پی</span>
-                                    <div class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان
-                                    </div>
+{{--                                    <div class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان</div>--}}
+                                    <span class="text-xs text-red-500">بزودی</span>
                                 </div>
                             </div>
                             <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}"
