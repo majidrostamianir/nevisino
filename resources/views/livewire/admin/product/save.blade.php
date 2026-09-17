@@ -1,26 +1,5 @@
 @push('editor')
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quill-rtl@1.0.0/dist/quill-rtl.min.js"></script>
-
     <style>
-        .ql-editor {
-            direction: rtl;
-            text-align: right;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100px;
-        }
-        .ql-toolbar.ql-snow {
-            direction: rtl;
-            border-radius: 0.75rem 0.75rem 0 0;
-        }
-        .ql-container.ql-snow {
-            border-radius: 0 0 0.75rem 0.75rem;
-        }
-        .ql-toolbar.ql-snow .ql-formats {
-            margin-left: 15px;
-            margin-right: 0;
-        }
         .nav-btn {
             display: inline-flex;
             align-items: center;
@@ -135,6 +114,55 @@
             padding: 1px 8px;
             border-radius: 12px;
         }
+
+        .html-editor-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            height: 34px;
+            padding: 0 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #374151;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .html-editor-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .html-editor-btn:active {
+            transform: scale(0.96);
+        }
+
+        .html-editor {
+            width: 100%;
+            min-height: 260px;
+            padding: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            background: #f9fafb;
+            color: #1f2937;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            resize: vertical;
+            outline: none;
+            direction: rtl;
+            text-align: right;
+            transition: all 0.15s ease;
+        }
+
+        .html-editor:focus {
+            border-color: transparent;
+            box-shadow: 0 0 0 2px rgb(196 181 253);
+        }
     </style>
 @endpush
 
@@ -174,7 +202,7 @@
             <div class="searchable-select" x-data="{
                 open: false,
                 search: '',
-                selected: @entangle('categoryId').defer,
+                selected: @entangle('categoryId'),
                 options: @js(\App\Models\Category::whereNotNull('parent_id')->pluck('title', 'id')->prepend('دسته بندی', '')->toArray()),
                 get filteredOptions() {
                     if (!this.search) return this.options;
@@ -184,11 +212,11 @@
                         )
                     );
                 },
-                selectOption(key) {
-                    this.selected = key;
+               selectOption(key) {
+                    this.selected = Number(key);
                     this.search = '';
                     this.open = false;
-                    $wire.set('categoryId', key);
+                    $wire.set('categoryId', Number(key));
                 }
             }">
                 <div class="relative">
@@ -236,7 +264,7 @@
             <div class="searchable-select" x-data="{
                 open: false,
                 search: '',
-                selected: @entangle('brandId').defer,
+                selected: @entangle('brandId'),
                 options: @js(\App\Models\Brand::where('status', true)->orderBy('order')->pluck('name', 'id')->prepend('انتخاب برند', '')->toArray()),
                 get filteredOptions() {
                     if (!this.search) return this.options;
@@ -247,10 +275,10 @@
                     );
                 },
                 selectOption(key) {
-                    this.selected = key;
+                    this.selected = Number(key);
                     this.search = '';
                     this.open = false;
-                    $wire.set('brandId', key);
+                    $wire.set('brandId', Number(key));
                 }
             }">
                 <div class="relative">
@@ -329,9 +357,35 @@
         </div>
 
         {{-- توضیحات --}}
-        <div class="sm:w-full p-1 pb-20" wire:ignore>
-            <small class="mr-2 text-gray-700 font-medium mb-1">توضیحات</small>
-            <div id="editor" class="bg-white rounded-xl shadow-sm"></div>
+        <div class="sm:w-full p-4 bg-white rounded-2xl my-4">
+            <div class="flex items-center justify-between mb-2">
+                <small class="mr-2 text-gray-700 font-medium">توضیحات</small>
+                <span class="text-xs text-gray-400">HTML</span>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-3 p-2 bg-gray-100 border border-gray-300 rounded-xl">
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'p')">P</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'h1')">H1</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'h2')">H2</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'h3')">H3</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'h4')">H4</button>
+                <button type="button" class="html-editor-btn" onclick="insertImageTag('description')">IMG</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'strong')">B</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'span')">SPAN</button>
+                <button type="button" class="html-editor-btn" onclick="insertBrTag('description')">BR</button>
+                <button type="button" class="html-editor-btn" onclick="insertTableTag('description')">TABLE</button>
+                <button type="button" class="html-editor-btn" onclick="insertUlTag('description')">UL</button>
+            </div>
+
+            <textarea
+                    id="description"
+                    wire:model.live="description"
+                    rows="15"
+                    spellcheck="false"
+                    class="html-editor"
+                    placeholder="توضیحات را به صورت HTML اینجا بنویسید..."
+            >{{ $description }}</textarea>
+
             @error('description')
             <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
             @enderror
@@ -342,20 +396,7 @@
     <div class="sm:flex sm:flex-wrap justify-between mt-4 border-t border-gray-200 pt-4">
         <h3 class="w-full text-lg font-bold text-gray-700 mb-3 pr-2">💰 قیمت‌ها</h3>
 
-        {{-- قیمت اصلی --}}
-        <div class="sm:w-4/12 p-1">
-            <small class="pr-2">قیمت اصلی <span class="text-red-500">*</span></small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اصلی به تومان" wire:model="prices.price">
-            @error('prices.price')
-            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
-            @enderror
-            @if($product->exists && $product->price)
-                <div class="price-history">
-                    <span>قبلی: {{ english_to_persian_num(number_format($product->price_previous ?? 0)) }} تومان</span>
-                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->price_updated_at)->format('H:i - Y/m/d')) }}</span>
-                </div>
-            @endif
-        </div>
+
 
         {{-- قیمت عمده --}}
         <div class="sm:w-4/12 p-1">
@@ -371,7 +412,20 @@
                 </div>
             @endif
         </div>
-
+        {{-- قیمت اصلی --}}
+        <div class="sm:w-4/12 p-1">
+            <small class="pr-2">قیمت اصلی <span class="text-red-500">*</span></small>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اصلی به تومان" wire:model="prices.price">
+            @error('prices.price')
+            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+            @enderror
+            @if($product->exists && $product->price)
+                <div class="price-history">
+                    <span>قبلی: {{ english_to_persian_num(number_format($product->price_previous ?? 0)) }} تومان</span>
+                    <span>بروزرسانی: {{ english_to_persian_num(verta($product->price_updated_at)->format('H:i - Y/m/d')) }}</span>
+                </div>
+            @endif
+        </div>
         {{-- قیمت اقساطی --}}
         <div class="sm:w-4/12 p-1">
             <small class="pr-2">قیمت اقساطی</small>
@@ -612,35 +666,128 @@
     @endif
 </div>
 
-{{-- اسکریپت Quill --}}
+{{-- اسکریپت ویرایشگر HTML --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const quill = new Quill('#editor', {
-            theme: 'snow',
-            direction: 'rtl',
-            modules: {
-                toolbar: [
-                    [{ 'header': [2, 3, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['link'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'align': [] }],
-                ]
-            }
-        });
+    function getHtmlEditor(editorId) {
+        return document.getElementById(editorId);
+    }
 
-        quill.root.innerHTML = `{!! $description !!}`;
+    function notifyHtmlEditor(editor) {
+        editor.dispatchEvent(new Event('input', { bubbles: true }));
+        editor.focus();
+    }
 
-        quill.on('text-change', function() {
-            @this.set('description', quill.root.innerHTML);
-        });
+    function insertHtmlTag(editorId, tag) {
+        const editor = getHtmlEditor(editorId);
+        if (!editor) return;
 
-        Livewire.on('descriptionUpdated', (content) => {
-            if (quill.root.innerHTML !== content) {
-                quill.root.innerHTML = content;
-            }
-        });
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const selectedText = editor.value.substring(start, end);
+        const html = selectedText.length > 0
+            ? '<' + tag + '>' + selectedText + '</' + tag + '>'
+            : '<' + tag + '></' + tag + '>';
 
-    });
+        editor.setRangeText(html, start, end, 'end');
+        notifyHtmlEditor(editor);
+    }
+
+    function insertImageTag(editorId) {
+        const editor = getHtmlEditor(editorId);
+        if (!editor) return;
+
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const selectedText = editor.value.substring(start, end);
+        const html = selectedText.length > 0
+            ? '<img src="' + selectedText + '" alt="" class="article-image">'
+            : '<img src="" alt="" class="article-image">';
+
+        editor.setRangeText(html, start, end, 'end');
+        notifyHtmlEditor(editor);
+    }
+
+    function insertBrTag(editorId) {
+        const editor = getHtmlEditor(editorId);
+        if (!editor) return;
+
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.setRangeText('<br>', start, end, 'end');
+        notifyHtmlEditor(editor);
+    }
+
+    function insertUlTag(editorId) {
+        const editor = getHtmlEditor(editorId);
+        if (!editor) return;
+
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const selectedText = editor.value.substring(start, end);
+
+        const html = selectedText.length > 0
+            ? `<ul>
+    <li>${selectedText}</li>
+    <li>مورد دوم</li>
+    <li>مورد سوم</li>
+</ul>`
+            : `<ul>
+    <li>مورد اول</li>
+    <li>مورد دوم</li>
+    <li>مورد سوم</li>
+</ul>`;
+
+        editor.setRangeText(html, start, end, 'end');
+        notifyHtmlEditor(editor);
+    }
+
+    function insertTableTag(editorId) {
+        const editor = getHtmlEditor(editorId);
+        if (!editor) return;
+
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        const selectedText = editor.value.substring(start, end);
+
+        const html = selectedText.length > 0
+            ? `<table>
+    <thead>
+        <tr>
+            <th>${selectedText}</th>
+            <th>عنوان</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>مقدار</td>
+            <td>مقدار</td>
+        </tr>
+        <tr>
+            <td>مقدار</td>
+            <td>مقدار</td>
+        </tr>
+    </tbody>
+</table>`
+            : `<table>
+    <thead>
+        <tr>
+            <th>عنوان ۱</th>
+            <th>عنوان ۲</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>مقدار</td>
+            <td>مقدار</td>
+        </tr>
+        <tr>
+            <td>مقدار</td>
+            <td>مقدار</td>
+        </tr>
+    </tbody>
+</table>`;
+
+        editor.setRangeText(html, start, end, 'end');
+        notifyHtmlEditor(editor);
+    }
 </script>

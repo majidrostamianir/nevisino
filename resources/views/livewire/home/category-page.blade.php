@@ -32,7 +32,8 @@
                 <h1 class="text-gray-700">
                     {{ $url->title_h1 }}
                 </h1>
-                <div class="p-4 text-justify text-xl">
+
+                <div class="article-content text-justify">
                     {!! $url->mini_article !!}
                 </div>
             </div>
@@ -54,9 +55,11 @@
         @endif
 
         @if($url->article)
-            <div class="bg-white rounded-xl text-xl shadow-md p-8 mb-4 article text-justify">
-                {!! $url->article !!}
-            </div>
+                <div class="bg-white rounded-xl shadow-md p-8 mb-4 article">
+                    <div class="article-content text-justify">
+                        {!! $url->article !!}
+                    </div>
+                </div>
         @endif
     </div>
 </div>

@@ -185,6 +185,11 @@
                         class="editor-btn">
                     TABLE
                 </button>
+                <button type="button"
+                        onclick="insertUlTag('mini_article')"
+                        class="editor-btn">
+                    UL
+                </button>
 
             </div>
 
@@ -294,6 +299,11 @@
                         onclick="insertTableTag('article')"
                         class="editor-btn">
                     TABLE
+                </button>
+                <button type="button"
+                        onclick="insertUlTag('article')"
+                        class="editor-btn">
+                    UL
                 </button>
 
             </div>
@@ -635,6 +645,57 @@
             editor.focus();
         }
 
+        function insertUlTag(editorId) {
+
+            const editor = document.getElementById(editorId);
+
+            if (!editor) {
+                return;
+            }
+
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+
+            const selectedText =
+                editor.value.substring(start, end);
+
+            let html;
+
+            if (selectedText.length > 0) {
+
+                html =
+                    `<ul>
+    <li>${selectedText}</li>
+    <li>مورد دوم</li>
+    <li>مورد سوم</li>
+</ul>`;
+
+            } else {
+
+                html =
+                    `<ul>
+    <li>مورد اول</li>
+    <li>مورد دوم</li>
+    <li>مورد سوم</li>
+</ul>`;
+
+            }
+
+            editor.setRangeText(
+                html,
+                start,
+                end,
+                'end'
+            );
+
+            editor.dispatchEvent(
+                new Event('input', {
+                    bubbles: true
+                })
+            );
+
+            editor.focus();
+        }
 
         /*
         |--------------------------------------------------------------------------

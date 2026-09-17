@@ -143,7 +143,7 @@
         </div>
         <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
             <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                کارمزد درگاه:
+                کارمزد درگاه قسطی:
             </label>
             <input
                     type="number"
@@ -271,7 +271,7 @@
                                    wire:model="prices.{{ $product->id }}.price"
                                    wire:key="price-{{ $product->id }}"
                                    class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
-                                   placeholder="قیمت">
+                                   placeholder="قیمت اصلی">
                             {{-- نمایش قیمت قبلی --}}
                             <div class="text-xs text-gray-500 flex flex-col">
                                 <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['price_previous'])) }} تومان</span>

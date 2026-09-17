@@ -78,34 +78,192 @@
         display: none !important;
     }
 
+
+    /* =========================
+   Article
+========================= */
+
+    .article {
+        color: #374151;
+        font-size: 1rem;
+        line-height: 2rem;
+        word-spacing: 1px;
+    }
+
+    /* Paragraph */
+    .article p {
+        margin-top: 0;
+        margin-bottom: 1.2rem;
+    }
+
+    /* =========================
+       Headings
+    ========================= */
+
     .article h1 {
         font-size: 1.6rem;
-        font-weight: bolder;
+        font-weight: 800;
+        line-height: 1.6;
+        margin: 0 0 1.2rem;
     }
 
     .article h2 {
-        font-size: 1.3rem;
-        font-weight: bold;
+        font-size: 1.35rem;
+        font-weight: 700;
+        line-height: 1.6;
+        margin-top: 2rem;
+        margin-bottom: 0.8rem;
     }
 
     .article h3 {
-        font-size: 1.1rem;
-        font-weight: bold;
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.6;
+        margin-top: 1.7rem;
+        margin-bottom: 0.7rem;
     }
 
+    .article h4 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        line-height: 1.6;
+        margin-top: 1.5rem;
+        margin-bottom: 0.6rem;
+    }
+
+    /* =========================
+       Links
+    ========================= */
+
     .article a {
-        color: #00c8ff;
+        color: #00aee6;
+        text-decoration: none;
     }
 
     .article a:hover {
         color: #04b6e7;
-
+        text-decoration: underline;
     }
+
+    /* =========================
+       Lists
+    ========================= */
+
+    .article ul {
+        list-style-type: disc;
+        padding-right: 30px;
+        margin-top: 1rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .article ol {
+        list-style-type: decimal;
+        padding-right: 30px;
+        margin-top: 1rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .article ul li,
+    .article ol li {
+        display: list-item;
+        margin-bottom: 8px;
+        padding-right: 4px;
+    }
+
+    /* =========================
+       Images
+    ========================= */
+
+    .article img,
     .article-image {
         display: block;
-        margin: 24px auto;
-        border-radius: 12px;
         max-width: 100%;
         height: auto;
+        margin: 28px auto;
+        border-radius: 12px;
+    }
+
+    /* =========================
+       Strong
+    ========================= */
+
+    .article strong {
+        font-weight: 700;
+    }
+
+    /* =========================
+       Table
+    ========================= */
+
+    .article table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 24px 0;
+        overflow: hidden;
+    }
+
+    .article th,
+    .article td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 12px;
+        text-align: right;
+    }
+
+    .article th {
+        font-weight: 700;
+    }
+
+    /* =========================
+       BR
+    ========================= */
+
+    .article br {
+        line-height: 2rem;
+    }
+
+    /* =========================
+       Mobile
+    ========================= */
+
+    @media (max-width: 640px) {
+
+        .article {
+            font-size: 0.95rem;
+            line-height: 1.9rem;
+            word-spacing: 0;
+        }
+
+        .article h1 {
+            font-size: 1.4rem;
+        }
+
+        .article h2 {
+            font-size: 1.2rem;
+            margin-top: 1.6rem;
+        }
+
+        .article h3 {
+            font-size: 1.05rem;
+            margin-top: 1.4rem;
+        }
+
+        .article-content {
+            padding: 0 !important;
+        }
+
+        .article img,
+        .article-image {
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+
+        .article table {
+            font-size: 0.9rem;
+        }
+
+        .article th,
+        .article td {
+            padding: 8px;
+        }
     }
 }
