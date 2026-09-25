@@ -10,7 +10,7 @@ use App\Models\Url;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
-
+use Illuminate\Support\Facades\Session;
 class Save extends Component
 {
     public Product $product;
@@ -30,7 +30,11 @@ class Save extends Component
         'discounted_installment_price' => null,
         'discounted_installment_price_previous' => null,
     ];
+    public $profitPercent = 20;
+    public $gatewayFeePercent = 13;
 
+    public $price_for_show = 0;
+    public $installment_price_for_show = 0;
     // تاریخ‌های بروزرسانی به صورت آرایه
     public array $price_updates = [
         'price_updated_at' => null,
@@ -48,6 +52,9 @@ class Save extends Component
 
     public function mount($product = null): void
     {
+        $this->profitPercent = Session::get('profit_percent', 20);
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 13);
+
         if ($product) {
             $this->brandId = $product->brand_id;
             $this->product = $product;
@@ -80,7 +87,7 @@ class Save extends Component
 
             // پر کردن آرایه قیمت‌ها از مدل
             $this->fillPricesFromModel();
-
+            $this->calculatePriceFromBulk();
             $this->variants = $product->variants->map(function ($v) {
                 return [
                     'id' => $v->id,
@@ -173,6 +180,60 @@ class Save extends Component
         return $rules;
     }
 
+    public function updatedPrices($value, $key): void
+    {
+        if ($key === 'bulk_price') {
+            $this->calculatePriceFromBulk();
+        }
+    }
+
+    public function updatedProfitPercent($value): void
+    {
+        Session::put('profit_percent', (int) $value);
+        $this->profitPercent = Session::get('profit_percent', 20);
+
+        $this->calculatePriceFromBulk();
+    }
+
+    public function updatedGatewayFeePercent($value): void
+    {
+        Session::put('gateway_fee_percent', (float) $value);
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 13);
+
+        $this->calculatePriceFromBulk();
+    }
+
+    public function calculatePriceFromBulk(): void
+    {
+        $bulk = $this->prices['bulk_price'] ?? 0;
+
+        // حذف جداکننده‌ها
+        $bulk = (int) str_replace(
+            [',', '،', ' ', '_'],
+            '',
+            $bulk
+        );
+
+        if ($bulk <= 0) {
+            $this->price_for_show = 0;
+            $this->installment_price_for_show = 0;
+            return;
+        }
+
+        // قیمت نقدی
+        $cashPrice = $bulk * (1 + ($this->profitPercent / 100));
+
+        $this->price_for_show = (int) $cashPrice;
+
+        // قیمت اقساطی
+        if ($this->gatewayFeePercent >= 100 || $this->gatewayFeePercent <= 0) {
+            $this->installment_price_for_show = 0;
+        } else {
+            $this->installment_price_for_show = (int) round(
+                $cashPrice / (1 - ($this->gatewayFeePercent / 100))
+            );
+        }
+    }
     public function save()
     {
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));

@@ -49,13 +49,30 @@
                 <div class="flex flex-col gap-3">
                     <div>
                         <small class="mr-2 text-gray-700 font-medium">انتخاب ویژگی</small>
-                        <select class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400 focus:border-transparent transition-all mt-1" wire:model.live="selectedAttributeForValue">
+
+                        <input
+                                type="text"
+                                wire:model.live.debounce.300ms="attributeSearch"
+                                class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400 focus:border-transparent transition-all mt-1"
+                                placeholder="جستجوی ویژگی یا دسته بندی..."
+                        >
+
+                        <select
+                                class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pars-400 focus:border-transparent transition-all mt-2"
+                                wire:model.live="selectedAttributeForValue"
+                        >
                             <option value="">انتخاب ویژگی</option>
+
                             @foreach($allAttributes as $attr)
-                                <option value="{{ $attr->id }}">{{ $attr->category->title }} - {{ $attr->name }}</option>
+                                <option value="{{ $attr->id }}">
+                                    {{ $attr->category->title }} - {{ $attr->name }}
+                                </option>
                             @endforeach
                         </select>
-                        @error('selectedAttributeForValue') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
+
+                        @error('selectedAttributeForValue')
+                        <span class="text-xs text-red-500 mt-1">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div>

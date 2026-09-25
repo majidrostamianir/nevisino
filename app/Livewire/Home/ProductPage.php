@@ -522,6 +522,6 @@ class ProductPage extends Component
             })
             ->limit(8)
             ->get();
-        return view('livewire.home.product-page' , compact('relatedProducts'))->layout('components.layouts.product');
+        return view('livewire.home.product-page' , compact('relatedProducts'))->layout('components.layouts.product')->title($this->product->title . ' | نویسینو');
     }
 }

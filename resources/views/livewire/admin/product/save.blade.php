@@ -9,14 +9,17 @@
             color: white;
             transition: all 0.3s ease;
         }
+
         .nav-btn:hover:not(.disabled) {
-            background-color: rgba(255,255,255,0.2);
+            background-color: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
         }
+
         .nav-btn.disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+
         .icon {
             font-size: 18px;
             line-height: 1;
@@ -26,6 +29,7 @@
         .searchable-select {
             position: relative;
         }
+
         .searchable-select .dropdown-menu {
             position: absolute;
             z-index: 50;
@@ -34,14 +38,16 @@
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             max-height: 200px;
             overflow: hidden;
         }
+
         .searchable-select .dropdown-search {
             padding: 8px;
             border-bottom: 1px solid #f3f4f6;
         }
+
         .searchable-select .dropdown-search input {
             width: 100%;
             border-radius: 0.75rem;
@@ -50,33 +56,40 @@
             font-size: 0.875rem;
             outline: none;
         }
+
         .searchable-select .dropdown-search input:focus {
             border-color: #8B5CF6;
             ring: 1px solid #8B5CF6;
         }
+
         .searchable-select .dropdown-options {
             overflow-y: auto;
             max-height: 150px;
         }
+
         .searchable-select .dropdown-options .option-item {
             padding: 8px 16px;
             cursor: pointer;
             font-size: 0.875rem;
             transition: all 0.15s;
         }
+
         .searchable-select .dropdown-options .option-item:hover {
             background-color: #f3f4f6;
         }
+
         .searchable-select .dropdown-options .option-item.selected {
             background-color: #EDE9FE;
             color: #5B21B6;
         }
+
         .searchable-select .dropdown-options .no-result {
             padding: 8px 16px;
             text-align: center;
             color: #9CA3AF;
             font-size: 0.875rem;
         }
+
         .searchable-select .selected-display {
             width: 100%;
             border-radius: 1rem;
@@ -89,13 +102,16 @@
             align-items: center;
             font-size: 0.875rem;
         }
+
         .searchable-select .selected-display:focus {
             border-color: #8B5CF6;
             ring: 1px solid #8B5CF6;
         }
+
         .searchable-select .selected-display .arrow {
             transition: transform 0.2s;
         }
+
         .searchable-select .selected-display .arrow.open {
             transform: rotate(180deg);
         }
@@ -109,6 +125,7 @@
             flex-wrap: wrap;
             gap: 4px 8px;
         }
+
         .price-history span {
             background: #F3F4F6;
             padding: 1px 8px;
@@ -223,7 +240,8 @@
                     <div @click="open = !open"
                          class="selected-display">
                         <span x-text="options[selected] || 'انتخاب کنید'"></span>
-                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
@@ -285,7 +303,8 @@
                     <div @click="open = !open"
                          class="selected-display">
                         <span x-text="options[selected] || 'انتخاب کنید'"></span>
-                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
@@ -323,7 +342,8 @@
         {{-- تنوع --}}
         <div class="sm:w-3/12 p-1">
             <small class="pr-2">تنوع</small>
-            <input type="text" class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="تنوع" wire:model.blur="variant">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="تنوع"
+                   wire:model.blur="variant">
             @error('variant')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -332,7 +352,8 @@
         {{-- کد کالا --}}
         <div class="sm:w-3/12 p-1">
             <small class="pr-2">کد کالا</small>
-            <input type="text" class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="کد کالا" wire:model="code">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="کد کالا"
+                   wire:model="code">
             @error('code')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -341,7 +362,8 @@
         {{-- عنوان و آدرس --}}
         <div class="sm:w-full p-1">
             <small class="pr-2">عنوان و آدرس</small>
-            <input type="text" class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="عنوان و آدرس" wire:model="title">
+            <input type="text" class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="عنوان و آدرس" wire:model="title">
             @error('title')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -350,7 +372,8 @@
         {{-- لینک ترب --}}
         <div class="sm:w-full p-1">
             <small class="pr-2">لینک ترب</small>
-            <input type="url" class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="https://torob.com/..." wire:model="torob_url">
+            <input type="url" class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="https://torob.com/..." wire:model="torob_url">
             @error('torob_url')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -370,8 +393,10 @@
                 <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'h3')">H3</button>
                 <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'h4')">H4</button>
                 <button type="button" class="html-editor-btn" onclick="insertImageTag('description')">IMG</button>
-                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'strong')">B</button>
-                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'span')">SPAN</button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'strong')">B
+                </button>
+                <button type="button" class="html-editor-btn" onclick="insertHtmlTag('description', 'span')">SPAN
+                </button>
                 <button type="button" class="html-editor-btn" onclick="insertBrTag('description')">BR</button>
                 <button type="button" class="html-editor-btn" onclick="insertTableTag('description')">TABLE</button>
                 <button type="button" class="html-editor-btn" onclick="insertUlTag('description')">UL</button>
@@ -393,15 +418,36 @@
     </div>
 
     {{-- بخش قیمت‌ها --}}
+    <div class="flex gap-4 mt-4">
+        <h3 class=" text-lg font-bold text-gray-700 pr-2">💰 قیمت‌ها</h3>
+        <div class="flex items-center gap-2 ">
+            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">درصد سود:</label>
+            <input type="number"
+                   wire:model.live.debounce.1000ms="profitPercent"
+                   class="w-16 rounded-lg border border-gray-300 px-2  text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                   min="0" max="1000">
+            <span class="text-xs text-gray-500">%</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                کارمزد درگاه قسطی:
+            </label>
+            <input
+                    type="number"
+                    wire:model.live.debounce.1000ms="gatewayFeePercent"
+                    class="w-16 rounded-lg border border-gray-300 px-2  text-sm"
+                    min="0"
+                    max="100">
+            <span class="text-xs text-gray-500">%</span>
+        </div>
+    </div>
     <div class="sm:flex sm:flex-wrap justify-between mt-4 border-t border-gray-200 pt-4">
-        <h3 class="w-full text-lg font-bold text-gray-700 mb-3 pr-2">💰 قیمت‌ها</h3>
-
-
 
         {{-- قیمت عمده --}}
         <div class="sm:w-4/12 p-1">
             <small class="pr-2">قیمت عمده</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت عمده به تومان" wire:model="prices.bulk_price">
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="قیمت عمده به تومان" wire:model="prices.bulk_price">
             @error('prices.bulk_price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -414,8 +460,16 @@
         </div>
         {{-- قیمت اصلی --}}
         <div class="sm:w-4/12 p-1">
-            <small class="pr-2">قیمت اصلی <span class="text-red-500">*</span></small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اصلی به تومان" wire:model="prices.price">
+            <div class="flex gap-2">
+                <small class="pr-2">قیمت اصلی <span class="text-red-500">*</span></small>
+                @if($price_for_show > 0)
+                    <small class="block text-blue-400 mb-1">
+                        {{ english_to_persian_num(number_format($price_for_show)) }}
+                    </small>
+                @endif
+            </div>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="قیمت اصلی به تومان" wire:model="prices.price">
             @error('prices.price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -428,8 +482,16 @@
         </div>
         {{-- قیمت اقساطی --}}
         <div class="sm:w-4/12 p-1">
-            <small class="pr-2">قیمت اقساطی</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اقساطی به تومان" wire:model="prices.installment_price">
+            <div class="flex gap-2">
+                <small class="pr-2">قیمت اقساطی</small>
+                @if($installment_price_for_show > 0)
+                    <small class="block text-blue-400 mb-1">
+                        {{ english_to_persian_num(number_format($installment_price_for_show)) }}
+                    </small>
+                @endif
+            </div>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="قیمت اقساطی به تومان" wire:model="prices.installment_price">
             @error('prices.installment_price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -444,7 +506,8 @@
         {{-- قیمت تخفیف‌خورده --}}
         <div class="sm:w-4/12 p-1">
             <small class="pr-2">قیمت تخفیف‌خورده</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت تخفیف‌خورده به تومان" wire:model="prices.discounted_price">
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="قیمت تخفیف‌خورده به تومان" wire:model="prices.discounted_price">
             @error('prices.discounted_price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -459,7 +522,8 @@
         {{-- قیمت اقساطی تخفیف‌خورده --}}
         <div class="sm:w-4/12 p-1">
             <small class="pr-2">قیمت اقساطی تخفیف‌خورده</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="قیمت اقساطی تخفیف‌خورده به تومان" wire:model="prices.discounted_installment_price">
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="قیمت اقساطی تخفیف‌خورده به تومان" wire:model="prices.discounted_installment_price">
             @error('prices.discounted_installment_price')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -474,7 +538,8 @@
         {{-- موجودی --}}
         <div class="sm:w-4/12 p-1">
             <small class="pr-2">موجودی</small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="موجودی" wire:model="stock" @if($variant) disabled @endif>
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="موجودی" wire:model="stock" @if($variant) disabled @endif>
             @error('stock')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -523,7 +588,8 @@
                     <div @click="open = !open"
                          class="selected-display">
                         <span x-text="options[selected] || 'انتخاب کنید'"></span>
-                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="arrow w-4 h-4 text-gray-400" :class="open ? 'open' : ''" fill="none"
+                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </div>
@@ -561,7 +627,8 @@
         {{-- وزن --}}
         <div class="sm:w-6/12 p-1">
             <small class="pr-2">وزن به گرم <span class="text-red-500">*</span></small>
-            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300" placeholder="وزن به گرم" wire:model="weight">
+            <input type="number" x-on:wheel.prevent class="w-full rounded-2xl bg-white pr-2 border border-gray-300"
+                   placeholder="وزن به گرم" wire:model="weight">
             @error('weight')
             <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
             @enderror
@@ -580,15 +647,20 @@
                     @foreach ($selectedAttrs as $attributeId => $data)
                         <div class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-pars-100 text-pars-700">
                             <span>{{ $data['attribute_name'] }} : {{ $data['value'] }}</span>
-                            <button wire:click="removeAttr({{ $attributeId }})" class="text-red-600 hover:text-red-800" title="حذف">🗑️</button>
+                            <button wire:click="removeAttr({{ $attributeId }})" class="text-red-600 hover:text-red-800"
+                                    title="حذف">🗑️
+                            </button>
                         </div>
                     @endforeach
-                    <input class="flex-1 min-w-[100px] outline-none py-2" type="text" wire:model.live.debounce.300ms="queryAttr" wire:focus="focusAttr" wire:click.away="blurAttr" placeholder="جستجوی ویژگی ها...">
+                    <input class="flex-1 min-w-[100px] outline-none py-2" type="text"
+                           wire:model.live.debounce.300ms="queryAttr" wire:focus="focusAttr" wire:click.away="blurAttr"
+                           placeholder="جستجوی ویژگی ها...">
                 </div>
                 @if ($isFocusedAttr && !empty($attrs))
                     <ul class="absolute z-10 bg-white mt-1 rounded shadow w-full max-h-60 overflow-y-auto">
                         @foreach ($attrs as $item)
-                            <li wire:click="selectAttr({{ $item['attribute_id'] }}, {{ $item['value_id'] }}, '{{ $item['attribute_name'] }}', '{{ $item['value'] }}')" class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
+                            <li wire:click="selectAttr({{ $item['attribute_id'] }}, {{ $item['value_id'] }}, '{{ $item['attribute_name'] }}', '{{ $item['value'] }}')"
+                                class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
                                 {{ $item['attribute_name'] }} : {{ $item['value'] }}
                             </li>
                         @endforeach
@@ -605,15 +677,20 @@
                     @foreach ($selectedUrls as $key => $value)
                         <div class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium bg-pars-100 text-pars-700">
                             <span>{{ $value }}</span>
-                            <button wire:click="removeUrl({{ $key }})" class="text-red-600 hover:text-red-800" title="حذف">🗑️</button>
+                            <button wire:click="removeUrl({{ $key }})" class="text-red-600 hover:text-red-800"
+                                    title="حذف">🗑️
+                            </button>
                         </div>
                     @endforeach
-                    <input class="flex-1 min-w-[100px] outline-none py-2" type="text" wire:focus="focus" wire:click.away="blur" wire:model.live.debounce.300ms="query" placeholder="جستجوی سردسته ها...">
+                    <input class="flex-1 min-w-[100px] outline-none py-2" type="text" wire:focus="focus"
+                           wire:click.away="blur" wire:model.live.debounce.300ms="query"
+                           placeholder="جستجوی سردسته ها...">
                 </div>
                 @if ($isFocused && !empty($urls))
                     <ul class="absolute z-10 bg-white mt-1 rounded shadow w-full max-h-60 overflow-y-auto">
                         @foreach ($urls as $key => $value)
-                            <li wire:click="selectUrl({{ $key }})" class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
+                            <li wire:click="selectUrl({{ $key }})"
+                                class="px-2 py-1 cursor-pointer hover:bg-pars-400 hover:text-pars-500">
                                 {{ $value }}
                             </li>
                         @endforeach
@@ -633,24 +710,32 @@
             @foreach($variants as $i => $variantItem)
                 <div class="flex flex-wrap gap-2 items-center mb-2">
                     <span class="w-8 text-gray-500">{{ $i+1 }} .</span>
-                    <input type="text" class="rounded-2xl flex-1 min-w-[150px] pr-2 border border-gray-300" placeholder="نام ویژگی (مثلاً قرمز، بتمن)" wire:model="variants.{{ $i }}.name">
+                    <input type="text" class="rounded-2xl flex-1 min-w-[150px] pr-2 border border-gray-300"
+                           placeholder="نام ویژگی (مثلاً قرمز، بتمن)" wire:model="variants.{{ $i }}.name">
                     @error('variants.' . $i . '.name')
                     <span class="text-xs text-red-500 font-semibold w-full">{{ $message }}</span>
                     @enderror
-                    <input type="number" x-on:wheel.prevent class="rounded-2xl w-32 pr-2 border border-gray-300" placeholder="موجودی" wire:model="variants.{{ $i }}.stock">
+                    <input type="number" x-on:wheel.prevent class="rounded-2xl w-32 pr-2 border border-gray-300"
+                           placeholder="موجودی" wire:model="variants.{{ $i }}.stock">
                     @error('variants.' . $i . '.stock')
                     <span class="text-xs text-red-500 font-semibold w-full">{{ $message }}</span>
                     @enderror
-                    <button type="button" class="text-red-500 font-bold px-2 cursor-pointer hover:text-red-700" wire:click="removeVariant({{ $i }})">🗑️ حذف</button>
+                    <button type="button" class="text-red-500 font-bold px-2 cursor-pointer hover:text-red-700"
+                            wire:click="removeVariant({{ $i }})">🗑️ حذف
+                    </button>
                 </div>
             @endforeach
-            <button type="button" class="bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white text-sm px-4 py-1.5 rounded-2xl cursor-pointer" wire:click="addVariant">+ افزودن ویژگی</button>
+            <button type="button"
+                    class="bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white text-sm px-4 py-1.5 rounded-2xl cursor-pointer"
+                    wire:click="addVariant">+ افزودن ویژگی
+            </button>
         </div>
     @endif
 
     {{-- دکمه ذخیره --}}
     <div class="w-full text-center my-4">
-        <button class="w-1/2 rounded-2xl p-2 cursor-pointer bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white transition-all font-bold shadow-lg" wire:click="save()">
+        <button class="w-1/2 rounded-2xl p-2 cursor-pointer bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white transition-all font-bold shadow-lg"
+                wire:click="save()">
             💾 ذخیره و آپلود عکس ها
         </button>
     </div>
@@ -673,7 +758,7 @@
     }
 
     function notifyHtmlEditor(editor) {
-        editor.dispatchEvent(new Event('input', { bubbles: true }));
+        editor.dispatchEvent(new Event('input', {bubbles: true}));
         editor.focus();
     }
 

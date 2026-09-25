@@ -19,9 +19,7 @@
                     class="border-b border-gray-200 transition-colors hover:bg-gray-50 {{ $loop->even ? 'bg-gray-50/50' : 'bg-white' }}">
                     <td class="px-4 py-3 text-sm text-gray-600">{{ english_to_persian_num($index + 1) }}</td>
                     <td class="px-4 py-3 text-sm">
-                        <span class="cursor-pointer hover:text-pars-600 transition-colors font-medium
-                            @if($value->in_menu) text-pars-700 @else text-pars-500 @endif"
-                              wire:click.prevent="setUrl({{ $value->id }})">
+                        <span class="cursor-pointer hover:text-pars-600 transition-colors font-medium">
                             {{ $value->title_tag }}
                         </span>
                         <a target="_blank" href="{{ route('category-page' , ['dashed' => $value->dashed_url]) }}"
