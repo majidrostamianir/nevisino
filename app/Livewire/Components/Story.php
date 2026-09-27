@@ -20,8 +20,9 @@ class Story extends Component
         return cache()->remember('home_stories', 900, function () {
             return Category::query()->has('products')
                 ->with(['products' => function($query) {
-                    $query->select('id', 'category_id', 'title', 'dashed_url')
-                        ->take(10);
+                    $query->where('stock', '>', 0)
+                        ->select('id', 'category_id', 'title', 'dashed_url')
+                        ->take(1);
                 }])
                 ->get()
                 ->filter(fn($category) => $category->products->isNotEmpty())

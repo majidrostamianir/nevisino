@@ -1,8 +1,8 @@
 <div>
-    <div class="w-full lg:fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
+    <div class="w-full fixed top-0 right-0 z-50 px-4 py-2 bg-pars-100 shadow-sm">
         <div class="flex flex-col lg:hidden">
             <div class="flex justify-between items-center relative">
-                <a href="{{ route('home') }}" class="self-center mt-1" wire:navigate>
+                <a href="{{ route('home') }}" class="self-center" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
                 </a>
                 <div class="w-full pl-4">
@@ -13,7 +13,7 @@
         <div class="hidden lg:flex justify-between items-center">
             <div class="flex items-center w-2/5">
                 <a href="{{ route('home') }}" class="w-fit" wire:navigate>
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12 mt-1">
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
                 </a>
                 <div class="w-full relative">
                     <livewire:components.search/>
@@ -102,16 +102,6 @@
                         </ul>
                     </li>
                 @endforeach
-
-
-                {{-- <li>
-                     <a href="#"
-                        class="flex items-center p-2  rounded-lg dark:text-white hover:bg-pars-400 hover:text-pars-500 group">
-                         <img src="{{ asset('images/insta.png') }}" width="35">
-                         <span class="flex-1 ms-3 lg:hidden group-hover:block whitespace-nowrap">قالب اینستاگرام</span>
-                     </a>
-                 </li>--}}
-
             </ul>
         </div>
     </aside>
