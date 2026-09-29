@@ -32,6 +32,61 @@ class Index extends Component
 
         $this->loadProducts();
     }
+
+    public function calculateAndSaveAllInstallmentPrices()
+    {
+        try {
+            $gatewayFee = (float) $this->gatewayFeePercent;
+
+            if ($gatewayFee >= 100 || $gatewayFee <= 0) {
+                session()->flash('error', '❌ درصد کارمزد درگاه باید بین 0 تا 100 باشد.');
+                return;
+            }
+
+            $count = 0;
+
+            foreach ($this->products as $product) {
+                // خواندن قیمت اصلی از دیتابیس
+                $price = (int) $product->price;
+
+                if ($price <= 0) {
+                    continue; // محصول بدون قیمت اصلی معتبر رو رد کن
+                }
+
+                // محاسبه قیمت اقساطی از روی قیمت اصلی با کارمزد درگاه
+                $installmentPrice = (int) round($price / (1 - ($gatewayFee / 100)));
+
+                // رُند به بالا تا مضربی از 1000
+                $installmentPrice = (int) (ceil($installmentPrice / 1000) * 1000);
+
+                // تاریخچه
+                if ($product->installment_price != $installmentPrice) {
+                    $product->installment_price_previous = $product->installment_price;
+                    $product->installment_price_updated_at = now();
+                }
+
+                $product->installment_price = $installmentPrice;
+                $product->save();
+
+                // به‌روزرسانی آرایه‌ها
+                $this->prices[$product->id]['installment_price'] = (string) $installmentPrice;
+                $this->previousPrices[$product->id]['installment_price_previous'] = $product->installment_price_previous;
+                $this->priceUpdates[$product->id]['installment_price_updated_at'] = $product->installment_price_updated_at;
+
+                $count++;
+            }
+
+            if ($count > 0) {
+                session()->flash('message', "✅ قیمت اقساطی {$count} محصول با موفقیت محاسبه و ذخیره شد.");
+            } else {
+                session()->flash('error', '⚠ هیچ محصولی با قیمت اصلی معتبر برای محاسبه یافت نشد.');
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error bulk saving installment prices: ' . $e->getMessage());
+            session()->flash('error', '❌ خطا در محاسبه و ذخیره قیمت‌های اقساطی.');
+        }
+    }
     public function loadProducts()
     {
         $query = Product::query();

@@ -153,6 +153,35 @@
                     max="100">
             <span class="text-xs text-gray-500">%</span>
         </div>
+        {{-- دکمه محاسبه و ذخیره گروهی قیمت اقساطی --}}
+        <div class="flex items-center gap-2" x-data="{ confirming: false }">
+            <template x-if="!confirming">
+                <button @click="confirming = true"
+                        type="button"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-orange-500 text-white hover:bg-orange-600 transition-colors shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m-6 4h6m-6 4h3M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                    </svg>
+                    محاسبه قیمت اقساطی همه
+                </button>
+            </template>
+
+            <template x-if="confirming">
+                <div class="flex items-center gap-1 bg-yellow-50 border border-yellow-300 rounded-lg px-2 py-1">
+                    <span class="text-xs text-yellow-800 whitespace-nowrap">مطمئنی؟</span>
+                    <button @click="$wire.calculateAndSaveAllInstallmentPrices(); confirming = false"
+                            type="button"
+                            class="px-2 py-0.5 rounded text-xs font-medium bg-green-500 text-white hover:bg-green-600">
+                        بله
+                    </button>
+                    <button @click="confirming = false"
+                            type="button"
+                            class="px-2 py-0.5 rounded text-xs font-medium bg-gray-300 text-gray-700 hover:bg-gray-400">
+                        خیر
+                    </button>
+                </div>
+            </template>
+        </div>
         {{-- تعداد محصولات --}}
         <span class="text-sm text-gray-500 mr-auto">
             تعداد: {{ english_to_persian_num($products->count()) }} محصول
