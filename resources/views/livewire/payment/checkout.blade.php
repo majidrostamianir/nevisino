@@ -1,3 +1,6 @@
+@push('meta')
+    <meta name="robots" content="noindex, follow">
+@endpush
 <div
         x-data="{ showPopup: @entangle('showPopup').live }"
         x-cloak
@@ -442,16 +445,6 @@
                         <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
                         <span class="text-pars-700 ">{{ english_to_persian_num(number_format($sum)) }} <span
                                     class="text-xs text-gray-400">تومان</span></span>
-                    </div>
-                    <div class="flex justify-between items-center pb-4 border-gray-100">
-                        <span class="text-gray-600">هزینه بسته بندی</span>
-                        <span class="flex-1 border-t border-dashed border-gray-300 mx-2 self-center"></span>
-                        @if($sum >= $free_packaging_threshold)
-                            <span class="text-green-500 font-bold ">رایگان</span>
-                        @else
-                            <span class="text-pars-700 ">{{ english_to_persian_num(number_format($packaging_price)) }} <span
-                                        class="text-xs text-gray-400">تومان</span></span>
-                        @endif
                     </div>
                     <div class="flex justify-between items-center pb-4 border-gray-100">
                         <span class="text-gray-600">هزینه ارسال</span>
