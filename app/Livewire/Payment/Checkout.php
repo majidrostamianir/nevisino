@@ -65,7 +65,7 @@ class Checkout extends Component
         $this->torobpayEligible = false;
 
 
-       /* if ($this->amount <= 0) {
+        if ($this->amount <= 0) {
             $this->torobpayEligible = false;
             return;
         }
@@ -80,7 +80,7 @@ class Checkout extends Component
             }
         } catch (\Exception $e) {
             $this->torobpayEligible = false;
-        }*/
+        }
     }
 
     private function calculateSum()

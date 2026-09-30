@@ -502,8 +502,8 @@
                                 <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با ترب پی</span>
-{{--                                    <div class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان</div>--}}
-                                    <span class="text-xs text-red-500">بزودی</span>
+                                    <div class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان</div>
+{{--                                    <span class="text-xs text-red-500">بزودی</span>--}}
                                 </div>
                             </div>
                             <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}"
