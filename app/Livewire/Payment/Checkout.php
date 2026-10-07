@@ -242,7 +242,7 @@ class Checkout extends Component
 
             case 'torobpay':
                 if (!$this->torobpayEligible) {
-                    abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
+                    abort(403, 'پرداخت اقساطی ترب پی در حال حاضر در دسترس نیست.');
                 }
 
                 $order = $cart->convertToOrder($orderParams);
@@ -266,6 +266,80 @@ class Checkout extends Component
                     Log::error($e->getMessage());
                     abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
                 }
+/*            case 'digipay':
+                // ۱. تبدیل سبد خرید به سفارش
+                $order = $cart->convertToOrder($orderParams);
+
+                // ۲. ساخت رکورد تراکنش داخلی
+                $transaction = Transaction::query()->create([
+                    'order_id' => $order->id,
+                    'amount' => $finalAmount,
+                    'status' => 'pending',
+                    'payment_gateway' => 'digipay',
+                    'authority' => '',
+                ]);
+
+                try {
+                    // ۳. شماره موبایل کاربر
+                    $cellNumber = $this->user->mobile ?? $this->recipient_mobile;
+
+                    // ۴. providerId یونیک
+                    $providerId = 'order-' . $order->id . '-' . now()->timestamp;
+
+                    // ۵. مبلغ به ریال (چون دیجی‌پی ریال می‌گیره)
+                    $amountRial = $finalAmount * 10;
+
+                    // ۶. ساخت تیکت
+                    $result = app(TicketService::class)->create([
+                        'cellNumber' => $cellNumber,
+                        'amount' => $amountRial,
+                        'providerId' => $providerId,
+                        'callbackUrl' => route('digipay.callback'),
+                        'type' => 11, // UPG - همه ابزارهای پرداخت
+                    ]);
+
+                    // ۷. ذخیره اطلاعات دیجی‌پی
+                    DigipayTransaction::create([
+                        'order_id' => $order->id,
+                        'transaction_id' => $transaction->id,
+                        'provider_id' => $providerId,
+                        'ticket' => $result['ticket'] ?? null,
+                        'cell_number' => $cellNumber,
+                        'amount' => $amountRial,
+                        'type' => 11,
+                        'status' => DigipayTransaction::STATUS_PENDING,
+                        'callback_url' => route('digipay.callback'),
+                        'redirect_url' => $result['redirectUrl'] ?? null,
+                        'request_payload' => [
+                            'cellNumber' => $cellNumber,
+                            'amount' => $amountRial,
+                            'providerId' => $providerId,
+                            'callbackUrl' => route('digipay.callback'),
+                            'type' => 11,
+                        ],
+                        'response_payload' => $result,
+                    ]);
+
+                    // ۸. ذخیره ticket توی transaction داخلی برای پیگیری
+                    $transaction->update([
+                        'authority' => $result['ticket'] ?? '',
+                    ]);
+
+                    // ۹. ریدایرکت به درگاه دیجی‌پی
+                    return redirect()->away($result['redirectUrl']);
+
+                } catch (\Throwable $e) {
+                    $transaction->update(['status' => 'failed']);
+
+                    Log::error('Digipay pay error', [
+                        'order_id' => $order->id,
+                        'message' => $e->getMessage(),
+                    ]);
+
+                    $this->addError('payment', 'خطا در اتصال به دیجی‌پی. لطفاً مجدداً تلاش کنید.');
+
+                    return null;
+                }*/
         }
     }
 

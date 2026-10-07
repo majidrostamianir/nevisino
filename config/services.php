@@ -34,4 +34,17 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'digipay' => [
+        'base_url' => env('DIGIPAY_BASE_URL', 'https://api.mydigipay.com/digipay/api'),
+        'client_id' => env('DIGIPAY_CLIENT_ID'),
+        'client_secret' => env('DIGIPAY_CLIENT_SECRET'),
+        'username' => env('DIGIPAY_USERNAME'),
+        'password' => env('DIGIPAY_PASSWORD'),
+        'version' => env('DIGIPAY_VERSION', '2022-02-02'),
+        'agent' => env('DIGIPAY_AGENT', 'WEB'),
+    ],
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_ids'  => array_filter(array_map('trim', explode(',', env('TELEGRAM_CHAT_IDS', '')))),
+    ],
 ];

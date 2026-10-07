@@ -59,8 +59,8 @@ class visitTracker
                 Visit::query()->create([
                     'ip' => $ip ?? null,
                     'user_id' => auth()->id() ?? null,
-                    'url' => urldecode($request->path() ?? ''),
-                    'referrer' => $request->headers->get('referer') ? urldecode($request->headers->get('referer')) : null,
+                    'url' => rawurldecode($request->path() ?? ''),
+                    'referrer' => $request->headers->get('referer') ? rawurldecode($request->headers->get('referer')) : null,
                     'is_bot' => $isBot,
                     'user_agent' => $userAgent,
                 ]);

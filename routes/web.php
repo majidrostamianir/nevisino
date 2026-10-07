@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Http\Controllers\DigipayCallbackController;
+
 Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker::class , \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/', \App\Livewire\Home\Index::class)->name('home');
     Route::get('/shop', \App\Livewire\Home\Shop::class)->name('shop');
@@ -52,11 +54,16 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/contact-messages', \App\Livewire\Admin\Comment\ContactMessages::class)->name('admin.contact-messages');
 });
 
-
-Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
+Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobpayController::class, 'callback'])
+    ->name('torobpay.callback')
+    ->withoutMiddleware('auth');
+Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobpayCallback::class)
     ->name('torobpay.result')
     ->middleware('auth');
 
-Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
-    ->name('torobpay.callback')
+/*Route::post('/payment/digipay/callback', [\App\Http\Controllers\DigipayController::class, 'callback'])
+    ->name('digipay.callback')
     ->withoutMiddleware('auth');
+Route::get('/payment/digipay/result', \App\Livewire\Payment\DigipayCallback::class)
+    ->name('digipay.result')
+    ->middleware('auth');*/

@@ -477,7 +477,23 @@
                             </span>
                         <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                     </label>
-
+                    {{-- پرداخت با دیجی‌پی --}}
+                   {{-- <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                           :class="payment_method === 'digipay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
+                        <div class="flex items-center">
+                            <input type="radio" value="digipay" x-model="payment_method" class="hidden">
+                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
+                                  :class="payment_method === 'digipay' ? 'border-pars-500' : 'border-gray-400'">
+            <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                  x-show="payment_method === 'digipay'"></span>
+        </span>
+                            <div>
+                                <span class="text-sm font-medium text-gray-800">پرداخت با دیجی‌پی</span>
+                                <div class="text-xs text-gray-500">کارت بانکی، کیف پول، اعتباری و اقساطی</div>
+                            </div>
+                        </div>
+                        <img class="w-12 rounded-full shadow-sm" src="{{ asset('images/digipay.svg') }}" alt="دیجی‌پی">
+                    </label>--}}
                     @if($torobpayEligible)
                         <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                :class="payment_method === 'torobpay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">

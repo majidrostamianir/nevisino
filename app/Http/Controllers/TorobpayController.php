@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TorobpayStatusEnum;
+use App\Jobs\SendTelegramTransactionNotification;
 use App\Models\Transaction;
 use App\Services\TorobpayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\TelegramService;
 
-class TorobPayController extends Controller
+class TorobpayController extends Controller
 {
-    public function __construct(private TorobpayService $torobpay) {}
+    public function __construct(
+        private TorobpayService $torobpay,
+        private TelegramService $telegram
+    ) {}
 
     // ─────────────────────────────────────────────
     //  Callback - ترب‌پی کاربر رو اینجا برمیگردونه
@@ -84,10 +89,12 @@ class TorobPayController extends Controller
 
             DB::commit();
 
-            Log::info('TorobPay: payment verified and settled', [
-                'transaction_id'          => $transaction->id,
-                'torobpay_transaction_id' => $torobpayTransactionId,
-            ]);
+            $this->telegram->sendTorobPaySuccess(
+                $transaction,
+                $torobpayTransactionId
+            );
+
+            SendTelegramTransactionNotification::dispatch($transaction->id);
 
             return $this->successRedirect($transaction);
 
