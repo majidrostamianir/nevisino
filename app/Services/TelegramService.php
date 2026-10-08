@@ -39,11 +39,7 @@ class TelegramService
                     ]
                 );
 
-                Log::info('Telegram API response', [
-                    'chat_id' => $chatId,
-                    'status'  => $response->status(),
-                    'body'    => $response->json(),
-                ]);
+
 
             } catch (\Throwable $e) {
                 Log::error('Telegram notification failed', [
@@ -65,15 +61,13 @@ class TelegramService
 
         $message = "🟢 پرداخت موفق | ترب پی\n\n";
 
-        $message .= "💰 مبلغ تراکنش: " . number_format($transaction->amount) . " تومان\n";
-        $message .= "💳 درگاه: ترب پی\n";
+        $message .= " مبلغ تراکنش: " . number_format($transaction->amount) . " تومان\n";
 
-        $message .= "👤 گیرنده: {$order->recipient_name}\n";
-        $message .= "📱 موبایل: {$order->recipient_mobile}\n";
-        $message .= "🏠 آدرس: {$order->province} - {$order->city} - {$order->postal_address}\n\n";
+        $message .= " گیرنده: {$order->recipient_name}\n";
+        $message .= " موبایل: {$order->recipient_mobile}\n";
+        $message .= " آدرس: {$order->province} - {$order->city} - {$order->postal_address}\n\n";
 
         $message .= "🚚 روش ارسال: {$order->shipping_method->label()}\n";
-        $message .= "💵 هزینه ارسال: " . number_format($order->shipping_price) . " تومان\n\n";
 
         $message .= "🛍 محصولات:\n";
 
@@ -91,15 +85,14 @@ class TelegramService
             $message .= "\n";
         }
 
-        $message .= "🛒 مبلغ کالاها: " . number_format($order->total_price) . " تومان\n";
-        $message .= "💳 مبلغ نهایی پرداخت: " . number_format($order->amount) . " تومان\n";
+
 
         if (!empty($order->description)) {
             $message .= "\n📝 توضیحات مشتری:\n";
             $message .= "{$order->description}\n";
         }
 
-        $message .= "\n⏰ زمان تراکنش: ";
+        $message .= "\n زمان تراکنش: ";
         $message .= english_to_persian_num(verta($transaction->created_at)->format('Y/m/d H:i:s'));
 
         $this->sendMessage($message);

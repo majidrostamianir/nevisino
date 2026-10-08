@@ -9,13 +9,11 @@ use App\Services\TorobpayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Services\TelegramService;
 
 class TorobpayController extends Controller
 {
     public function __construct(
         private TorobpayService $torobpay,
-        private TelegramService $telegram
     ) {}
 
     // ─────────────────────────────────────────────
@@ -89,10 +87,6 @@ class TorobpayController extends Controller
 
             DB::commit();
 
-            $this->telegram->sendTorobPaySuccess(
-                $transaction,
-                $torobpayTransactionId
-            );
 
             SendTelegramTransactionNotification::dispatch($transaction->id);
 
