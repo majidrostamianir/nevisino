@@ -1,7 +1,6 @@
 <?php
 
 
-use App\Http\Controllers\DigipayCallbackController;
 
 Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker::class , \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/', \App\Livewire\Home\Index::class)->name('home');
