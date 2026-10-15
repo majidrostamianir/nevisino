@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TorobpayStatusEnum;
 use App\Jobs\SendTelegramTransactionNotification;
 use App\Models\Transaction;
+use App\Services\ProductService;
 use App\Services\TorobpayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ class TorobpayController extends Controller
 {
     public function __construct(
         private TorobpayService $torobpay,
+        private ProductService $productService,
     ) {}
 
     // ─────────────────────────────────────────────
@@ -77,16 +79,11 @@ class TorobpayController extends Controller
 
             // آپدیت سفارش
             $transaction->order->update(['status' => 'paid', 'shipping_status' => 'processing']);
-            foreach ($transaction->order->items as $item) {
-                if ($item->variant_id && $item->variant) {
-                    $item->variant->decrement('stock', $item->quantity);
-                } else {
-                    $item->product->decrement('stock', $item->quantity);
-                }
-            }
+
+            // کم کردن موجودی همه آیتم‌های سفارش از طریق ProductService
+            $this->productService->decrementStockForOrder($transaction->order);
 
             DB::commit();
-
 
             SendTelegramTransactionNotification::dispatch($transaction->id);
 

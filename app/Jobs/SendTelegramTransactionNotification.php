@@ -24,13 +24,12 @@ class SendTelegramTransactionNotification implements ShouldQueue
             return;
         }
 
-        switch ($transaction->payment_gateway) {
-            case 'torobpay':
-                $telegram->sendTorobPaySuccess(
-                    $transaction,
-                    $transaction->torobpay_transaction_id ?? '-'
-                );
-                break;
-        }
+        $label = match ($transaction->payment_gateway) {
+            'torobpay' => 'ترب پی',
+            'zibal'    => 'زیبال',
+            default    => 'آنلاین',
+        };
+
+        $telegram->sendPaymentSuccess($transaction, $label);
     }
 }

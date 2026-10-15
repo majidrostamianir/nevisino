@@ -22,5 +22,8 @@ class ProductVariant extends Model
         return $variant ? $variant->name : '';
     }
 
-
+    public function basalamProduct()
+    {
+        return $this->hasOne(BasalamProduct::class);
+    }
 }

@@ -47,4 +47,12 @@ return [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'chat_ids'  => array_filter(array_map('trim', explode(',', env('TELEGRAM_CHAT_IDS', '')))),
     ],
+    'ippanel' => [
+        'username'      => env('IPPANEL_USERNAME'),
+        'password'      => env('IPPANEL_PASSWORD'),
+        'from'          => env('IPPANEL_FROM'),
+        'pattern_codes' => [
+            'success_paid' => env('IPPANEL_PATTERN_SUCCESS_PAID'),
+        ],
+    ],
 ];

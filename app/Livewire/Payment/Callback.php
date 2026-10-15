@@ -2,79 +2,89 @@
 
 namespace App\Livewire\Payment;
 
+use App\Jobs\SendTelegramTransactionNotification;
 use App\Models\Transaction;
-use Carbon\Carbon;
+use App\Services\ProductService;
+use App\Services\SMS;
 use Livewire\Component;
 use Illuminate\Http\Request;
 use Shetabit\Multipay\Exceptions\InvalidPaymentException;
 use Shetabit\Payment\Facade\Payment;
-
 
 class Callback extends Component
 {
     public string $message;
     public $data = null;
 
-    public function mount(Request $request)
+    public function mount(Request $request, ProductService $productService, SMS $sms)
     {
-
         $authority = $request->query('trackId', '');
 
+        if (empty($authority)) {
+            abort(402, 'تراکنش نامعتبر');
+        }
+
+        // تراکنش رو فقط اگه مال کاربر فعلی باشه می‌گیریم
+        $transaction = Transaction::query()
+            ->where('authority', $authority)
+            ->whereHas('order', fn ($q) => $q->where('user_id', auth()->id()))
+            ->first();
+
+        if (!$transaction) {
+            abort(402, 'تراکنش نامعتبر');
+        }
+
+        // اگه قبلاً پردازش شده، دوباره پردازش نکن
+        if ($transaction->status === 'success') {
+            $this->message = 'این پرداخت قبلاً با موفقیت ثبت شده است.';
+            $this->data = [
+                'order_number'   => $transaction->order->order_number ?? null,
+                'authority'      => $transaction->authority,
+                'total_price'    => $transaction->order->total_price ?? null,
+                'shipping_price' => $transaction->order->shipping_price ?? null,
+                'amount'         => $transaction->amount,
+            ];
+            return;
+        }
+
         try {
-            $trans = Transaction::query()->where('authority', $authority);
+            $receipt = Payment::amount($transaction->amount)
+                ->transactionId($authority)
+                ->verify();
 
-            $receipt = Payment::amount($trans->first()->amount)->transactionId($authority)->verify();
-            $this->message = 'پرداخت با موفقیت انجام شد' . PHP_EOL . 'شناسه مرجع: ' . $receipt->getReferenceId();
+            $this->message = 'پرداخت با موفقیت انجام شد' . PHP_EOL
+                . 'شناسه مرجع: ' . $receipt->getReferenceId();
 
-            if ($trans->exists()) {
-                $transaction = $trans->first();
-                $transaction->update(['status' => "success"]);
-                $transaction->order()->update(['status' => "paid", 'shipping_status' => 'processing']);
-                $this->data['order_number'] = $transaction->order->order_number;
-                $this->data['authority'] = $transaction->authority;
-                $this->data['total_price'] = $transaction->order->total_price;
-                $this->data['shipping_price'] = $transaction->order->shipping_price;
-                $this->data['amount'] = $transaction->amount;
+            $transaction->update(['status' => 'success']);
+            $transaction->order()->update([
+                'status'          => 'paid',
+                'shipping_status' => 'processing',
+            ]);
 
-                foreach ($transaction->order->items as $item) {
+            $this->data['order_number']   = $transaction->order->order_number;
+            $this->data['authority']      = $transaction->authority;
+            $this->data['total_price']    = $transaction->order->total_price;
+            $this->data['shipping_price'] = $transaction->order->shipping_price;
+            $this->data['amount']         = $transaction->amount;
 
-                    if ($item->variant_id && $item->variant) {
-                        $item->variant->decrement('stock', $item->quantity);
-                    } else {
-                        $item->product->decrement('stock', $item->quantity);
-                    }
-                }
-                $this->sendVerifyOrderSms($this->data['order_number']);
-            } else {
-                abort(402, 'تراکنش نامعتبر');
-            }
+            // کم کردن موجودی همه آیتم‌های سفارش
+            $productService->decrementStockForOrder($transaction->order);
+
+            // پیامک به مشتری
+            $sms->successPaid(
+                orderNumber: $this->data['order_number'],
+                mobile:      auth()->user()->mobile,
+            );
+
+            // تلگرام به ادمین
+            SendTelegramTransactionNotification::dispatch($transaction->id);
+
         } catch (InvalidPaymentException $exception) {
             $this->message = $exception->getMessage();
-            $this->message = $this->message . "کد پیگیری: " . PHP_EOL . $authority;
+            $this->message .= "کد پیگیری: " . PHP_EOL . $authority;
         } catch (\Throwable $e) {
             $this->message = "خطای غیرمنتظره:" . PHP_EOL . $e->getMessage();
         }
-    }
-
-    public function sendVerifyOrderSms($order): void
-    {
-        $link = 'https://nevisino.ir/dashboard/order?open=' . $order;
-        $username = '09169889759';
-        $password = 'Faraz@1920115072';
-        $from = '3000505';
-        $pattern_code = 'yhvz50h4nox3dq4';
-        $to = array('98' . substr(\Auth::user()->mobile, 1));
-        $input_data = array('link' => $link);
-
-        $url = "https://ippanel.com/patterns/pattern?username=" . $username . "&password=" .
-            urlencode($password) . "&from=$from&to=" . json_encode($to) . "&input_data=" . urlencode(json_encode($input_data)) .
-            "&pattern_code=$pattern_code";
-        $handler = curl_init($url);
-        curl_setopt($handler, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($handler, CURLOPT_POSTFIELDS, $input_data);
-        curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
-        curl_exec($handler);
-        curl_close($handler);
     }
 
     public function render()

@@ -50,30 +50,24 @@ class TelegramService
         }
     }
 
+
     /**
-     * پیام پرداخت موفق ترب پی
+     * پیام پرداخت موفق (عمومی برای همه درگاه‌ها)
      */
-    public function sendTorobPaySuccess(
-        Transaction $transaction,
-        string $torobpayTransactionId
-    ): void {
+    public function sendPaymentSuccess(Transaction $transaction, string $gatewayLabel): void
+    {
         $order = $transaction->order;
 
-        $message = "🟢 پرداخت موفق | ترب پی\n\n";
-
-        $message .= " مبلغ تراکنش: " . number_format($transaction->amount) . " تومان\n";
-
-        $message .= " گیرنده: {$order->recipient_name}\n";
-        $message .= " موبایل: {$order->recipient_mobile}\n";
-        $message .= " آدرس: {$order->province} - {$order->city} - {$order->postal_address}\n\n";
-
-        $message .= "🚚 روش ارسال: {$order->shipping_method->label()}\n";
-
+        $message  = "🟢 سفارش موفق | {$gatewayLabel}\n\n";
+        $message .= "💰 مبلغ: " . number_format($transaction->amount) . " تومان\n\n";
+        $message .= "👤 گیرنده: {$order->recipient_name}\n";
+        $message .= "📱 موبایل: {$order->recipient_mobile}\n";
+        $message .= "📍 آدرس: {$order->province} - {$order->city} - {$order->postal_address}\n\n";
+        $message .= "🚚 روش ارسال: {$order->shipping_method->label()}\n\n";
         $message .= "🛍 محصولات:\n";
 
         foreach ($order->items as $item) {
             $title = $item->product->title ?? 'محصول';
-
             $message .= "• {$title}\n";
             $message .= "  تعداد: {$item->quantity} عدد\n";
             $message .= "  قیمت واحد: " . number_format($item->price_snapshot) . " تومان\n";
@@ -81,20 +75,24 @@ class TelegramService
             if ($item->variant_id && $item->variant) {
                 $message .= "  تنوع: {$item->variant->name}\n";
             }
-
             $message .= "\n";
         }
 
-
-
         if (!empty($order->description)) {
-            $message .= "\n📝 توضیحات مشتری:\n";
-            $message .= "{$order->description}\n";
+            $message .= "📝 توضیحات مشتری:\n{$order->description}\n";
         }
 
-        $message .= "\n زمان تراکنش: ";
+        $message .= "\n⏰ زمان تراکنش: ";
         $message .= english_to_persian_num(verta($transaction->created_at)->format('Y/m/d H:i:s'));
 
         $this->sendMessage($message);
+    }
+
+    /**
+     * @deprecated استفاده کن از sendPaymentSuccess
+     */
+    public function sendTorobPaySuccess(Transaction $transaction, string $torobpayTransactionId): void
+    {
+        $this->sendPaymentSuccess($transaction, 'ترب پی');
     }
 }

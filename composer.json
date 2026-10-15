@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "ext-curl": "*",
+        "basalam/php-sdk": "^1.2",
         "hekmatinasser/verta": "^8.5",
         "intervention/image": "^3.11",
         "laravel/framework": "^12.0",

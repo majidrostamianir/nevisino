@@ -105,4 +105,29 @@ class Product extends Model
     {
         return \App\Helpers\PriceHelper::getProductPrice($this);
     }
+    public function basalamProduct()
+    {
+        return $this->hasOne(BasalamProduct::class)
+            ->whereNull('product_variant_id');
+    }
+
+    public function basalamProducts()
+    {
+        return $this->hasMany(BasalamProduct::class);
+    }
+    /**
+     * آیا این محصول در باسلام ساخته شده؟
+     */
+    public function isSyncedToBasalam(): bool
+    {
+        return $this->basalamProduct?->status === 'synced';
+    }
+
+    /**
+     * شناسه محصول در باسلام
+     */
+    public function getBasalamIdAttribute(): ?string
+    {
+        return $this->basalamProduct?->basalam_product_id;
+    }
 }

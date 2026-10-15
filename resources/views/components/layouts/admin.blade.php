@@ -11,7 +11,6 @@
 
     @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
-
 </head>
 <body>
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
@@ -19,17 +18,15 @@
 
         <!-- موبایل -->
         <div class="flex flex-col sm:hidden">
-            <!-- ردیف اول در موبایل -->
             <div class="flex justify-between items-center mb-2">
                 <a href="{{ route('home') }}" class="self-center" wire:navigate>
                     <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
                 </a>
             </div>
-            <!-- ردیف دوم در موبایل -->
             <div class="flex justify-between items-center">
-                <button  @click="sidebarOpen = !sidebarOpen; if(!sidebarOpen) activeDropdown=null"
-                         type="button"
-                         class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                <button @click="sidebarOpen = !sidebarOpen; if(!sidebarOpen) activeDropdown=null"
+                        type="button"
+                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
                     <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
                          xmlns="http://www.w3.org/2000/svg">
                         <path clip-rule="evenodd" fill-rule="evenodd"
@@ -40,7 +37,6 @@
                 <div class="w-full pl-4">
                     <livewire:components.search/>
                 </div>
-
             </div>
         </div>
 
@@ -56,97 +52,130 @@
             </div>
         </div>
     </div>
+
     <aside
-        class="fixed top-10 sm:top-0 right-0 group z-40 pt-16 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
+            class="fixed top-10 sm:top-0 right-0 group z-40 pt-16 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
-        :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'"
-        @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
-        @mouseleave="if(window.innerWidth>=640) sidebarOpen=false; activeDropdown=null">
+            :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'"
+            @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
+            @mouseleave="if(window.innerWidth>=640) sidebarOpen=false; activeDropdown=null">
 
         <div class="h-full px-3 py-4 overflow-y-auto bg-pars-100">
-            <ul class="space-y-2 font-medium overflow-x-hidden ">
+            <ul class="space-y-2 font-medium overflow-x-hidden">
+
+                {{-- ═══ کاربران ═══ --}}
+                <li class="text-xs text-gray-400 px-2 pt-2 sm:hidden group-hover:block">کاربران</li>
+
                 <li>
                     <a href="{{ route('admin.user.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
                         👤
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">کاربران</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.visit.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
                         👁️
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">بازدیدها</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.static.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
                         📈
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">آمار</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.order.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
-                        📦
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سفارشات</span>
+                    <a href="{{ route('admin.contact-messages') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        🗨️
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">کامنت</span>
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('admin.setting.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
-                        ⚙️
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">تنظیمات</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.category.index') }}"
-                       class="flex items-center p-2 pr-3 rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
-                        ☰
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">منو و دسته بندی</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.url.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
-                        📑
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سئو صفحات دسته بندی</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.product.save') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
-                        🆕
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">محصول جدید</span>
-                    </a>
-                </li>
+
+                {{-- ═══ فروشگاه ═══ --}}
+                <li class="text-xs text-gray-400 px-2 pt-3 mt-2 border-t border-pars-300 sm:hidden group-hover:block">فروشگاه</li>
+
                 <li>
                     <a href="{{ route('admin.product.index') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
                         🛍️
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">محصولات</span>
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('admin.product.save') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        🆕
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">محصول جدید</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.order.index') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        📦
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سفارشات</span>
+                    </a>
+                </li>
+
+                {{-- ═══ دسته‌بندی ═══ --}}
+                <li class="text-xs text-gray-400 px-2 pt-3 mt-2 border-t border-pars-300 sm:hidden group-hover:block">دسته‌بندی</li>
+
+                <li>
+                    <a href="{{ route('admin.category.index') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        ☰
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">منو و دسته بندی</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('admin.product.attr') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
                         ✔️
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">ویژگی محصولات</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.brand') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
                         🏷️
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">برندها</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.contact-messages') }}"
-                       class="flex items-center p-2  rounded-lg  hover:bg-pars-400 hover:text-pars-500 group">
-                        🗨️
-                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">کامنت</span>
+                    <a href="{{ route('admin.url.index') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        📑
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سئو صفحات دسته بندی</span>
+                    </a>
+                </li>
+
+                {{-- ═══ باسلام ═══ --}}
+                <li class="text-xs text-gray-400 px-2 pt-3 mt-2 border-t border-pars-300 sm:hidden group-hover:block">باسلام</li>
+
+                <li>
+                    <a href="{{ route('admin.basalam.products') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        🔗
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">سینک باسلام</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.basalam.category-mapping') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        🗂️
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">دسته بندی باسلام</span>
+                    </a>
+                </li>
+
+                {{-- ═══ سیستم ═══ --}}
+                <li class="pt-3 mt-2 border-t border-pars-300">
+                    <a href="{{ route('admin.setting.index') }}"
+                       class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
+                        ⚙️
+                        <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">تنظیمات</span>
                     </a>
                 </li>
             </ul>
@@ -156,7 +185,7 @@
 
 <livewire:components.toast />
 
-<div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20  min-h-[65vh]">
+<div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20 min-h-[65vh]">
     {{ $slot }}
 </div>
 @livewireScripts

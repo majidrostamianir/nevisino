@@ -309,9 +309,11 @@ class Save extends Component
             ->whereNotIn('id', $keptIds)
             ->delete();
 
+        // ⬇️ سینک با باسلام بعد از همه تغییرات
+        app(\App\Services\ProductService::class)->syncToBasalam($this->product->fresh());
+
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
-
     private function updatePriceHistory(): void
     {
         // لیست قیمت‌ها و تاریخ‌های مربوطه
