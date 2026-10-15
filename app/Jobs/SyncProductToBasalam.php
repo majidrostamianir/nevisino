@@ -284,7 +284,8 @@ class SyncProductToBasalam implements ShouldQueue
      */
     protected function calculateBasalamPrice(int $price): int
     {
-        $withProfit = $price * 1.09 * 10;   // ← * 10 برای تبدیل تومان به ریال
+        $percent = (float) \Cache::get('basalam_profit_percent', 9);
+        $withProfit = $price * (1 + $percent / 100) * 10;
         return (int) (ceil($withProfit / 10000) * 10000);
     }
     /**

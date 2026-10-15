@@ -42,11 +42,7 @@
             <option value="none">بدون سینک</option>
         </select>
 
-        <select wire:model.live="perPage" class="border rounded-lg px-3 py-2 text-sm">
-            <option value="25">۲۵ در صفحه</option>
-            <option value="50">۵۰ در صفحه</option>
-            <option value="100">۱۰۰ در صفحه</option>
-        </select>
+
 
         <label class="flex items-center gap-2 text-sm bg-white border rounded-lg px-3 py-2">
             <input type="checkbox" wire:model="skipPhotos" class="rounded"/>
@@ -54,6 +50,17 @@
         </label>
 
         <div class="flex-1"></div>
+        <div class="flex items-center gap-2 bg-white border rounded-lg px-3 py-2">
+            <span class="text-sm text-gray-600">📈 درصد سود:</span>
+            <input type="number"
+                   wire:model="profitPercent"
+                   wire:blur="saveProfitPercent"
+                   step="0.5"
+                   min="0"
+                   max="200"
+                   class="w-20 rounded-lg border-gray-300 text-sm py-1 px-2 text-center">
+            <span class="text-sm text-gray-600">%</span>
+        </div>
 
         <button wire:click="syncSelected" class="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
             سینک انتخاب‌شده‌ها ({{ english_to_persian_num(count($selected)) }})

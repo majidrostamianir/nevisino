@@ -17,6 +17,19 @@ class Products extends Component
     public bool   $skipPhotos = false;
     public int    $perPage = 25;
 
+    public ?float $profitPercent = null;
+
+    public function mount(): void
+    {
+        $this->profitPercent = (float) \Cache::get('basalam_profit_percent', 9);
+    }
+
+    public function saveProfitPercent(): void
+    {
+        $this->validate(['profitPercent' => 'required|numeric|min:0|max:200']);
+        \Cache::forever('basalam_profit_percent', (float) $this->profitPercent);
+        session()->flash('success', "درصد افزایش قیمت به {$this->profitPercent}% تغییر کرد.");
+    }
     public function updatedSearch()       { $this->resetPage(); }
     public function updatedStatusFilter() { $this->resetPage(); }
     public function updatedPerPage()      { $this->resetPage(); }
