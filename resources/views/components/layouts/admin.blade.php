@@ -18,11 +18,11 @@
 
         <!-- موبایل -->
         <div class="flex flex-col sm:hidden">
-            <div class="flex justify-between items-center mb-2">
-                <a href="{{ route('home') }}" class="self-center" wire:navigate>
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
-                </a>
-            </div>
+{{--            <div class="flex justify-between items-center mb-2">--}}
+{{--                <a href="{{ route('home') }}" class="self-center" wire:navigate>--}}
+{{--                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">--}}
+{{--                </a>--}}
+{{--            </div>--}}
             <div class="flex justify-between items-center">
                 <button @click="sidebarOpen = !sidebarOpen; if(!sidebarOpen) activeDropdown=null"
                         type="button"
@@ -54,7 +54,7 @@
     </div>
 
     <aside
-            class="fixed top-10 sm:top-0 right-0 group z-40 pt-16 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
+            class="fixed top-0 sm:top-0 right-0 group z-40 pt-12 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
             :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'"
             @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
@@ -185,7 +185,7 @@
 
 <livewire:components.toast />
 
-<div class="mx-4 sm:mr-20 sm:ml-4 mt-32 sm:mt-20 min-h-[65vh]">
+<div class="mx-2 sm:mr-20 sm:ml-4 mt-18 sm:mt-20 min-h-[65vh]">
     {{ $slot }}
 </div>
 @livewireScripts
