@@ -5,5 +5,6 @@ return [
     'refresh_token' => env('BASALAM_REFRESH_TOKEN'),
     'vendor_id'     => env('BASALAM_VENDOR_ID'),
     'auto_sync'     => env('BASALAM_AUTO_SYNC', true),
-    'default_status' => 3790,
+    'default_status' => 2976,
+    'brand_attribute_id' => 1751,
 ];

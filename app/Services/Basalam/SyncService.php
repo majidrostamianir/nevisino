@@ -111,6 +111,8 @@ class SyncService
             'is_wholesale'     => $data['is_wholesale'] ?? false,
             'unit_quantity'    => $data['unit_quantity'] ?? 1,
             'unit_type'        => $data['unit_type'] ?? 6304,
+            'product_attribute' => $data['product_attribute'] ?? null,
+
         ];
 
         $payload = array_filter($payload, fn ($v) => !is_null($v));
@@ -165,6 +167,8 @@ class SyncService
             'sku'              => $data['sku'] ?? null,
             'unit_quantity'    => $data['unit_quantity'] ?? null,
             'unit_type'        => $data['unit_type'] ?? null,
+            'product_attribute' => $data['product_attribute'] ?? null,   // ← اضافه کن
+
         ], fn ($v) => !is_null($v));
 
         return $this->handle(

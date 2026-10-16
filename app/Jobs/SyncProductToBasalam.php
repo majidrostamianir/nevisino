@@ -276,6 +276,12 @@ class SyncProductToBasalam implements ShouldQueue
             'unit_quantity' => 1,
             'unit_type' => (int) ($product->category?->basalam_unit_type ?? 6304),
             'preparation_days' => 0,
+            'product_attribute' => $product->brand?->name
+                ? [[
+                    'attribute_id' => (int) config('basalam.brand_attribute_id', 1751),
+                    'value'        => $product->brand->name,
+                ]]
+                : null,
         ];
     }
     /**
@@ -324,6 +330,12 @@ class SyncProductToBasalam implements ShouldQueue
             'unit_quantity' => 1,
             'unit_type' => (int) ($product->category?->basalam_unit_type ?? 6304),
             'preparation_days' => 0,
+            'product_attribute' => $product->brand?->name
+                ? [[
+                    'attribute_id' => (int) config('basalam.brand_attribute_id', 1751),
+                    'value'        => $product->brand->name,
+                ]]
+                : null,
         ];
     }
 
