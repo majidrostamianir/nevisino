@@ -70,11 +70,11 @@ class Callback extends Component
             // کم کردن موجودی همه آیتم‌های سفارش
             $productService->decrementStockForOrder($transaction->order);
 
-            // پیامک به مشتری
-            $sms->successPaid(
-                orderNumber: $this->data['order_number'],
-                mobile:      auth()->user()->mobile,
-            );
+//            // پیامک به مشتری
+//            $sms->successPaid(
+//                orderNumber: $this->data['order_number'],
+//                mobile:      auth()->user()->mobile,
+//            );
 
             // تلگرام به ادمین
             SendTelegramTransactionNotification::dispatch($transaction->id);

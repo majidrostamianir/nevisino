@@ -18,12 +18,27 @@ class Products extends Component
     public int    $perPage = 25;
 
     public ?float $profitPercent = null;
+    public ?int $forceStock = null;
 
     public function mount(): void
     {
+        $this->forceStock     = (int) \Cache::get('basalam_force_stock', 0) ?: null;
         $this->profitPercent = (float) \Cache::get('basalam_profit_percent', 9);
     }
 
+    public function saveForceStock(): void
+    {
+        $val = (int) $this->forceStock;
+
+        if ($val > 0) {
+            \Cache::forever('basalam_force_stock', $val);
+            session()->flash('success', "موجودی اجباری روی {$val} تنظیم شد.");
+        } else {
+            \Cache::forget('basalam_force_stock');
+            $this->forceStock = null;
+            session()->flash('success', 'موجودی واقعی برگشت.');
+        }
+    }
     public function saveProfitPercent(): void
     {
         $this->validate(['profitPercent' => 'required|numeric|min:0|max:200']);

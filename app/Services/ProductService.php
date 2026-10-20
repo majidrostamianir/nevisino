@@ -154,10 +154,10 @@ class ProductService
 
         if (DB::transactionLevel() > 0) {
             DB::afterCommit(function () use ($product, $updateOnly) {
-                SyncProductToBasalam::dispatch($product, $updateOnly);
+                SyncProductToBasalam::dispatch($product, $updateOnly, skipPhotos: true);
             });
         } else {
-            SyncProductToBasalam::dispatch($product, $updateOnly);
+            SyncProductToBasalam::dispatch($product, $updateOnly, skipPhotos: true);
         }
     }
 }

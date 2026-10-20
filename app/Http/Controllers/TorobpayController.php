@@ -18,10 +18,6 @@ class TorobpayController extends Controller
         private ProductService $productService,
     ) {}
 
-    // ─────────────────────────────────────────────
-    //  Callback - ترب‌پی کاربر رو اینجا برمیگردونه
-    //  POST /payment/torobpay/callback
-    // ─────────────────────────────────────────────
 
     public function callback(Request $request)
     {

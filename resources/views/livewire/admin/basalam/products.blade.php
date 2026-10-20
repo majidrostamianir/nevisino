@@ -79,12 +79,16 @@
                 class="cursor-pointer bg-gray-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-700">
             ریست ناموفق‌ها
         </button>
-        <button
-                wire:click="toggleForceStock"
-                class="{{ $this->forceStock ? 'cursor-pointer bg-red-600 hover:bg-red-700' : 'bg-emerald-600 hover:bg-emerald-700' }} text-white px-4 py-2 rounded-lg text-sm"
-        >
-            {{ $this->forceStock ? '🔴 موجودی = ۱ (روشن)' : '⚪ موجودی واقعی' }}
-        </button>
+        <div class="flex items-center gap-2 bg-white border rounded-lg px-3 py-2">
+            <span class="text-sm text-gray-600">📦 موجودی اجباری:</span>
+            <input type="number"
+                   wire:model="forceStock"
+                   wire:blur="saveForceStock"
+                   placeholder="واقعی"
+                   min="0"
+                   class="w-24 rounded-lg border-gray-300 text-sm py-1 px-2 text-center">
+            <span class="text-xs text-gray-400">(خالی = واقعی)</span>
+        </div>
     </div>
 
     {{-- جدول --}}

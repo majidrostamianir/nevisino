@@ -267,9 +267,7 @@ class SyncProductToBasalam implements ShouldQueue
             'category_id'    => (int) $basalamCategoryId,
             'status'         => (int) config('basalam.default_status', 3790),
             'price' => $this->calculateBasalamPrice((int) $product->price),
-            'stock' => \Cache::get('basalam_force_stock_one', false)
-                ? 1
-                : max(0, (int) ($product->stock ?? 0)),
+            'stock' => \Cache::get('basalam_force_stock', 0) ?: max(0, (int) ($product->stock ?? 0)),
             'sku'            => 'bslm_' . $product->id,
             'weight'         => max(100, (int) ($product->weight ?? 500)),
             'package_weight' => max(200, (int) ($product->weight ?? 500) + 100),
@@ -321,9 +319,7 @@ class SyncProductToBasalam implements ShouldQueue
             'category_id'    => (int) $basalamCategoryId,
             'status'         => (int) config('basalam.default_status', 3790),
             'price' => $this->calculateBasalamPrice((int) $product->price),
-            'stock' => \Cache::get('basalam_force_stock_one', false)
-                ? 1
-                : max(0, (int) ($variant->stock ?? 0)),
+            'stock' => \Cache::get('basalam_force_stock', 0) ?: max(0, (int) ($variant->stock ?? 0)),
             'sku'            => 'bslm_' . $product->id . '_' . $variant->id,
             'weight'         => max(100, (int) ($product->weight ?? 500)),
             'package_weight' => max(200, (int) ($product->weight ?? 500) + 100),

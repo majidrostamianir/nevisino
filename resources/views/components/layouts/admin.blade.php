@@ -18,11 +18,7 @@
 
         <!-- موبایل -->
         <div class="flex flex-col sm:hidden">
-{{--            <div class="flex justify-between items-center mb-2">--}}
-{{--                <a href="{{ route('home') }}" class="self-center" wire:navigate>--}}
-{{--                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">--}}
-{{--                </a>--}}
-{{--            </div>--}}
+
             <div class="flex justify-between items-center">
                 <button @click="sidebarOpen = !sidebarOpen; if(!sidebarOpen) activeDropdown=null"
                         type="button"
@@ -54,7 +50,7 @@
     </div>
 
     <aside
-            class="fixed top-0 sm:top-0 right-0 group z-40 pt-12 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
+            class="fixed top-0 sm:top-0 right-0 group z-40 pt-14 w-64 sm:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
             :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full sm:translate-x-0'"
             @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
@@ -62,10 +58,6 @@
 
         <div class="h-full px-3 py-4 overflow-y-auto bg-pars-100">
             <ul class="space-y-2 font-medium overflow-x-hidden">
-
-                {{-- ═══ کاربران ═══ --}}
-                <li class="text-xs text-gray-400 px-2 pt-2 sm:hidden group-hover:block">کاربران</li>
-
                 <li>
                     <a href="{{ route('admin.user.index') }}"
                        class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
@@ -94,10 +86,6 @@
                         <span class="flex-1 ms-3 sm:hidden group-hover:block whitespace-nowrap">کامنت</span>
                     </a>
                 </li>
-
-                {{-- ═══ فروشگاه ═══ --}}
-                <li class="text-xs text-gray-400 px-2 pt-3 mt-2 border-t border-pars-300 sm:hidden group-hover:block">فروشگاه</li>
-
                 <li>
                     <a href="{{ route('admin.product.index') }}"
                        class="flex items-center p-2 rounded-lg hover:bg-pars-400 hover:text-pars-500 group">
@@ -120,8 +108,6 @@
                     </a>
                 </li>
 
-                {{-- ═══ دسته‌بندی ═══ --}}
-                <li class="text-xs text-gray-400 px-2 pt-3 mt-2 border-t border-pars-300 sm:hidden group-hover:block">دسته‌بندی</li>
 
                 <li>
                     <a href="{{ route('admin.category.index') }}"
@@ -152,8 +138,6 @@
                     </a>
                 </li>
 
-                {{-- ═══ باسلام ═══ --}}
-                <li class="text-xs text-gray-400 px-2 pt-3 mt-2 border-t border-pars-300 sm:hidden group-hover:block">باسلام</li>
 
                 <li>
                     <a href="{{ route('admin.basalam.products') }}"
