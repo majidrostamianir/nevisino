@@ -58,10 +58,11 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
 
 Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobpayController::class, 'callback'])
     ->name('torobpay.callback')
-    ->withoutMiddleware('auth');
+    ->withoutMiddleware('auth')
+    ->middleware('throttle:60');
 Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobpayCallback::class)
     ->name('torobpay.result')
-    ->middleware('auth');
+    ->middleware(['auth', 'throttle:60', \App\Http\Middleware\visitTracker::class, \App\Http\Middleware\getReferrer::class]);
 
 /*Route::post('/payment/digipay/callback', [\App\Http\Controllers\DigipayController::class, 'callback'])
     ->name('digipay.callback')
