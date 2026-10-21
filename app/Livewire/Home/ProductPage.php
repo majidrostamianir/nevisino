@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class ProductPage extends Component
 {
-    public string $title;
+    public ?string $title = null;
     public int $npi , $nvi;
     public Product $product;
     public string $message = '';
@@ -26,20 +26,38 @@ class ProductPage extends Component
     public $basePrice;
     public $hasDiscount;
 
-    public function mount(): void
+    public function mount()
     {
         $this->product = Product::query()->findOrFail($this->npi);
 
-        if (request()->has('nvi')){
-            if (in_array(request()->query('nvi') , $this->product->variants()->pluck('id')->toArray())){
-                $this->selectedVariant = request()->query('nvi');
-            }else{
-                abort(404);
+        // ۱. اعتبارسنجی nvi — اگر نامعتبر بود، ریدایرکت به نسخه بدون nvi
+        if (request()->has('nvi')) {
+            if (in_array((int) request()->query('nvi'), $this->product->variants()->pluck('id')->toArray())) {
+                $this->selectedVariant = (int) request()->query('nvi');
+            } else {
+                return redirect()->to(
+                    route('product-page', [
+                        'npi'   => $this->product->id,
+                        'title' => $this->product->dashed_url,
+                    ]),
+                    301
+                );
             }
         }
-        if($this->product->dashed_url != $this->title){
-            abort(404);
+
+        // ۲. اگر title نیامده یا اشتباه است → ریدایرکت دائمی (301) به آدرس صحیح
+        if ($this->title !== $this->product->dashed_url) {
+            $params = [
+                'npi'   => $this->product->id,
+                'title' => $this->product->dashed_url,
+            ];
+            if (request()->has('nvi')) {
+                $params['nvi'] = request()->query('nvi');
+            }
+            return redirect()->to(route('product-page', $params), 301);
         }
+
+        // ۳. ادامه‌ی منطق قبلی (بدون تغییر)
         $path = 'products/' . $this->product->id . '/large';
         $this->images = collect(Storage::disk('public')->files($path))
             ->map(fn($file) => pathinfo($file, PATHINFO_FILENAME))
