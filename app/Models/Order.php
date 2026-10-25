@@ -10,7 +10,7 @@ class Order extends Model
     protected $fillable = ['order_number', 'user_id', 'status','shipping_status','tracking_code','packaging_price','packaging_size',
         'total_price', 'shipping_price','shipping_method', 'amount',
         'recipient_name', 'recipient_mobile', 'postal_address', 'zipcode',
-        'province', 'city' , 'description', 'expires_at' ,
+        'province', 'city' , 'description', 'expires_at' ,'torob_clid',
         ];
     protected $casts = [
         'shipping_method' => ShippingMethodEnum::class,

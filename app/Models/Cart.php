@@ -34,6 +34,7 @@ class Cart extends Model
             $shipping_method = $orderData['shipping_method'] ?? 'post_cod';
             $shipping_price = $orderData['shipping_price'] ?? 0;
             $packaging_price = $orderData['packaging_price'] ?? 0;
+            $torob_clid = $orderData['torob_clid'] ?? null;
 
             // اصلاح شده: استفاده از PriceHelper
             $totalPrice = $this->items->sum(function ($item) {
@@ -49,6 +50,7 @@ class Cart extends Model
             $order = $this->user->orders()->create([
                 'order_number' => $newOrderNumber,
                 'status' => 'pending',
+                'torob_clid'       => $torob_clid,
                 'total_price' => $totalPrice,
                 'shipping_method' => $shipping_method,
                 'shipping_price' => $shipping_price,

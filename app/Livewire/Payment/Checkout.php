@@ -362,6 +362,8 @@ class Checkout extends Component
             'shipping_method' => $this->shipping_method,
             'shipping_price' => $this->shipping_price,
             'packaging_price' => $this->packaging_price,
+            'torob_clid' => request()->cookie('torob_clid') ?: null,   // ← این خط
+
         ];
     }
 

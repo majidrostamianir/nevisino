@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('order_number');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['pending', 'paid', 'canceled'])->default('pending');
+            $table->string('torob_clid', 100)->nullable()->index();
             $table->enum('shipping_status', ['pending','processing', 'preparing', 'shipped' , 'delivered' , 'returned'])->default('pending');
             $table->string('tracking_code')->nullable();
             $table->unsignedBigInteger('total_price')->default(0);

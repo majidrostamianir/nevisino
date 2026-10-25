@@ -254,12 +254,19 @@ class TorobController extends Controller
     // =========================================================
     private function handleByUrls(array $urls)
     {
+        // نرمال‌سازی URLهای ورودی — هر دو شکل (خام و percent-encoded) پذیرفته شود
+        $normalizedUrls = [];
+        foreach ($urls as $u) {
+            $normalizedUrls[] = $this->normalizeUrlForComparison((string) $u);
+        }
+
         $products = Product::with(['variants', 'attributeValues.attribute', 'category'])->get();
 
         $items = collect();
         foreach ($products as $product) {
             if ($product->variants->isEmpty()) {
-                if (in_array($this->makeUrl($product, null), $urls, true)) {
+                $candidate = $this->normalizeUrlForComparison($this->makeUrl($product, null));
+                if (in_array($candidate, $normalizedUrls, true)) {
                     $items->push([
                         'product' => $product,
                         'variant' => null,
@@ -268,7 +275,8 @@ class TorobController extends Controller
                 }
             } else {
                 foreach ($product->variants as $variant) {
-                    if (in_array($this->makeUrl($product, $variant), $urls, true)) {
+                    $candidate = $this->normalizeUrlForComparison($this->makeUrl($product, $variant));
+                    if (in_array($candidate, $normalizedUrls, true)) {
                         $items->push([
                             'product' => $product,
                             'variant' => $variant,
@@ -282,10 +290,54 @@ class TorobController extends Controller
         return $this->pageResponse($items->values(), 1, $items->count());
     }
 
-    // =========================================================
-    //  Helpers
-    // =========================================================
+    private function normalizeUrlForComparison(string $url): string
+    {
+        $parts = parse_url(trim($url));
+        if ($parts === false || empty($parts['host'])) {
+            return $url;
+        }
 
+        $scheme = strtolower($parts['scheme'] ?? 'https');
+        $host   = strtolower($parts['host']);
+        $port   = $parts['port'] ?? null;
+        $path   = $parts['path'] ?? '/';
+        $query  = $parts['query'] ?? '';
+
+        // 1) path را percent-decode کن (کلید اصلی مشکل)
+        $path = rawurldecode($path);
+
+        // 2) اسلش انتهایی را حذف کن (به‌جز ریشه)
+        $path = rtrim($path, '/');
+        if ($path === '') {
+            $path = '/';
+        }
+
+        // 3) query را پارس و مرتب کن (parse_str خودش urldecode می‌کند)
+        $queryArr = [];
+        if ($query !== '') {
+            parse_str($query, $queryArr);
+            ksort($queryArr);
+        }
+
+        // 4) دوباره بساز (خام، بدون percent-encoding)
+        $out = $scheme . '://' . $host;
+        if ($port !== null) {
+            $out .= ':' . $port;
+        }
+        $out .= $path;
+        if (!empty($queryArr)) {
+            $pairs = [];
+            foreach ($queryArr as $k => $v) {
+                if (is_array($v)) {
+                    continue;
+                }
+                $pairs[] = $k . '=' . $v;
+            }
+            $out .= '?' . implode('&', $pairs);
+        }
+
+        return $out;
+    }
     private function perPage(): int
     {
         return (int) config('torob.per_page', 100);
