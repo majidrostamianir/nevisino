@@ -70,6 +70,10 @@
                         <img src="{{ asset('images/ecunion.png') }}"
                              class="h-16 hover:scale-105 transition-all cursor-pointer">
                     </a>
+                    <a target="_blank" href="https://torob.com/shop/279915" rel="nofollow" >
+                        <img alt="" src="https://api.torob.com/third-party/guarantee/v1/hologram/?instance_id=279915"
+                             class="h-16 hover:scale-105 transition-all cursor-pointer">
+                    </a>
                 </div>
             </div>
         

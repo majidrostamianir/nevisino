@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TorobpayService;
+use App\Helpers\Site; // <-- اضافه شد
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Shetabit\Multipay\Invoice;
@@ -33,28 +34,30 @@ class Order extends Component
         if ($pendingOrder) {
             $this->checkTorobpayEligibility($pendingOrder->amount);
         }
+
+        // تعیین روش پرداخت پیش‌فرض بر اساس دامنه
+        if (Site::isGhesti() && $this->torobpayEligible) {
+            $this->payment_method = 'torobpay'; // در سایت قسطی
+        } else {
+            $this->payment_method = 'gateway';  // در سایت نقدی
+        }
     }
 
     public function toggleOrder($orderId)
     {
-
         $this->openOrderId = $this->openOrderId === $orderId ? null : $orderId;
-
     }
-
-    // ─────────────────────────────────────────────
-    //  بررسی صلاحیت ترب‌پی برای مبلغ سفارش
-    // ─────────────────────────────────────────────
 
     private function checkTorobpayEligibility(int $amount): void
     {
-
-
         $this->torobpayEligible = false;
 
+        // اگر در سایت نقدی هستیم، کلاً ترب‌پی را بررسی نکن
+        if (Site::isMain()) {
+            return;
+        }
 
         if ($amount <= 0) {
-            $this->torobpayEligible = false;
             return;
         }
 
@@ -70,9 +73,6 @@ class Order extends Component
             $this->torobpayEligible = false;
         }
     }
-    // ─────────────────────────────────────────────
-    //  پرداخت مجدد
-    // ─────────────────────────────────────────────
 
     public function pay($orderId = null)
     {
@@ -84,7 +84,6 @@ class Order extends Component
             ->firstOrFail();
 
         switch ($this->payment_method) {
-
             case 'gateway':
                 $invoice = (new Invoice)->amount($order->amount);
                 $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
@@ -99,6 +98,11 @@ class Order extends Component
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
+                // لایه امنیتی: کارت به کارت فقط در سایت نقدی مجاز است
+                if (!Site::isMain()) {
+                    abort(403, 'پرداخت کارت به کارت فقط در سایت اصلی در دسترس است.');
+                }
+
                 Transaction::query()->create([
                     'order_id'        => $order->id,
                     'amount'          => $order->amount,
@@ -109,9 +113,13 @@ class Order extends Component
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
             case 'torobpay':
-                if (!$this->torobpayEligible) {
-                    abort(403 , 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
+                // لایه امنیتی: ترب‌پی فقط در سایت قسطی مجاز است
+                if (!Site::isGhesti()) {
+                    abort(403, 'پرداخت اقساطی فقط در سایت قسطی در دسترس است.');
+                }
 
+                if (!$this->torobpayEligible) {
+                    abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
                 }
 
                 $transaction = Transaction::query()->create([
@@ -142,13 +150,11 @@ class Order extends Component
 
                 } catch (\Exception $e) {
                     $transaction->update(['status' => 'failed']);
-                    abort(403 , 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
-
+                    abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
                 }
         }
     }
 
-    // متد قدیمی payAgain رو نگه میداریم تا چیزی نشکنه
     public function payAgain($orderId)
     {
         return $this->pay($orderId);

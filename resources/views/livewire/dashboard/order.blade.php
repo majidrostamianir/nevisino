@@ -313,62 +313,66 @@
 
                             <div class="flex flex-col gap-3">
                                 <div class="flex flex-col lg:flex-row gap-3">
+
+                                    {{-- ۱. گزینه پرداخت اقساطی (فقط در سایت قسطی) --}}
+                                    @if(\App\Helpers\Site::isGhesti())
+                                        @if($torobpayEligible)
+                                            <label class="flex flex-1 items-center justify-between bg-white px-4 py-2 rounded-xl border-2 cursor-pointer transition-all duration-300"
+                                                   :class="payment_method === 'torobpay' ? 'border-pars-500 shadow-md' : 'border-gray-200'">
+                                                <input type="radio" value="torobpay" x-model="payment_method" class="hidden">
+                                                <div class="flex items-center">
+                                                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3"
+                                                          :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-300'">
+                                                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500" x-show="payment_method === 'torobpay'"></span>
+                                                    </span>
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium">{{ $torobpayTitle }}</span>
+                                                        <span class="text-xs text-gray-500">{{ $torobpayDescription }}</span>
+                                                    </div>
+                                                </div>
+                                                <img class="w-10 rounded-full shadow-md" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                            </label>
+                                        @else
+                                            <label class="flex flex-1 items-center justify-between bg-gray-50 px-4 py-2 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
+                                                <div class="flex items-center">
+                                                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 border-gray-300 ml-3"></span>
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
+                                                        <span class="text-xs text-red-500">در حال حاضر برای این مبلغ قابل استفاده نیست.</span>
+                                                    </div>
+                                                </div>
+                                                <img class="w-10 rounded-full shadow-md opacity-50" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                                            </label>
+                                        @endif
+                                    @endif
+
+                                    {{-- ۲. درگاه بانکی (در هر دو سایت) --}}
                                     <label class="flex flex-1 items-center bg-white px-4 py-2 rounded-xl border-2 cursor-pointer transition-all duration-300"
                                            :class="payment_method === 'gateway' ? 'border-pars-500 shadow-md' : 'border-gray-200'">
                                         <input type="radio" value="gateway" x-model="payment_method" class="hidden">
                                         <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3"
                                               :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-300'">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
-                                                  x-show="payment_method === 'gateway'"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500" x-show="payment_method === 'gateway'"></span>
                                         </span>
                                         <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                                     </label>
-                                    <label class="flex items-center bg-white px-4 py-2 rounded-xl border-2 cursor-pointer transition-all duration-300 lg:flex-1"
-                                           :class="payment_method === 'card' ? 'border-pars-500 shadow-md' : 'border-gray-200'">
-                                        <input type="radio" value="card" x-model="payment_method" class="hidden">
-                                        <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3"
-                                              :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-300'">
-                                            <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
-                                                  x-show="payment_method === 'card'"></span>
-                                        </span>
-                                        <span class="text-sm">پرداخت از طریق کارت به کارت</span>
-                                    </label>
-                                    @if($torobpayEligible)
-                                        <label class="flex flex-1 items-center justify-between bg-white px-4 py-2 rounded-xl border-2 cursor-pointer transition-all duration-300"
-                                               :class="payment_method === 'torobpay' ? 'border-pars-500 shadow-md' : 'border-gray-200'">
-                                            <input type="radio" value="torobpay" x-model="payment_method"
-                                                   class="hidden">
-                                            <div class="flex items-center">
-                                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3"
-                                                      :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-300'">
-                                                    <span class="w-2.5 h-2.5 rounded-full bg-pars-500"
-                                                          x-show="payment_method === 'torobpay'"></span>
-                                                </span>
-                                                <div class="flex flex-col">
-                                                    <span class="text-sm font-medium">{{ $torobpayTitle }}</span>
-                                                    <span class="text-xs text-gray-500">{{ $torobpayDescription }}</span>
-                                                </div>
-                                            </div>
-                                            <img class="w-10 rounded-full shadow-md"
-                                                 src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
-                                        </label>
-                                    @else
-                                        <label class="flex flex-1 items-center justify-between bg-gray-50 px-4 py-2 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
-                                            <div class="flex items-center">
-                                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 border-gray-300 ml-3"></span>
-                                                <div class="flex flex-col">
-                                                    <span class="text-sm font-medium">پرداخت اقساطی با ترب پی</span>
-                                                    <span class="text-xs text-red-500">برای سفارش‌های با مبالغ بالاتر از ۲۰,۰۰۰ تومان</span>
-{{--                                                    <span class="text-xs text-red-500">بزودی</span>--}}
-                                                </div>
-                                            </div>
-                                            <img class="w-10 rounded-full shadow-md"
-                                                 src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+
+                                    {{-- ۳. کارت به کارت (فقط در سایت نقدی) --}}
+                                    @if(\App\Helpers\Site::isMain())
+                                        <label class="flex items-center bg-white px-4 py-2 rounded-xl border-2 cursor-pointer transition-all duration-300 lg:flex-1"
+                                               :class="payment_method === 'card' ? 'border-pars-500 shadow-md' : 'border-gray-200'">
+                                            <input type="radio" value="card" x-model="payment_method" class="hidden">
+                                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3"
+                                                  :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-300'">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-pars-500" x-show="payment_method === 'card'"></span>
+                                            </span>
+                                            <span class="text-sm">پرداخت از طریق کارت به کارت</span>
                                         </label>
                                     @endif
 
                                 </div>
 
+                                {{-- نمایش کارت بانکی (فقط اگر کارت به کارت انتخاب شده باشد) --}}
                                 <div x-show="payment_method === 'card'" x-collapse>
                                     <div class="w-full max-w-xs mx-auto bg-gradient-to-br from-gray-900 to-black rounded-2xl relative text-white overflow-visible border border-gray-700 mt-2"
                                          style="aspect-ratio:1.7;">
@@ -376,8 +380,7 @@
                                              class="absolute top-5 left-5 font-bold text-[11px] bg-green-500 text-white px-3 py-1 rounded-full shadow-md z-10">
                                             کپی شد ✓
                                         </div>
-                                        <img src="{{ asset('images/Pasargad.png') }}"
-                                             class="absolute top-3 right-3 w-10 opacity-90" alt="">
+                                        <img src="{{ asset('images/Pasargad.png') }}" class="absolute top-3 right-3 w-10 opacity-90" alt="">
                                         <div class="absolute top-4 left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide text-white/80">
                                             بانک پاسارگاد
                                         </div>
@@ -387,29 +390,27 @@
                                                 5022 2915 3361 0273
                                             </button>
                                         </div>
-                                        <div class="absolute top-[60%] right-4 text-xs font-semibold text-white/70">مجید
-                                            رستمیان
-                                        </div>
+                                        <div class="absolute top-[60%] right-4 text-xs font-semibold text-white/70">مجید رستمیان</div>
                                         <div class="absolute bottom-3 right-4 left-4 text-[10px] text-yellow-400 leading-tight">
-                                            لطفاً مبلغ {{ english_to_persian_num(number_format($order->amount)) }} تومان
-                                            را واریز کرده، سپس دکمه زیر را بزنید.
+                                            لطفاً مبلغ {{ english_to_persian_num(number_format($order->amount)) }} تومان را واریز کرده، سپس دکمه زیر را بزنید.
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- دکمه پرداخت جدا از گزینه‌ها --}}
+                                {{-- دکمه پرداخت --}}
                                 <button wire:click.prevent="pay('{{ $order->id }}')" wire:target="pay"
                                         class="w-full lg:w-64 lg:mx-auto h-10 cursor-pointer bg-pars-500 hover:bg-pars-600 active:scale-95 text-white rounded-xl flex items-center justify-center gap-2 transition-all duration-200 font-bold text-sm shadow-sm">
                                     <span wire:loading.remove wire:target="pay">
-                                        <span x-text="payment_method === 'card' ? 'ثبت واریزی' : 'پرداخت مجدد'"></span>
+                                        @if(\App\Helpers\Site::isGhesti())
+                                            <span x-text="payment_method === 'torobpay' ? 'پرداخت اقساطی' : 'پرداخت نقدی (یکجا)'"></span>
+                                        @else
+                                            <span x-text="payment_method === 'card' ? 'ثبت واریزی' : 'پرداخت مجدد'"></span>
+                                        @endif
                                     </span>
                                     <span wire:loading wire:target="pay" class="flex items-center justify-center">
-                                        <svg class="w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
-                                             fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                    stroke-width="4"/>
-                                            <path class="opacity-75" fill="currentColor"
-                                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                                        <svg class="w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
                                         </svg>
                                     </span>
                                 </button>

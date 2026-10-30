@@ -16,7 +16,7 @@
     @stack('variant')
 
 </head>
-<body>
+<body class="{{ \App\Helpers\Site::isGhesti() ? 'theme-ghesti' : '' }}">
 
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
 

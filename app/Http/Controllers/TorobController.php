@@ -234,6 +234,16 @@ class TorobController extends Controller
                     ]);
                 }
             } else {
+                // صفحه‌ی پایه
+                if (in_array((string)$product->id, $uniques, true)) {
+                    $items->push([
+                        'product' => $product,
+                        'variant' => null,
+                        'stock'   => (int)$product->variants->sum('stock'),
+                    ]);
+                }
+
+                // variantها
                 foreach ($product->variants as $variant) {
                     if (in_array($product->id . '_' . $variant->id, $uniques, true)) {
                         $items->push([
@@ -248,13 +258,11 @@ class TorobController extends Controller
 
         return $this->pageResponse($items->values(), 1, $items->count());
     }
-
     // =========================================================
     //  By page_urls
     // =========================================================
     private function handleByUrls(array $urls)
     {
-        // نرمال‌سازی URLهای ورودی — هر دو شکل (خام و percent-encoded) پذیرفته شود
         $normalizedUrls = [];
         foreach ($urls as $u) {
             $normalizedUrls[] = $this->normalizeUrlForComparison((string) $u);
@@ -265,6 +273,7 @@ class TorobController extends Controller
         $items = collect();
         foreach ($products as $product) {
             if ($product->variants->isEmpty()) {
+                // بدون variant
                 $candidate = $this->normalizeUrlForComparison($this->makeUrl($product, null));
                 if (in_array($candidate, $normalizedUrls, true)) {
                     $items->push([
@@ -274,6 +283,17 @@ class TorobController extends Controller
                     ]);
                 }
             } else {
+                // با variant — اول URL پایه
+                $baseCandidate = $this->normalizeUrlForComparison($this->makeUrl($product, null));
+                if (in_array($baseCandidate, $normalizedUrls, true)) {
+                    $items->push([
+                        'product' => $product,
+                        'variant' => null,
+                        'stock'   => (int)$product->variants->sum('stock'),
+                    ]);
+                }
+
+                // بعد URLهای variant
                 foreach ($product->variants as $variant) {
                     $candidate = $this->normalizeUrlForComparison($this->makeUrl($product, $variant));
                     if (in_array($candidate, $normalizedUrls, true)) {
@@ -289,7 +309,6 @@ class TorobController extends Controller
 
         return $this->pageResponse($items->values(), 1, $items->count());
     }
-
     private function normalizeUrlForComparison(string $url): string
     {
         $parts = parse_url(trim($url));

@@ -18,9 +18,27 @@
     --color-pars-600: #2f86b6;
     --color-pars-700: #55768BFF;
     --color-pars-800: #4e6a7e;
+}
+/* =========================
+   Ghesti Subdomain Theme (Lilac)
+========================= */
 
+body.theme-ghesti {
+    background-color: #F5F3FF; /* رنگ پس‌زمینه یاسی خیلی روشن */
+    color: #6D28D9 !important; /* رنگ متن پیش‌فرض یاسی تیره */
 }
 
+/* بازنویسی متغیرهای رنگی Tailwind برای ساب‌دامین قسطی */
+.theme-ghesti {
+    --color-pars-100: #F5F3FF;
+    --color-pars-200: #EDE9FE;
+    --color-pars-300: #DDD6FE;
+    --color-pars-400: #C4B5FD;
+    --color-pars-500: #8B5CF6; /* رنگ اصلی (دکمه‌ها، لینک‌ها) - بنفش */
+    --color-pars-600: #7C3AED;
+    --color-pars-700: #6D28D9; /* رنگ متن‌های تیره */
+    --color-pars-800: #5B21B6; /* تیره‌ترین حالت */
+}
 @layer base {
     @font-face {
         font-family: "Tanha";

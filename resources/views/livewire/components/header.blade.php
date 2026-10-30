@@ -3,7 +3,14 @@
         <div class="flex flex-col lg:hidden">
             <div class="flex justify-between items-center relative">
                 <a href="{{ route('home') }}" class="self-center" wire:navigate>
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
+
+                    @if(\App\Helpers\Site::isGhesti())
+                        <img src="{{ asset('images/logo-ghesti.png') }}" alt="" class="h-12">
+                    @endif
+
+                    @if(\App\Helpers\Site::isMain())
+                        <img src="{{ asset('images/logosss.png') }}" alt="" class="h-12">
+                    @endif
                 </a>
                 <div class="w-full pl-4">
                     <livewire:components.search/>
@@ -27,12 +34,12 @@
                     <span class="text-xs lg:text-sm py-2.5">سبد خرید</span>
                     @if((int)$cartCount > 0)
                         <span
-                            class="absolute -bottom-2 -right-4 bg-red-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
+                                class="absolute -bottom-2 -right-4 bg-red-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
                                 {{ english_to_persian_num($cartCount) }}
                             </span>
                     @elseif((int) $orderCount > 0)
                         <span
-                            class="absolute -bottom-2 -right-4 bg-amber-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
+                                class="absolute -bottom-2 -right-4 bg-amber-500 w-7 h-7 flex items-center justify-center text-sm border-2 border-pars-100 rounded-full">
                                 {{ english_to_persian_num($orderCount) }}
                             </span>
                     @endif
@@ -56,18 +63,18 @@
         </div>
     </div>
     <div
-        x-show="sidebarOpen && window.innerWidth < 640"
-        x-transition.opacity
-        @click="sidebarOpen = false; activeDropdown = null"
-        class="fixed bg-black/30 inset-0  z-30 lg:hidden"
+            x-show="sidebarOpen && window.innerWidth < 640"
+            x-transition.opacity
+            @click="sidebarOpen = false; activeDropdown = null"
+            class="fixed bg-black/30 inset-0  z-30 lg:hidden"
     ></div>
     <aside
-        x-cloak
-        class="fixed top-0 lg:top-0 right-0 group z-40 lg:pt-16 w-64 lg:w-16 hover:w-64 shadow-sm h-screen
+            x-cloak
+            class="fixed top-0 lg:top-0 right-0 group z-40 lg:pt-16 w-64 lg:w-16 hover:w-64 shadow-sm h-screen
            bg-pars-100 transition-all duration-200 ease-in-out"
-        :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
-        @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
-        @mouseleave="if(window.innerWidth>=640) sidebarOpen=false; activeDropdown=null">
+            :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
+            @mouseover="if(window.innerWidth>=640) sidebarOpen=true"
+            @mouseleave="if(window.innerWidth>=640) sidebarOpen=false; activeDropdown=null">
 
         <div class="h-full px-3 py-4 overflow-y-auto bg-pars-100">
             <ul class="space-y-2 font-medium overflow-x-hidden ">
@@ -78,7 +85,7 @@
                                 class="flex cursor-pointer items-center w-full p-2 text-base  transition duration-75 rounded-lg group hover:bg-pars-400 hover:text-gray-800 ">
                             <img src="{{ asset('images/icon/'.$key +1 .'.png') }}" width="30">
                             <span
-                                class="flex-1 ms-3 lg:hidden group-hover:block text-right rtl:text-right text-gray-800 whitespace-nowrap">{{ $value->title }}</span>
+                                    class="flex-1 ms-3 lg:hidden group-hover:block text-right rtl:text-right text-gray-800 whitespace-nowrap">{{ $value->title }}</span>
                             <svg class="w-3 h-3 ml-auto transition-transform duration-300"
                                  :class="activeDropdown === {{ $key }} ? 'rotate-180' : 'rotate-0'"
                                  fill="none" viewBox="0 0 10 6">
@@ -87,12 +94,12 @@
                             </svg>
                         </button>
                         <ul
-                            x-show="activeDropdown === {{ $key }}"
-                            x-collapse
-                            x-cloak
-                            class="pr-8 text-xs overflow-hidden transition-all duration-300 ease-in-out"
+                                x-show="activeDropdown === {{ $key }}"
+                                x-collapse
+                                x-cloak
+                                class="pr-8 text-xs overflow-hidden transition-all duration-300 ease-in-out"
                         >
-                        @foreach(\App\Models\Category::query()->where('parent_id',$value->id)->get() as $value )
+                            @foreach(\App\Models\Category::query()->where('parent_id',$value->id)->get() as $value )
                                 <li>
                                     <a href="{{ route('category-page', ['dashed' => $value->dashed_url] ) }}"
                                        wire:navigate

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Visit extends Model
 {
-    protected $fillable = ['url' , 'url_id' , 'ip' , 'user_id','referrer','is_bot','user_agent'];
+    protected $fillable = ['url' , 'url_id' , 'ip' , 'user_id','referrer','is_bot','user_agent','is_ghesti'];
 
     public function user()
     {

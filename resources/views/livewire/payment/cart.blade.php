@@ -75,7 +75,7 @@
                                         <div class="flex-1">
                                             <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}"
                                                class="font-bold text-gray-800 text-sm hover:text-pars-600 transition-colors">
-                                                {{ english_to_persian_num($product['title']) }} {{ english_to_persian_num($product['code']) }}
+                                                {{ english_to_persian_num($product['title']) }}
                                             </a>
                                             @if($product['variant'])
                                                 <div class="text-xs text-gray-500 mt-1">

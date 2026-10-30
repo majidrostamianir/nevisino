@@ -12,7 +12,7 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="text-gray-900 antialiased">
+<body class="{{ \App\Helpers\Site::isGhesti() ? 'theme-ghesti' : '' }} text-gray-900 antialiased">
 <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-4">
     <div class="w-full relative sm:w-4/12 p-4 h-[85vh] bg-white border border-gray-100 shadow-sm overflow-hidden sm:rounded-2xl">
         <a class="absolute top-4 left-4 flex items-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm py-1.5 px-3 rounded-xl transition-all duration-200"

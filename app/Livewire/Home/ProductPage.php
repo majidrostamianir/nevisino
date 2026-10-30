@@ -3,6 +3,8 @@
 namespace App\Livewire\Home;
 
 use App\Helpers\PriceHelper;
+use App\Models\AttributeValue;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
@@ -13,7 +15,7 @@ use Livewire\Component;
 class ProductPage extends Component
 {
     public ?string $title = null;
-    public int $npi , $nvi;
+    public int $npi, $nvi;
     public Product $product;
     public string $message = '';
     public string $quantity = "۱";
@@ -25,19 +27,40 @@ class ProductPage extends Component
     public $finalPrice;
     public $basePrice;
     public $hasDiscount;
+    public $msg;
+
+    /* ------------------------------------------------------------------ */
+    /*  داده‌های نمایشی که در ویو استفاده می‌شوند                         */
+    /* ------------------------------------------------------------------ */
+    public bool $inStock = false;
+    public ?Category $category = null;
+    public ?Category $parentCategory = null;
+
+    public string $crossTitle = '';
+    public string $crossLabel = '';
+    public string $crossDesc = '';
+    public string $crossBaseUrl = '';
+    public string $crossUrl = '';
+    public array $crossTheme = [];
+
+    public array $displayAttributes = [];
+    public array $variantNameMap = [];   // [variant_id => name]
+    public ?string $selectedVariantName = null;
+
+    /* ------------------------------------------------------------------ */
 
     public function mount()
     {
         $this->product = Product::query()->findOrFail($this->npi);
 
-        // ۱. اعتبارسنجی nvi — اگر نامعتبر بود، ریدایرکت به نسخه بدون nvi
+        // ۱. اعتبارسنجی nvi
         if (request()->has('nvi')) {
-            if (in_array((int) request()->query('nvi'), $this->product->variants()->pluck('id')->toArray())) {
-                $this->selectedVariant = (int) request()->query('nvi');
+            if (in_array((int)request()->query('nvi'), $this->product->variants()->pluck('id')->toArray())) {
+                $this->selectedVariant = (int)request()->query('nvi');
             } else {
                 return redirect()->to(
                     route('product-page', [
-                        'npi'   => $this->product->id,
+                        'npi' => $this->product->id,
                         'title' => $this->product->dashed_url,
                     ]),
                     301
@@ -45,10 +68,10 @@ class ProductPage extends Component
             }
         }
 
-        // ۲. اگر title نیامده یا اشتباه است → ریدایرکت دائمی (301) به آدرس صحیح
+        // ۲. ریدایرکت دائمی در صورت نامعتبر بودن title
         if ($this->title !== $this->product->dashed_url) {
             $params = [
-                'npi'   => $this->product->id,
+                'npi' => $this->product->id,
                 'title' => $this->product->dashed_url,
             ];
             if (request()->has('nvi')) {
@@ -57,7 +80,7 @@ class ProductPage extends Component
             return redirect()->to(route('product-page', $params), 301);
         }
 
-        // ۳. ادامه‌ی منطق قبلی (بدون تغییر)
+        // ۳. بارگذاری تصاویر و قیمت
         $path = 'products/' . $this->product->id . '/large';
         $this->images = collect(Storage::disk('public')->files($path))
             ->map(fn($file) => pathinfo($file, PATHINFO_FILENAME))
@@ -70,14 +93,107 @@ class ProductPage extends Component
         $this->finalPrice = PriceHelper::getProductPrice($this->product);
         $this->basePrice = PriceHelper::getBasePrice($this->product);
         $this->hasDiscount = PriceHelper::hasDiscount($this->product);
+
+        // ۴. آماده‌سازی داده‌های ویو
+        $this->loadViewData();
     }
+
+    protected function loadViewData(): void
+    {
+        $this->inStock = (is_null($this->product->variant) && $this->product->stock > 0)
+            || (!is_null($this->product->variant) && $this->product->variants->sum('stock') > 0);
+
+        $this->category = Category::query()->find($this->product->category_id);
+        $this->parentCategory = $this->category
+            ? Category::query()->find($this->category->parent_id)
+            : null;
+
+        $this->variantNameMap = $this->product->variants->pluck('name', 'id')->toArray();
+
+        $this->displayAttributes = [];
+        foreach ($this->product->attributes as $attr) {
+            $value = AttributeValue::query()->find($attr->pivot->attribute_value_id);
+            if ($value) {
+                $this->displayAttributes[] = [
+                    'name' => $attr->name,
+                    'value' => $value->value,
+                ];
+            }
+        }
+
+        $this->selectedVariantName = $this->resolveSelectedVariantName();
+        $this->buildCrossSite();
+    }
+
+    protected function buildCrossSite(): void
+    {
+        $isGhestiSite = str_starts_with(request()->getHost(), 'ghesti.');
+        $path = '/product/' . $this->product->id . '/' . $this->product->dashed_url;
+
+        if ($isGhestiSite) {
+            // مقصد: سایت نقدی (استفاده از رنگ‌های استاندارد آبی برای جلوگیری از تداخل با تم بنفش)
+            $this->crossTitle = 'خرید نقدی';
+            $this->crossLabel = 'برای خرید نقدی کلیک کنید';
+            $this->crossDesc = 'همین کالا را بصورت نقدی با قیمت ' . english_to_persian_num(number_format($this->product->price)) . ' تومان بخر';
+            $this->msg = 'با تایید، به فروشگاه نقدی ما منتقل می‌شوید. توجه داشته باشید که در فروشگاه نقدی، کل سبد خرید شما به صورت نقدی محاسبه می‌شود.';
+            $this->crossBaseUrl = 'https://nevisino.ir' . $path;
+            $this->crossTheme = [
+                'border' => 'border-blue-300',
+                'bg' => 'bg-gradient-to-l from-blue-50 via-blue-100/40 to-white',
+                'iconBg' => 'bg-blue-500',
+                'textDark' => 'text-blue-900',
+                'textSoft' => 'text-blue-700',
+                'btn' => 'bg-blue-500 hover:bg-blue-600',
+                'icon' => 'cash',
+            ];
+        } else {
+            // مقصد: سایت قسطی (استفاده از رنگ‌های بنفش)
+            $this->crossTitle = 'خرید اقساطی';
+            $this->crossLabel = 'برای خرید قسطی کلیک کنید';
+            $this->crossDesc = 'همین کالا را در ۴ قسط ' . english_to_persian_num(number_format(($this->product->installment_price ?? 0) / 4)) . ' تومانی بخر';
+            $this->crossBaseUrl = 'https://ghesti.nevisino.ir' . $path;
+            $this->msg = 'با تایید، به فروشگاه قسطی ما منتقل می‌شوید. توجه داشته باشید که در نویسینو قسطی، کل سبد خرید شما به صورت اقساطی محاسبه می‌شود.';
+            $this->crossTheme = [
+                'border' => 'border-purple-300',
+                'bg' => 'bg-gradient-to-l from-purple-50 via-purple-100/40 to-white',
+                'iconBg' => 'bg-purple-500',
+                'textDark' => 'text-purple-900',
+                'textSoft' => 'text-purple-700',
+                'btn' => 'bg-purple-500 hover:bg-purple-600',
+                'icon' => 'installment',
+            ];
+        }
+
+        $this->refreshCrossUrl();
+    }
+    protected function refreshCrossUrl(): void
+    {
+        $this->crossUrl = $this->crossBaseUrl
+            . ($this->selectedVariant >= 1000 ? '?nvi=' . $this->selectedVariant : '');
+    }
+
+    protected function resolveSelectedVariantName(): ?string
+    {
+        if ($this->product->variant === null || $this->selectedVariant < 1000) {
+            return null;
+        }
+        return ProductVariant::query()->find($this->selectedVariant)?->name;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  بقیه‌ی متدهای قبلی                                                */
+    /* ------------------------------------------------------------------ */
 
     public function updatedSelectedVariant($id): void
     {
         $this->stock = $this->stockCheck();
         $this->quantity = "۱";
-        if ($id != "")
+        $this->selectedVariantName = $this->resolveSelectedVariantName();
+        $this->refreshCrossUrl();
+
+        if ($id != "") {
             $this->setImage($id);
+        }
     }
 
     public function setImage($id): void
@@ -130,27 +246,21 @@ class ProductPage extends Component
 
     public function addToCart()
     {
-        // 1. اعتبارسنجی
-        $this->validate(
-            [
-            'selectedVariant' =>'required|int|min:1',
+        $this->validate([
+            'selectedVariant' => 'required|int|min:1',
             'quantity' => 'required|string|min:1|max:5',
         ]);
 
-        // 2. آماده‌سازی اولیه داده‌ها
         $requestedQuantity = (int)persian_to_english_num($this->quantity);
         if ($requestedQuantity <= 0) {
             $this->dispatch('showNotification', message: 'مقدار درخواستی نامعتبر است.', type: 'error');
             return;
         }
 
+        $isNoVariant = $this->product->variant === null;
+        $isAutoDistribution = $this->product->variant !== null && $this->selectedVariant < 1000;
+        $isSpecificVariant = $this->product->variant !== null && $this->selectedVariant >= 1000;
 
-        // *** تعریف شرط‌های جدید برای رفع تداخل ***
-        $isNoVariant = $this->product->variant === null; // حالت جدید: محصول بدون واریانت
-        $isAutoDistribution = $this->product->variant !== null && $this->selectedVariant < 1000; // واریانت‌دار + توزیع خودکار
-        $isSpecificVariant = $this->product->variant !== null && $this->selectedVariant >= 1000; // واریانت‌دار + واریانت خاص
-
-        // 3. مسیریابی بر اساس وضعیت لاگین
         if (Auth::check()) {
             $this->handleAuthenticatedCart($requestedQuantity, $isAutoDistribution, $isSpecificVariant, $isNoVariant);
         } else {
@@ -159,8 +269,7 @@ class ProductPage extends Component
         $this->dispatch('cart-updated');
     }
 
-
-    protected function handleAuthenticatedCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant, bool $isNoVariant) // آرگومان جدید
+    protected function handleAuthenticatedCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant, bool $isNoVariant)
     {
         $user = Auth::user();
         $cart = $user->cart()->firstOrCreate();
@@ -168,7 +277,6 @@ class ProductPage extends Component
         $successMessage = 'محصول با موفقیت به سبد خرید اضافه شد';
 
         if ($isAutoDistribution) {
-            // حالت ۱: کاربر لاگین + واریانت‌دار + توزیع خودکار (بدون تغییر)
             $availableVariants = $this->getAvailableVariantsStock();
             $totalAvailableStock = $availableVariants->sum('available_stock');
 
@@ -199,7 +307,6 @@ class ProductPage extends Component
             $this->dispatch('showNotification', message: $successMessage, type: 'success');
 
         } elseif ($isSpecificVariant) {
-            // حالت ۲: کاربر لاگین + واریانت‌دار + واریانت خاص (بدون تغییر)
             $variantId = $this->selectedVariant;
             $variant = ProductVariant::query()->find($variantId);
 
@@ -234,11 +341,8 @@ class ProductPage extends Component
             }
 
         } elseif ($isNoVariant) {
-            // *** حالت ۳: کاربر لاگین + بدون واریانت (جدید) ***
-
-            // variant_id برای محصول بدون واریانت null یا 0 در نظر گرفته می‌شود.
             $variantId = null;
-            $maxStock = $this->product->stock; // موجودی از فیلد stock خود محصول خوانده می‌شود
+            $maxStock = $this->product->stock;
 
             if ($maxStock <= 0) {
                 $this->dispatch('showNotification', message: 'موجودی این محصول به اتمام رسیده است.', type: 'warning');
@@ -266,23 +370,17 @@ class ProductPage extends Component
             }
 
         } else {
-            // حالت نامعتبر (اگر هیچ یک از شرط‌ها صدق نکند)
             $this->dispatch('showNotification', message: 'عملیات نامعتبر.', type: 'error');
         }
     }
 
-    /**
-     * مدیریت سبد خرید کاربر مهمان (سشن)
-     */
-    protected function handleGuestCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant, bool $isNoVariant) // آرگومان جدید
+    protected function handleGuestCart(int $requestedQuantity, bool $isAutoDistribution, bool $isSpecificVariant, bool $isNoVariant)
     {
         $cart = session()->get('cart', []);
         $productId = $this->product->id;
         $successMessage = 'محصول با موفقیت به سبد خرید اضافه شد';
 
         if ($isAutoDistribution) {
-            // حالت ۴: مهمان + واریانت‌دار + توزیع خودکار (بدون تغییر)
-            // ... (منطق قبلی)
             $variants = $this->product->variants;
             $availableVariants = collect([]);
 
@@ -328,8 +426,6 @@ class ProductPage extends Component
             $this->dispatch('showNotification', message: 'محصولات با موفقیت به سبد خرید اضافه شدند.', type: 'success');
 
         } elseif ($isSpecificVariant) {
-            // حالت ۵: مهمان + واریانت‌دار + واریانت خاص (بدون تغییر)
-            // ... (منطق قبلی)
             $variantId = $this->selectedVariant;
             $variant = ProductVariant::query()->find($variantId);
             $key = $productId . '-' . $variantId;
@@ -356,12 +452,9 @@ class ProductPage extends Component
             }
 
         } elseif ($isNoVariant) {
-            // *** حالت ۶: مهمان + بدون واریانت (جدید) ***
-
-            // variant_id برای محصول بدون واریانت null یا 0 در نظر گرفته می‌شود.
-            $variantId = 0; // در سشن از 0 به جای null استفاده می‌شود تا کلید معتبر باشد
+            $variantId = 0;
             $key = $productId . '-' . $variantId;
-            $maxStock = $this->product->stock; // موجودی از فیلد stock خود محصول خوانده می‌شود
+            $maxStock = $this->product->stock;
 
             if ($maxStock <= 0) {
                 $this->dispatch('showNotification', message: 'موجودی این محصول به اتمام رسیده است.', type: 'warning');
@@ -372,7 +465,6 @@ class ProductPage extends Component
             $newTotalQuantity = $inCartQuantity + $requestedQuantity;
             $qtyToSave = min($newTotalQuantity, $maxStock);
 
-            // در اینجا variantId را 0 (به عنوان واریانت پیش‌فرض) ارسال می‌کنیم
             $cart = $this->updateSessionCartItem($cart, $productId, $variantId, $qtyToSave);
 
             if ($inCartQuantity >= $maxStock) {
@@ -385,14 +477,10 @@ class ProductPage extends Component
             }
 
         } else {
-            // حالت نامعتبر (اگر هیچ یک از شرط‌ها صدق نکند)
             $this->dispatch('showNotification', message: 'عملیات نامعتبر.', type: 'error');
         }
     }
 
-    /**
-     * متد کمکی: دریافت موجودی خالص واریانت‌ها از دیتابیس (پس از کسر سبد خرید کاربر)
-     */
     protected function getAvailableVariantsStock(): \Illuminate\Support\Collection
     {
         $variants = $this->product->variants;
@@ -417,9 +505,6 @@ class ProductPage extends Component
         })->filter(fn($v) => $v->available_stock > 0);
     }
 
-    /**
-     * متد کمکی: توزیع تعداد درخواستی بین واریانت‌ها بر اساس اولویت حفظ موجودی
-     */
     protected function distributeQuantityToVariants(\Illuminate\Support\Collection $availableVariants, int $requestedQuantity): array
     {
         $updates = [];
@@ -448,7 +533,6 @@ class ProductPage extends Component
             }
         }
 
-        // مرحله نهایی: مصرف موجودی باقیمانده (تکرار سطح 0)
         if ($remainingQuantity > 0) {
             $variantsToDistribute = $remainingStocks
                 ->filter(fn($v) => $v->available_stock > 0)
@@ -474,9 +558,6 @@ class ProductPage extends Component
         ];
     }
 
-    /**
-     * متد کمکی: افزودن یا به‌روزرسانی آیتم در سبد خرید دیتابیس (لاگین)
-     */
     protected function updateDatabaseCartItem($cart, $productId, $variantId, $quantity)
     {
         $cartItem = $cart->items()
@@ -496,14 +577,10 @@ class ProductPage extends Component
         }
     }
 
-    /**
-     * متد کمکی: افزودن یا به‌روزرسانی آیتم در سبد خرید سشن (مهمان)
-     */
     protected function updateSessionCartItem(array $cart, int $productId, int $variantId, int $quantity): array
     {
         $key = $productId . '-' . $variantId;
 
-        // اگر variantId برابر 0 یا null بود، دیگر نباید از ProductVariant کوئری گرفت.
         if ($variantId >= 1000) {
             $variant = ProductVariant::query()->find($variantId);
         } else {
@@ -514,7 +591,6 @@ class ProductPage extends Component
         $cart[$key] = [
             'id' => $productId,
             'title' => $this->product->title,
-            'price' => $this->product->discounted_price ?? $this->product->price,
             'code' => $this->product->code,
             'quantity' => $quantity,
             'variant' => $variantId,
@@ -525,21 +601,21 @@ class ProductPage extends Component
         return $cart;
     }
 
-    public
-    function render(): \Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
+    public function render(): \Illuminate\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
     {
         $relatedProducts = Product::where('category_id', $this->product->category_id)
             ->where('id', '!=', $this->product->id)
             ->where(function ($query) {
-                // محصول خودش موجودی داره
                 $query->where('stock', '>', 0)
-                    // یا حداقل یکی از واریانت‌ها موجود باشه
                     ->orWhereHas('variants', function ($q) {
                         $q->where('stock', '>', 0);
                     });
             })
             ->limit(8)
             ->get();
-        return view('livewire.home.product-page' , compact('relatedProducts'))->layout('components.layouts.product')->title($this->product->title . ' | نویسینو');
+
+        return view('livewire.home.product-page', compact('relatedProducts'))
+            ->layout('components.layouts.product')
+            ->title($this->product->title . ' | نویسینو');
     }
 }

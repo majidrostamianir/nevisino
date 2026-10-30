@@ -8,8 +8,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TorobpayService;
 use App\Helpers\PriceHelper;
-
-// <-- اضافه کن
+use App\Helpers\Site;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -28,18 +27,16 @@ class Checkout extends Component
     public string $shipping_method = 'post_cod';
     public string $payment_method = 'gateway';
 
-    public int $packaging_price = 0, $shipping_price = 0;
+    public int  $shipping_price = 0;
 
-    public int $free_packaging_threshold = 0, $free_shipping_threshold = 0;
+    public int  $free_shipping_threshold = 0;
 
-    public int $sum = 0, $amount = 0, $maxPackagingSize = 1;
-
+    public int $sum = 0, $amount = 0;
 
     // ترب‌پی
     public bool $torobpayEligible = false;
     public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
     public string $torobpayDescription = '';
-
 
     public function mount()
     {
@@ -47,28 +44,38 @@ class Checkout extends Component
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
 
-
         $this->calculateSum();
-        $this->calculatePackaging();
         $this->calculateShipping();
         $this->calculateAmount();
 
         if ($this->sum == 0) {
             return redirect()->route('cart');
         }
+
+        // بررسی شرایط ترب‌پی
         $this->checkTorobpayEligibility();
+
+        // تعیین روش پرداخت پیش‌فرض
+        if (Site::isGhesti() && $this->torobpayEligible) {
+            $this->payment_method = 'torobpay'; // پیش‌فرض در سایت قسطی
+        } else {
+            $this->payment_method = 'gateway';  // پیش‌فرض در سایت نقدی یا وقتی ترب‌پی مجاز نیست
+        }
     }
 
     private function checkTorobpayEligibility(): void
     {
-
         $this->torobpayEligible = false;
 
-
-        if ($this->amount <= 0) {
-            $this->torobpayEligible = false;
+        // در سایت اصلی اصلاً ترب‌پی وجود ندارد
+        if (Site::isMain()) {
             return;
         }
+
+        if ($this->amount <= 0) {
+            return;
+        }
+
         try {
             $service = app(TorobpayService::class);
             $result = $service->checkEligible($this->amount);
@@ -89,27 +96,9 @@ class Checkout extends Component
             ->with('product', 'variant')->get();
 
         $this->sum = $cartItems->sum(function ($item) {
-            $price = PriceHelper::getProductPrice($item->product); // <-- اصلاح شده
+            $price = PriceHelper::getProductPrice($item->product);
             return $price * $item->quantity;
         });
-
-        $this->maxPackagingSize = $cartItems->max(function ($item) {
-            return (int)($item->product->size ?? 1);
-        }) ?? 1;
-
-        if ($this->maxPackagingSize == 0) {
-            $this->maxPackagingSize = 1;
-        }
-    }
-
-    private function calculatePackaging()
-    {
-        $this->free_packaging_threshold = Setting::get('free_packaging_threshold');
-        if ($this->sum < $this->free_packaging_threshold) {
-            $this->packaging_price = Setting::get('packaging_' . $this->maxPackagingSize);
-        } else {
-            $this->packaging_price = 0;
-        }
     }
 
     private function calculateShipping()
@@ -136,15 +125,13 @@ class Checkout extends Component
 
     public function calculateAmount()
     {
-        $this->amount = $this->sum + $this->shipping_price + $this->packaging_price;
+        $this->amount = $this->sum + $this->shipping_price ;
     }
-
 
     public function updateShippingMethod($method)
     {
         $this->shipping_method = $method;
         $this->calculateSum();
-        $this->calculatePackaging();
         $this->calculateShipping();
         $this->calculateAmount();
 
@@ -199,7 +186,6 @@ class Checkout extends Component
         }
 
         $this->calculateSum();
-        $this->calculatePackaging();
         $this->calculateShipping();
         $this->calculateAmount();
         $finalAmount = $this->amount; // snapshot بگیر
@@ -216,6 +202,7 @@ class Checkout extends Component
 
         switch ($this->payment_method) {
             case 'gateway':
+                // پرداخت نقدی در هر دو سایت مجاز است
                 $order = $cart->convertToOrder($orderParams);
                 $invoice = (new Invoice)->amount($finalAmount);
                 $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($finalAmount, $order) {
@@ -230,6 +217,7 @@ class Checkout extends Component
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
+                // کارت به کارت در هر دو سایت مجاز است
                 $order = $cart->convertToOrder($orderParams);
                 Transaction::query()->create([
                     'order_id' => $order->id,
@@ -241,6 +229,11 @@ class Checkout extends Component
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
             case 'torobpay':
+                // لایه امنیتی: ترب‌پی فقط در سایت قسطی مجاز است
+                if (!Site::isGhesti()) {
+                    abort(403, 'پرداخت اقساطی فقط در سایت قسطی در دسترس است.');
+                }
+
                 if (!$this->torobpayEligible) {
                     abort(403, 'پرداخت اقساطی ترب پی در حال حاضر در دسترس نیست.');
                 }
@@ -249,7 +242,7 @@ class Checkout extends Component
 
                 $transaction = Transaction::query()->create([
                     'order_id' => $order->id,
-                    'amount' => $this->amount,
+                    'amount' => $finalAmount, // اصلاح شد
                     'status' => 'pending',
                     'payment_gateway' => 'torobpay',
                     'authority' => '',
@@ -266,80 +259,6 @@ class Checkout extends Component
                     Log::error($e->getMessage());
                     abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
                 }
-/*            case 'digipay':
-                // ۱. تبدیل سبد خرید به سفارش
-                $order = $cart->convertToOrder($orderParams);
-
-                // ۲. ساخت رکورد تراکنش داخلی
-                $transaction = Transaction::query()->create([
-                    'order_id' => $order->id,
-                    'amount' => $finalAmount,
-                    'status' => 'pending',
-                    'payment_gateway' => 'digipay',
-                    'authority' => '',
-                ]);
-
-                try {
-                    // ۳. شماره موبایل کاربر
-                    $cellNumber = $this->user->mobile ?? $this->recipient_mobile;
-
-                    // ۴. providerId یونیک
-                    $providerId = 'order-' . $order->id . '-' . now()->timestamp;
-
-                    // ۵. مبلغ به ریال (چون دیجی‌پی ریال می‌گیره)
-                    $amountRial = $finalAmount * 10;
-
-                    // ۶. ساخت تیکت
-                    $result = app(TicketService::class)->create([
-                        'cellNumber' => $cellNumber,
-                        'amount' => $amountRial,
-                        'providerId' => $providerId,
-                        'callbackUrl' => route('digipay.callback'),
-                        'type' => 11, // UPG - همه ابزارهای پرداخت
-                    ]);
-
-                    // ۷. ذخیره اطلاعات دیجی‌پی
-                    DigipayTransaction::create([
-                        'order_id' => $order->id,
-                        'transaction_id' => $transaction->id,
-                        'provider_id' => $providerId,
-                        'ticket' => $result['ticket'] ?? null,
-                        'cell_number' => $cellNumber,
-                        'amount' => $amountRial,
-                        'type' => 11,
-                        'status' => DigipayTransaction::STATUS_PENDING,
-                        'callback_url' => route('digipay.callback'),
-                        'redirect_url' => $result['redirectUrl'] ?? null,
-                        'request_payload' => [
-                            'cellNumber' => $cellNumber,
-                            'amount' => $amountRial,
-                            'providerId' => $providerId,
-                            'callbackUrl' => route('digipay.callback'),
-                            'type' => 11,
-                        ],
-                        'response_payload' => $result,
-                    ]);
-
-                    // ۸. ذخیره ticket توی transaction داخلی برای پیگیری
-                    $transaction->update([
-                        'authority' => $result['ticket'] ?? '',
-                    ]);
-
-                    // ۹. ریدایرکت به درگاه دیجی‌پی
-                    return redirect()->away($result['redirectUrl']);
-
-                } catch (\Throwable $e) {
-                    $transaction->update(['status' => 'failed']);
-
-                    Log::error('Digipay pay error', [
-                        'order_id' => $order->id,
-                        'message' => $e->getMessage(),
-                    ]);
-
-                    $this->addError('payment', 'خطا در اتصال به دیجی‌پی. لطفاً مجدداً تلاش کنید.');
-
-                    return null;
-                }*/
         }
     }
 
@@ -361,9 +280,7 @@ class Checkout extends Component
             'description' => $this->description,
             'shipping_method' => $this->shipping_method,
             'shipping_price' => $this->shipping_price,
-            'packaging_price' => $this->packaging_price,
-            'torob_clid' => request()->cookie('torob_clid') ?: null,   // ← این خط
-
+            'torob_clid' => request()->cookie('torob_clid') ?: null,
         ];
     }
 

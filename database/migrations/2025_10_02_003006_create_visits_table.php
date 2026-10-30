@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->text('url')->nullable();
             $table->string('ip')->nullable();
+            $table->boolean('is_ghesti')->default(false);
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             $table->text('referrer')->nullable();
             $table->boolean('is_bot')->default(false);
