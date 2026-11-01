@@ -41,18 +41,30 @@ class Index extends Component
 
         $linkColor = $isGhesti ? 'text-purple-500 font-medium' : 'text-gray-700';
 
-        $cleanUrl    = $this->stripDomain($item->url);
-        $currentHref = ($isGhesti ? 'https://ghesti.nevisino.ir' : 'https://nevisino.ir') . $cleanUrl;
+        // base دامنه بر اساس نوع بازدید
+        $base = $isGhesti ? 'https://ghesti.nevisino.ir' : 'https://nevisino.ir';
 
+        // مسیر تمیز و نرمال‌شده (همیشه با / شروع می‌شود)
+        $cleanUrl    = $this->stripDomain($item->url);
+        $currentHref = rtrim($base, '/') . '/' . ltrim($cleanUrl, '/');
+
+        // ریفرر
         $refIsExternal = $this->isExternalReferrer($item->referrer);
         $refColor      = $refIsExternal ? 'text-gray-400' : $linkColor;
         $cleanRef      = $this->stripDomain($item->referrer);
 
+        // href ریفرر: اگر کامل و معتبر بود همان، وگرنه بساز
+        $refHref = $item->referrer
+            ? (str_starts_with($item->referrer, 'http')
+                ? $item->referrer
+                : rtrim($base, '/') . '/' . ltrim($item->referrer, '/'))
+            : null;
+
         $user = $item->user_id ? User::find($item->user_id) : null;
 
-        $userName    = null;
-        $userHref    = null;
-        $userClass   = null;
+        $userName  = null;
+        $userHref  = null;
+        $userClass = null;
         if ($user) {
             $userName  = $user->name ?? english_to_persian_num($user->mobile) ?? '—';
             $userHref  = 'https://nevisino.ir/admin/user/order/' . $item->user_id;
@@ -70,12 +82,12 @@ class Index extends Component
             'ip'          => english_to_persian_num($item->ip),
             'created_at'  => english_to_persian_num(verta($item->created_at)->format('m/d#H:i:s')),
 
-            'link_color'  => $linkColor,
-            'clean_url'   => $cleanUrl,
-            'current_href'=> $currentHref,
+            'link_color'   => $linkColor,
+            'clean_url'    => $cleanUrl,
+            'current_href' => $currentHref,
 
             'has_ref'     => (bool) $item->referrer,
-            'ref_href'    => $item->referrer,
+            'ref_href'    => $refHref ?? '#',
             'clean_ref'   => $cleanRef,
             'ref_color'   => $refColor,
 
@@ -94,17 +106,35 @@ class Index extends Component
         ];
     }
 
-    /** حذف پیشوند پروتکل، www، ghesti و nevisino.ir از URL برای نمایش کوتاه. */
+    /**
+     * حذف پیشوند پروتکل، www، ghesti و nevisino.ir از URL برای نمایش کوتاه.
+     * خروجی همیشه با "/" (یا "?" یا "#") شروع می‌شود.
+     */
     protected function stripDomain(?string $url): string
     {
         if (!$url) {
-            return '';
+            return '/';
         }
 
+        // حذف پروتکل و www
         $path = preg_replace('#^https?://(www\.)?#', '', $url);
+
+        // حذف دامنه‌ی nevisino.ir یا ghesti.nevisino.ir در ابتدا
         $path = preg_replace('#^(ghesti\.)?nevisino\.ir#', '', $path);
 
-        return $path === '' ? '/' : $path;
+        // اگر خالی شد
+        if ($path === '' || $path === false) {
+            return '/';
+        }
+
+        // اگر بدون / شروع شده، اضافه کن
+        if (!str_starts_with($path, '/')
+            && !str_starts_with($path, '?')
+            && !str_starts_with($path, '#')) {
+            $path = '/' . $path;
+        }
+
+        return $path;
     }
 
     /** آیا ریفرر به دامنه‌ای خارج از nevisino.ir اشاره می‌کند؟ */
