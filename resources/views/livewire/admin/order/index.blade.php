@@ -33,32 +33,38 @@
                     <div class="border-r border-gray-300 h-6"></div>
 
                     <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg {{ $statusFilter['pending'] ? 'bg-orange-100' : 'bg-gray-100' }}">
-                        <input type="checkbox" wire:model.live="statusFilter.pending" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
+                        <input type="checkbox" wire:model.live="statusFilter.pending"
+                               class="rounded border-gray-300 text-orange-600 focus:ring-orange-500">
                         <span class="text-sm font-medium {{ $statusFilter['pending'] ? 'text-orange-700' : 'text-gray-500' }}">🕐 در انتظار</span>
                     </label>
 
                     <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg {{ $statusFilter['paid'] ? 'bg-green-100' : 'bg-gray-100' }}">
-                        <input type="checkbox" wire:model.live="statusFilter.paid" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                        <input type="checkbox" wire:model.live="statusFilter.paid"
+                               class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                         <span class="text-sm font-medium {{ $statusFilter['paid'] ? 'text-green-700' : 'text-gray-500' }}">✓ پرداخت شده</span>
                     </label>
 
                     <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg {{ $statusFilter['shipped'] ? 'bg-blue-100' : 'bg-gray-100' }}">
-                        <input type="checkbox" wire:model.live="statusFilter.shipped" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <input type="checkbox" wire:model.live="statusFilter.shipped"
+                               class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                         <span class="text-sm font-medium {{ $statusFilter['shipped'] ? 'text-blue-700' : 'text-gray-500' }}">🚚 ارسال شده</span>
                     </label>
 
                     <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg {{ $statusFilter['delivered'] ? 'bg-emerald-100' : 'bg-gray-100' }}">
-                        <input type="checkbox" wire:model.live="statusFilter.delivered" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                        <input type="checkbox" wire:model.live="statusFilter.delivered"
+                               class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
                         <span class="text-sm font-medium {{ $statusFilter['delivered'] ? 'text-emerald-700' : 'text-gray-500' }}">✓ تحویل شده</span>
                     </label>
 
                     <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg {{ $statusFilter['returned'] ? 'bg-red-100' : 'bg-gray-100' }}">
-                        <input type="checkbox" wire:model.live="statusFilter.returned" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        <input type="checkbox" wire:model.live="statusFilter.returned"
+                               class="rounded border-gray-300 text-red-600 focus:ring-red-500">
                         <span class="text-sm font-medium {{ $statusFilter['returned'] ? 'text-red-700' : 'text-gray-500' }}">↩️ عودت شده</span>
                     </label>
 
                     <label class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg {{ $statusFilter['canceled'] ? 'bg-red-100' : 'bg-gray-100' }}">
-                        <input type="checkbox" wire:model.live="statusFilter.canceled" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        <input type="checkbox" wire:model.live="statusFilter.canceled"
+                               class="rounded border-gray-300 text-red-600 focus:ring-red-500">
                         <span class="text-sm font-medium {{ $statusFilter['canceled'] ? 'text-red-700' : 'text-gray-500' }}">✗ لغو شده</span>
                     </label>
                 </div>
@@ -74,6 +80,7 @@
                 <th class="px-4 py-3 text-sm font-semibold">نام</th>
                 <th class="px-4 py-3 text-sm font-semibold">مبلغ</th>
                 <th class="px-4 py-3 text-sm font-semibold">وضعیت</th>
+                <th class="px-4 py-3 text-sm font-semibold">روش پرداخت</th>
                 <th class="px-4 py-3 text-sm font-semibold">تاریخ ثبت سفارش</th>
             </tr>
             </thead>
@@ -119,7 +126,8 @@
                                         @case('shipped')
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-blue-100 text-blue-700">تحویل پست شده</span>
-                                                <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}" target="_blank"
+                                                <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}"
+                                                   target="_blank"
                                                    class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-100 text-gray-500 hover:bg-cyan-600 shadow-sm transition-all">
                                                     رهگیری
                                                 </a>
@@ -129,7 +137,8 @@
                                         @case('delivered')
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700">تحویل مشتری شده</span>
-                                                <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}" target="_blank"
+                                                <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}"
+                                                   target="_blank"
                                                    class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-400 text-white hover:bg-gray-500 shadow-sm transition-all">
                                                     مشاهده مسیر
                                                 </a>
@@ -139,7 +148,8 @@
                                         @case('returned')
                                             <div class="flex items-center gap-2 flex-wrap">
                                                 <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-700">عودت شده به فروشنده</span>
-                                                <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}" target="_blank"
+                                                <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}"
+                                                   target="_blank"
                                                    class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white hover:bg-red-700 shadow-sm transition-all">
                                                     پیگیری عودت
                                                 </a>
@@ -154,11 +164,47 @@
                                 @break
                         @endswitch
                     </td>
+
+                    {{-- ═══ ستون جدید: روش پرداخت ═══ --}}
+                    <td class="px-4 py-3 text-sm">
+                        @php
+                            // آخرین تراکنش بدون توجه به status
+                            $lastTx = $order->transactions->first();
+                        @endphp
+
+                        @if($lastTx)
+                            @switch($lastTx->payment_gateway)
+                                @case('torobpay')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium ">
+                                        ترب پی
+                                    </span>
+                                    @break
+
+                                @case('card')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium">
+                                         کارت به کارت
+                                    </span>
+                                    @break
+
+                                @case('zibal')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium">
+                                    زیبال
+                                </span>
+                                    @break
+                                @default
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700">
+                                        {{ $lastTx->payment_gateway ?: 'نامشخص' }}
+                                    </span>
+                            @endswitch
+                        @else
+                            <span class="text-xs text-gray-400">—</span>
+                        @endif
+                    </td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ english_to_persian_num(verta($order->created_at)) }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center py-12 bg-gray-50">
+                    <td colspan="5" class="text-center py-12 bg-gray-50">
                         <p class="text-gray-500">هیچ سفارشی یافت نشد</p>
                     </td>
                 </tr>

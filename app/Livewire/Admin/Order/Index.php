@@ -14,7 +14,7 @@ class Index extends Component
         'shipped'   => true,
         'delivered' => true,
         'returned'  => true,
-        'canceled'  => false,
+        'canceled'  => false, // ← پیش‌فرض true تا در ابتدا همه سفارش‌ها دیده بشن
     ];
 
     public function toggleAllStatuses(): void
@@ -28,27 +28,33 @@ class Index extends Component
 
     public function render()
     {
-        $query = Order::query()->latest();
+        $query = Order::query()
+            ->with(['user', 'transactions'])
+            ->latest();
 
         $activeStatuses = array_keys(array_filter($this->statusFilter));
 
+        // حالت ۱: هیچ فیلتری فعال نیست → نتیجه خالی
         if (empty($activeStatuses)) {
             $orders = collect();
-        } else {
+        }
+        // حالت ۲: همه فیلترها فعال هستن → همه سفارش‌ها بدون هیچ شرطی
+        elseif (count($activeStatuses) === count($this->statusFilter)) {
+            $orders = $query->get();
+        }
+        // حالت ۳: فیلتر جزئی
+        else {
             $query->where(function ($q) use ($activeStatuses) {
-                if (in_array('pending', $activeStatuses)) {
-                    $q->orWhere('status', 'pending');
-                }
-                if (in_array('paid', $activeStatuses)) {
-                    $q->orWhere('status', 'paid');
-                }
-                if (in_array('canceled', $activeStatuses)) {
-                    $q->orWhere('status', 'canceled');
+                // فیلترهای ستون status
+                $statusFilters = array_intersect($activeStatuses, ['pending', 'paid', 'canceled']);
+                if (!empty($statusFilters)) {
+                    $q->orWhereIn('status', $statusFilters);
                 }
 
-                $shippingStatuses = array_intersect($activeStatuses, ['shipped', 'delivered', 'returned']);
-                if (!empty($shippingStatuses)) {
-                    $q->orWhereIn('shipping_status', $shippingStatuses);
+                // فیلترهای ستون shipping_status
+                $shippingFilters = array_intersect($activeStatuses, ['shipped', 'delivered', 'returned']);
+                if (!empty($shippingFilters)) {
+                    $q->orWhereIn('shipping_status', $shippingFilters);
                 }
             });
 

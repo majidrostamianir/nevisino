@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Throwable;
@@ -13,97 +15,167 @@ class TorobOrderController extends Controller
 {
     public function __invoke(Request $request)
     {
-        // ۱) قابلیت فعال است؟
+        // 1. بررسی فعال بودن رهگیری سفارش
         if (!config('torob.order_tracking_enabled', false)) {
-            return $this->jsonResponse(['error' => 'order tracking is disabled for this shop'], 403);
+            return $this->jsonResponse([
+                'error' => 'order tracking is disabled for this shop'
+            ], 403);
         }
 
-        // ۲) احراز هویت JWT
+        // 2. احراز هویت JWT
         try {
             $this->verifyToken($request);
         } catch (Throwable $e) {
-            return $this->jsonResponse(['error' => 'unauthorized: ' . $e->getMessage()], 401);
+            Log::warning('Torob Order API: Authentication failed', [
+                'message' => $e->getMessage(),
+                'ip' => $request->ip(),
+            ]);
+
+            return $this->jsonResponse([
+                'error' => 'unauthorized: ' . $e->getMessage()
+            ], 401);
         }
 
-        // ۳) اعتبارسنجی پارامترها (دستی، چون Torob انتظار JSON دارد نه HTML)
+        // 3. دریافت پارامترهای درخواست
         $rawSince = $request->query('purchase_timestamp_gt');
+        $rawLimit = $request->query('limit');
+
         if (!is_string($rawSince) || trim($rawSince) === '') {
-            return $this->jsonResponse(['error' => 'purchase_timestamp_gt is required'], 400);
+            return $this->jsonResponse([
+                'error' => 'purchase_timestamp_gt is required'
+            ], 400);
         }
 
         try {
             $since = Carbon::parse($rawSince)->utc();
         } catch (Throwable $e) {
-            return $this->jsonResponse(['error' => 'purchase_timestamp_gt must be a valid ISO 8601 timestamp'], 400);
+            return $this->jsonResponse([
+                'error' => 'purchase_timestamp_gt must be a valid ISO 8601 timestamp'
+            ], 400);
         }
 
-        $rawLimit = $request->query('limit');
         if ($rawLimit === null || !is_numeric($rawLimit)) {
-            return $this->jsonResponse(['error' => 'limit is required and must be numeric'], 400);
-        }
-        $limit = (int) $rawLimit;
-        if ($limit < 1 || $limit > 1000) {
-            return $this->jsonResponse(['error' => 'limit must be between 1 and 1000'], 400);
+            return $this->jsonResponse([
+                'error' => 'limit is required and must be numeric'
+            ], 400);
         }
 
-        // ۴) کوئری سفارش‌ها
-        // - فقط سفارش‌های دارای torob_clid
-        // - فقط paid یا canceled (pending به ترب نمی‌رود)
-        // - purchase_timestamp > since
+        $limit = (int) $rawLimit;
+
+        if ($limit < 1 || $limit > 1000) {
+            return $this->jsonResponse([
+                'error' => 'limit must be between 1 and 1000'
+            ], 400);
+        }
+
+        // 4. ثبت اطلاعات درخواست ترب در لاگ
+        try {
+            $databaseTimezone = DB::selectOne(
+                'SELECT @@session.time_zone AS timezone'
+            )->timezone ?? null;
+        } catch (Throwable $e) {
+            $databaseTimezone = 'unavailable: ' . $e->getMessage();
+        }
+
+        Log::info('Torob Order API: Request received', [
+            'requested_timestamp' => $rawSince,
+            'parsed_timestamp_utc' => $since->toIso8601String(),
+            'parsed_timestamp_mysql' => $since->format('Y-m-d H:i:s'),
+            'limit' => $limit,
+            'app_timezone' => config('app.timezone'),
+            'php_timezone' => date_default_timezone_get(),
+            'database_timezone' => $databaseTimezone,
+            'server_time' => now()->toDateTimeString(),
+            'server_time_utc' => now('UTC')->toIso8601String(),
+        ]);
+
+        $sinceForDatabase = $since
+            ->setTimezone(config('app.timezone'))
+            ->format('Y-m-d H:i:s.u');
+
         $orders = Order::query()
             ->whereNotNull('torob_clid')
             ->whereIn('status', ['paid', 'canceled'])
-            ->where('created_at', '>', $since)
+            ->where('created_at', '>', $sinceForDatabase)
             ->orderBy('created_at', 'asc')
             ->limit($limit)
             ->with(['items.product', 'transactions'])
             ->get();
 
-        // ۵) پاسخ
-        $data = $orders->map(fn(Order $order) => $this->transformOrder($order))->values()->all();
+        // 6. ثبت تعداد و جزئیات سفارش‌های پیدا شده
+        Log::info('Torob Order API: Orders returned', [
+            'count' => $orders->count(),
+            'orders' => $orders->map(function (Order $order) {
+                return [
+                    'id' => $order->id,
+                    'torob_clid' => $order->torob_clid,
+                    'created_at' => $order->created_at?->toDateTimeString(),
+                    'created_at_utc' => $order->created_at
+                        ?->copy()->utc()->toIso8601String(),
+                    'updated_at' => $order->updated_at?->toDateTimeString(),
+                    'status' => $order->status,
+                ];
+            })->values()->all(),
+        ]);
+
+        // 7. تبدیل سفارش‌ها به فرمت مورد انتظار ترب
+        $data = $orders
+            ->map(fn (Order $order) => $this->transformOrder($order))
+            ->values()
+            ->all();
+
+        // 8. ثبت زمان‌های خروجی API
+        Log::info('Torob Order API: Response prepared', [
+            'count' => count($data),
+            'torob_clids' => array_column($data, 'torob_clid'),
+            'purchase_timestamps' => array_column(
+                $data,
+                'purchase_timestamp'
+            ),
+        ]);
 
         return $this->jsonResponse([
             'success' => true,
-            'data'    => $data,
+            'data' => $data,
         ]);
     }
 
-    // =========================================================
-    //  Transform
-    // =========================================================
     private function transformOrder(Order $order): array
     {
         $payload = [
-            'purchase_timestamp'     => $this->toIsoUtc($order->created_at),
-            'last_updated_timestamp' => $this->toIsoUtc($order->updated_at ?? $order->created_at),
-            'torob_clid'             => (string) $order->torob_clid,
-            'status'                 => $order->status === 'paid' ? 'completed' : 'cancelled',
+            'purchase_timestamp' => $this->toIsoUtc($order->created_at),
+            'last_updated_timestamp' => $this->toIsoUtc(
+                $order->updated_at ?? $order->created_at
+            ),
+            'torob_clid' => (string) $order->torob_clid,
+            'status' => $order->status === 'paid'
+                ? 'completed'
+                : 'cancelled',
         ];
 
-        // psp (اختیاری)
         $psp = $this->resolvePsp($order);
+
         if ($psp !== null) {
             $payload['psp'] = $psp;
         }
 
-        // order_value = مجموع اقلام (بدون ارسال/بسته‌بندی)
         if ($order->total_price !== null) {
             $payload['order_value'] = (int) $order->total_price;
         }
 
-        // shipping_amount = هزینه ارسال + بسته‌بندی
-        $shipping = (int)($order->shipping_price ?? 0) + (int)($order->packaging_price ?? 0);
+        $shipping = (int) ($order->shipping_price ?? 0)
+            + (int) ($order->packaging_price ?? 0);
+
         if ($shipping > 0) {
             $payload['shipping_amount'] = $shipping;
         }
 
-        // phone_number
         if (!empty($order->recipient_mobile)) {
             $payload['phone_number'] = (string) $order->recipient_mobile;
         }
 
-        // products (اختیاری)
         $products = $this->transformProducts($order);
+
         if (!empty($products)) {
             $payload['products'] = $products;
         }
@@ -118,7 +190,6 @@ class TorobOrderController extends Controller
         }
 
         return $order->items->map(function ($item) {
-            // اگر محصول حذف شده، از URL ساده استفاده کن
             $productUrl = $item->product
                 ? url('/product/' . $item->product->id . '/' . $item->product->dashed_url)
                 : url('/product/' . $item->product_id);
@@ -128,9 +199,9 @@ class TorobOrderController extends Controller
             }
 
             return [
-                'product_url'   => $productUrl,
-                'product_price' => (int) $item->price_snapshot,  // ← قیمت واحد
-                'quantity'      => (int) $item->quantity,
+                'product_url' => $productUrl,
+                'product_price' => (int) $item->price_snapshot,
+                'quantity' => (int) $item->quantity,
             ];
         })->values()->all();
     }
@@ -141,14 +212,18 @@ class TorobOrderController extends Controller
             return null;
         }
 
-        // اول TorobPay را چک کن — اگر هر تراکنشی torobpay_transaction_id دارد
-        $torobpayTx = $order->transactions->whereNotNull('torobpay_transaction_id')->first();
+        $torobpayTx = $order->transactions
+            ->whereNotNull('torobpay_transaction_id')
+            ->first();
+
         if ($torobpayTx) {
             return 'torobpay';
         }
 
-        // وگرنه آخرین تراکنش
-        $latest = $order->transactions->sortByDesc('created_at')->first();
+        $latest = $order->transactions
+            ->sortByDesc('created_at')
+            ->first();
+
         if ($latest && !empty($latest->payment_gateway)) {
             return strtolower($latest->payment_gateway);
         }
@@ -156,12 +231,11 @@ class TorobOrderController extends Controller
         return null;
     }
 
-    // =========================================================
-    //  Helpers
-    // =========================================================
     private function toIsoUtc($date): string
     {
-        return Carbon::parse($date)->utc()->format('Y-m-d\TH:i:s.u\Z');
+        return Carbon::parse($date)
+            ->utc()
+            ->format('Y-m-d\TH:i:s.u\Z');
     }
 
     private function jsonResponse(array $data, int $status = 200)
@@ -174,21 +248,22 @@ class TorobOrderController extends Controller
         );
     }
 
-    // =========================================================
-    //  JWT (مشترک با TorobController)
-    // =========================================================
     private function verifyToken(Request $request): void
     {
         $tokenHeader = config('torob.token_header', 'X-Torob-Token');
-        $publicKey   = config('torob.public_key');
-        $algo        = config('torob.jwt_algo', 'EdDSA');
+        $publicKey = config('torob.public_key');
+        $algo = config('torob.jwt_algo', 'EdDSA');
 
         $token = $request->header($tokenHeader);
+
         if (!$token) {
             throw new \RuntimeException("missing {$tokenHeader} header");
         }
+
         if (!$publicKey) {
-            throw new \RuntimeException('torob public key not configured (TOROB_PUBLIC_KEY)');
+            throw new \RuntimeException(
+                'torob public key not configured (TOROB_PUBLIC_KEY)'
+            );
         }
 
         $seed = $this->extractEd25519Seed($publicKey);
@@ -196,21 +271,31 @@ class TorobOrderController extends Controller
         try {
             $decoded = JWT::decode($token, new Key($seed, $algo));
         } catch (Throwable $e) {
-            throw new \RuntimeException('invalid token: ' . $e->getMessage(), 0, $e);
+            throw new \RuntimeException(
+                'invalid token: ' . $e->getMessage(),
+                0,
+                $e
+            );
         }
 
-        $expectedAud = config('torob.expected_audience') ?: $request->getHttpHost();
+        $expectedAud = config('torob.expected_audience')
+            ?: $request->getHttpHost();
+
         if (($decoded->aud ?? null) !== $expectedAud) {
-            throw new \RuntimeException("invalid audience: expected {$expectedAud}");
+            throw new \RuntimeException(
+                "invalid audience: expected {$expectedAud}"
+            );
         }
     }
 
     private function extractEd25519Seed(string $publicKeyB64): string
     {
         $der = base64_decode($publicKeyB64, true);
+
         if ($der === false || strlen($der) < 32) {
             throw new \RuntimeException('invalid torob public key format');
         }
+
         return base64_encode(substr($der, -32));
     }
 }

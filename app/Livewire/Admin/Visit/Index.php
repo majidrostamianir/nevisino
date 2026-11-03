@@ -14,17 +14,31 @@ class Index extends Component
 
     public string $searchQuery = '';
 
+    /** پیش‌فرض: ربات‌ها نمایش داده نشوند */
+    public bool $showBots = false;
+
     public function updatingSearchQuery(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingShowBots(): void
     {
         $this->resetPage();
     }
 
     public function render()
     {
-        $visits = ($this->searchQuery
+        $query = $this->searchQuery
             ? Visit::search($this->searchQuery)
-            : Visit::query()->latest())
-            ->paginate(500);
+            : Visit::query()->latest();
+
+        // به‌صورت پیش‌فرض ربات‌ها فیلتر می‌شوند
+        if (! $this->showBots) {
+            $query->where('is_bot', false);
+        }
+
+        $visits = $query->paginate(500);
 
         $visits->getCollection()->transform(fn (Visit $item) => $this->formatVisit($item));
 

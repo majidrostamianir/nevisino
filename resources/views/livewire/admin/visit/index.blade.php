@@ -8,7 +8,18 @@
                            class="w-full max-w-[200px] rounded-lg border-0 bg-white/20 text-white placeholder-white/70 focus:ring-2 focus:ring-white/50 h-9 px-2 text-sm"
                            placeholder="👤 جستجو ...">
                 </th>
-                <th class="px-4 py-3 text-sm font-semibold w-[48%]">صفحه / صفحه قبل</th>
+                <th class="px-4 py-3 text-sm font-semibold w-[48%] flex">
+                    <span>صفحه / صفحه قبل</span>
+                    {{-- سوییچ نمایش ربات‌ها --}}
+                    <div class="flex pr-8">
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none text-sm text-white">
+                            <input type="checkbox"
+                                   wire:model.live="showBots"
+                                   class="rounded border-gray-300 text-pars-600 focus:ring-pars-500">
+                            <span>🤖 نمایش ربات‌ها</span>
+                        </label>
+                    </div>
+                </th>
                 <th class="px-4 py-3 text-sm font-semibold w-[20%]">ایجنت</th>
             </tr>
             </thead>

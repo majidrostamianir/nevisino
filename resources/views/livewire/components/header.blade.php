@@ -9,7 +9,7 @@
                     @endif
 
                     @if(\App\Helpers\Site::isMain())
-                        <img src="{{ asset('images/logosss.png') }}" alt="" class="h-12">
+                        <img src="{{ asset('images/logo.png') }}" alt="" class="h-12">
                     @endif
                 </a>
                 <div class="w-full pl-4">
