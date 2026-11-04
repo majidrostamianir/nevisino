@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -68,27 +67,7 @@ class TorobOrderController extends Controller
             ], 400);
         }
 
-        // 4. ثبت اطلاعات درخواست ترب در لاگ
-        try {
-            $databaseTimezone = DB::selectOne(
-                'SELECT @@session.time_zone AS timezone'
-            )->timezone ?? null;
-        } catch (Throwable $e) {
-            $databaseTimezone = 'unavailable: ' . $e->getMessage();
-        }
-
-        Log::info('Torob Order API: Request received', [
-            'requested_timestamp' => $rawSince,
-            'parsed_timestamp_utc' => $since->toIso8601String(),
-            'parsed_timestamp_mysql' => $since->format('Y-m-d H:i:s'),
-            'limit' => $limit,
-            'app_timezone' => config('app.timezone'),
-            'php_timezone' => date_default_timezone_get(),
-            'database_timezone' => $databaseTimezone,
-            'server_time' => now()->toDateTimeString(),
-            'server_time_utc' => now('UTC')->toIso8601String(),
-        ]);
-
+        // 4. دریافت سفارش‌های جدیدتر از timestamp درخواست
         $sinceForDatabase = $since
             ->setTimezone(config('app.timezone'))
             ->format('Y-m-d H:i:s.u');
@@ -102,37 +81,11 @@ class TorobOrderController extends Controller
             ->with(['items.product', 'transactions'])
             ->get();
 
-        // 6. ثبت تعداد و جزئیات سفارش‌های پیدا شده
-        Log::info('Torob Order API: Orders returned', [
-            'count' => $orders->count(),
-            'orders' => $orders->map(function (Order $order) {
-                return [
-                    'id' => $order->id,
-                    'torob_clid' => $order->torob_clid,
-                    'created_at' => $order->created_at?->toDateTimeString(),
-                    'created_at_utc' => $order->created_at
-                        ?->copy()->utc()->toIso8601String(),
-                    'updated_at' => $order->updated_at?->toDateTimeString(),
-                    'status' => $order->status,
-                ];
-            })->values()->all(),
-        ]);
-
-        // 7. تبدیل سفارش‌ها به فرمت مورد انتظار ترب
+        // 5. تبدیل سفارش‌ها به فرمت مورد انتظار ترب
         $data = $orders
             ->map(fn (Order $order) => $this->transformOrder($order))
             ->values()
             ->all();
-
-        // 8. ثبت زمان‌های خروجی API
-        Log::info('Torob Order API: Response prepared', [
-            'count' => count($data),
-            'torob_clids' => array_column($data, 'torob_clid'),
-            'purchase_timestamps' => array_column(
-                $data,
-                'purchase_timestamp'
-            ),
-        ]);
 
         return $this->jsonResponse([
             'success' => true,
