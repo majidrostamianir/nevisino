@@ -4,6 +4,11 @@ namespace App\Helpers;
 
 class PriceHelper
 {
+    /**
+     * قیمت نهاییِ نمایشی محصول بر اساس نوع سایت.
+     * قسطی → discounted_installment_price ?? installment_price
+     * نقدی → discounted_price ?? price
+     */
     public static function getProductPrice($product)
     {
         // سایت قسطی: قیمت قسطی (با تخفیف اگر بود)
@@ -16,10 +21,8 @@ class PriceHelper
     }
 
     /**
-     * دریافت قیمت پایه محصول (بدون تخفیف)
-     *
-     * @param \App\Models\Product $product
-     * @return int|null
+     * قیمت پایه محصول (بدون تخفیف) بر اساس نوع سایت.
+     * قسطی → installment_price | نقدی → price
      */
     public static function getBasePrice($product)
     {
@@ -31,10 +34,7 @@ class PriceHelper
     }
 
     /**
-     * بررسی آیا قیمت تخفیف خورده است یا نه
-     *
-     * @param \App\Models\Product $product
-     * @return bool
+     * آیا محصول تخفیف دارد؟ (قیمت تخفیف‌خورده وجود دارد و کمتر از قیمت پایه است)
      */
     public static function hasDiscount($product)
     {
@@ -45,5 +45,21 @@ class PriceHelper
 
         return !is_null($product->discounted_price)
             && $product->discounted_price < $product->price;
+    }
+
+    /**
+     * قیمت قسطی محصول (با تخفیف در صورت وجود)
+     */
+    public static function getGhestiPrice($product)
+    {
+        return $product->discounted_installment_price ?? $product->installment_price;
+    }
+
+    /**
+     * قیمت نقدی محصول (با تخفیف در صورت وجود)
+     */
+    public static function getCachPrice($product)
+    {
+        return $product->discounted_price ?? $product->price;
     }
 }
