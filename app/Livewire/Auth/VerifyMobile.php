@@ -5,6 +5,7 @@ namespace App\Livewire\Auth;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class VerifyMobile extends Component
@@ -19,10 +20,12 @@ class VerifyMobile extends Component
 
     public function mount()
     {
-        $this->mobile = session()->get('mobile');
+        $this->mobile = session()->get('mobile', '');
+
         if (!preg_match('/^09\d{9}$/', $this->mobile)) {
             session()->forget('mobile');
-            return redirect()->route('register');
+            Log::info($this->mobile);
+            return $this->redirect(route('register'), navigate: true);
         }
 
         $this->user = User::where('mobile', $this->mobile)->first();

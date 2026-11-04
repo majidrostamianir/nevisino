@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['parent_id', 'title', 'dashed_url', 'order', 'status'];
-
+    protected $fillable = ['parent_id', 'basalam_category_id', 'basalam_unit_type', 'title', 'dashed_url', 'order', 'status'];
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id')->orderBy('order');
@@ -25,8 +24,13 @@ class Category extends Model
     {
         return $this->hasMany(Product::class);
     }
+
     public function attributes()
     {
         return $this->hasMany(Attribute::class);
+    }
+    public function childrenRecursive()
+    {
+        return $this->children()->with('childrenRecursive');
     }
 }

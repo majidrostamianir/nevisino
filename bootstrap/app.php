@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: [
             'payment/torobpay/callback',
+            'payment/digipay/callback',
+        ]);
+        $middleware->appendToGroup('web', [
+            \App\Http\Middleware\CaptureTorobClid::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -3,9 +3,12 @@
 namespace App\Livewire\Payment;
 
 use App\Models\Address;
+use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TorobpayService;
+use App\Helpers\PriceHelper;
+use App\Helpers\Site;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,77 +18,139 @@ use Shetabit\Payment\Facade\Payment;
 
 class Checkout extends Component
 {
-    public string $payment_method = 'gateway';
+    public $recipient_name, $recipient_mobile, $province_id, $city_id, $postal_address, $zipcode, $description;
     public User $user;
     public Address|null $selectedAddress = null;
-    public array|null $cart = [];
     public Collection $addresses;
     public $cities = [];
-    public int $shipping_price = 0, $amount = 0, $sum = 0;
-    public $recipient_name, $recipient_mobile, $province_id, $city_id, $postal_address, $zipcode, $description;
     public $showPopup = false;
     public string $shipping_method = 'post_cod';
+    public string $payment_method = 'gateway';
 
-    /*
+    public int  $shipping_price = 0;
+
+    public int  $free_shipping_threshold = 0;
+
+    public int $sum = 0, $amount = 0;
+
     // ترب‌پی
-   public bool $torobpayEligible = false;
+    public bool $torobpayEligible = false;
     public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
     public string $torobpayDescription = '';
-*/
 
     public function mount()
     {
         $this->user = Auth::user();
         $this->addresses = $this->user->addresses()->get();
         $this->selectedAddress = $this->addresses[0] ?? null;
+
+        $this->calculateSum();
+        $this->calculateShipping();
         $this->calculateAmount();
-        $this->shipping_method = 'post_cod';
-        $this->shipping_price = 0;
-//        $this->checkTorobpayEligibility();
+
+        if ($this->sum == 0) {
+            return redirect()->route('cart');
+        }
+
+        // بررسی شرایط ترب‌پی
+        $this->checkTorobpayEligibility();
+
+        // تعیین روش پرداخت پیش‌فرض
+        if (Site::isGhesti() && $this->torobpayEligible) {
+            $this->payment_method = 'torobpay'; // پیش‌فرض در سایت قسطی
+        } else {
+            $this->payment_method = 'gateway';  // پیش‌فرض در سایت نقدی یا وقتی ترب‌پی مجاز نیست
+        }
     }
 
-    // ─────────────────────────────────────────────
-    //  بررسی صلاحیت ترب‌پی
-    // ─────────────────────────────────────────────
+    private function checkTorobpayEligibility(): void
+    {
+        $this->torobpayEligible = false;
 
-    /* private function checkTorobpayEligibility(): void
-     {
-         if ($this->amount <= 0) {
-             $this->torobpayEligible = false;
-             return;
-         }
-         try {
-             $service = app(TorobpayService::class);
-             $result = $service->checkEligible($this->amount);
-             $this->torobpayEligible = $result['eligible'];
+        // در سایت اصلی اصلاً ترب‌پی وجود ندارد
+        if (Site::isMain()) {
+            return;
+        }
 
-             if ($result['eligible']) {
-                 $this->torobpayTitle = $result['message_title'] ?? 'پرداخت اقساطی با ترب پی';
-                 $this->torobpayDescription = $result['description'] ?? '';
-             }
-         } catch (\Exception $e) {
-             $this->torobpayEligible = false;
-         }
-     }*/
+        if ($this->amount <= 0) {
+            return;
+        }
+
+        try {
+            $service = app(TorobpayService::class);
+            $result = $service->checkEligible($this->amount);
+            $this->torobpayEligible = $result['eligible'];
+
+            if ($result['eligible']) {
+                $this->torobpayTitle = $result['message_title'] ?? 'پرداخت اقساطی با ترب پی';
+                $this->torobpayDescription = $result['description'] ?? '';
+            }
+        } catch (\Exception $e) {
+            $this->torobpayEligible = false;
+        }
+    }
+
+    private function calculateSum()
+    {
+        $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
+            ->with('product', 'variant')->get();
+
+        $this->sum = $cartItems->sum(function ($item) {
+            $price = PriceHelper::getProductPrice($item->product);
+            return $price * $item->quantity;
+        });
+    }
+
+    private function calculateShipping()
+    {
+        $this->free_shipping_threshold = Setting::get('free_shipping_threshold');
+
+        if ($this->sum < $this->free_shipping_threshold && in_array($this->shipping_method, ['post_free', 'tipax_free'])) {
+            $this->shipping_method = 'post_cod';
+        }
+        if ($this->sum >= $this->free_shipping_threshold && in_array($this->shipping_method, ['post_cash', 'tipax_cash', 'post_cod', 'tipax_cod'])) {
+            $this->shipping_method = 'post_free';
+        }
+
+        if ($this->sum < $this->free_shipping_threshold) {
+            $this->shipping_price = match ($this->shipping_method) {
+                'post_cash' => Setting::get('post_price'),
+                'tipax_cash' => Setting::get('tipax_price'),
+                'post_cod', 'post_free', 'tipax_cod', 'tipax_free' => 0,
+            };
+        } else {
+            $this->shipping_price = 0;
+        }
+    }
+
+    public function calculateAmount()
+    {
+        $this->amount = $this->sum + $this->shipping_price ;
+    }
 
     public function updateShippingMethod($method)
     {
         $this->shipping_method = $method;
+        $this->calculateSum();
+        $this->calculateShipping();
         $this->calculateAmount();
-//        $this->checkTorobpayEligibility();
+
+        $this->checkTorobpayEligibility();
     }
 
     public function selectAddress($value)
     {
         $this->dispatch('close-popup');
-        $this->selectedAddress = Address::query()->find($value);
+        $this->selectedAddress = Address::query()
+            ->where('user_id', Auth::id())
+            ->findOrFail($value);
     }
 
     public function changeAddress()
     {
         $this->dispatch('close-popup');
         $this->selectedAddress = null;
-        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
+        $this->recipient_mobile = $this->user->mobile;
     }
 
     protected $rules = [
@@ -96,15 +161,14 @@ class Checkout extends Component
         'postal_address' => 'required|string|min:10|max:200',
         'zipcode' => 'required|digits:10',
         'description' => 'nullable|string|max:200',
-        'shipping_method' => 'required|in:post_cod,post_cash,tipax_cod,tipax_cash',
-        'shipping_price' => 'required|integer',
     ];
 
     public function pay()
     {
-
         $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
         $this->postal_address = str_replace(["\r\n", "\r", "\n"], ' ', $this->postal_address);
+
+        $this->validateOnly('description');
 
         if ($this->selectedAddress == null) {
             $this->validate();
@@ -121,25 +185,30 @@ class Checkout extends Component
             }
         }
 
+        $this->calculateSum();
+        $this->calculateShipping();
+        $this->calculateAmount();
+        $finalAmount = $this->amount; // snapshot بگیر
+
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
             ->first();
-
-        if (!$cart || $cart->items->isEmpty()) {
-            return $this->redirect('/cart', navigate: true);
+        if (!$cart) {
+            return redirect()->route('cart');
         }
 
-        Auth::user()->orders()->where('status', 'pending')->update(['status' => 'canceled']);
+        Auth::user()->orders()->where('user_id', Auth::id())->where('status', 'pending')->update(['status' => 'canceled']);
         $orderParams = $this->getOrderParams();
 
         switch ($this->payment_method) {
             case 'gateway':
+                // پرداخت نقدی در هر دو سایت مجاز است
                 $order = $cart->convertToOrder($orderParams);
-                $invoice = (new Invoice)->amount($this->amount);
-                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
+                $invoice = (new Invoice)->amount($finalAmount);
+                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($finalAmount, $order) {
                     Transaction::query()->create([
                         'order_id' => $order->id,
-                        'amount' => $this->amount,
+                        'amount' => $finalAmount,
                         'status' => 'pending',
                         'payment_gateway' => 'zibal',
                         'authority' => (string)$transactionId,
@@ -148,27 +217,32 @@ class Checkout extends Component
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
+                // کارت به کارت در هر دو سایت مجاز است
                 $order = $cart->convertToOrder($orderParams);
                 Transaction::query()->create([
                     'order_id' => $order->id,
-                    'amount' => $this->amount,
+                    'amount' => $finalAmount,
                     'status' => 'pending',
                     'payment_gateway' => 'card',
                     'authority' => '5022291533610273',
                 ]);
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
-           /* case 'torobpay':
-                // اگر کاربر به هر طریقی گزینه غیرفعال رو bypass کرد
+            case 'torobpay':
+                // لایه امنیتی: ترب‌پی فقط در سایت قسطی مجاز است
+                if (!Site::isGhesti()) {
+                    abort(403, 'پرداخت اقساطی فقط در سایت قسطی در دسترس است.');
+                }
+
                 if (!$this->torobpayEligible) {
-                    abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
+                    abort(403, 'پرداخت اقساطی ترب پی در حال حاضر در دسترس نیست.');
                 }
 
                 $order = $cart->convertToOrder($orderParams);
 
                 $transaction = Transaction::query()->create([
                     'order_id' => $order->id,
-                    'amount' => $this->amount,
+                    'amount' => $finalAmount, // اصلاح شد
                     'status' => 'pending',
                     'payment_gateway' => 'torobpay',
                     'authority' => '',
@@ -181,11 +255,10 @@ class Checkout extends Component
                     return redirect()->away($result['paymentPageUrl']);
 
                 } catch (\Exception $e) {
-                    // اگر توکن گرفته نشد، تراکنش رو failed میکنیم
                     $transaction->update(['status' => 'failed']);
                     Log::error($e->getMessage());
                     abort(403, 'خطا در اتصال به درگاه ترب‌پی. لطفاً مجدداً تلاش کنید.');
-                }*/
+                }
         }
     }
 
@@ -193,37 +266,6 @@ class Checkout extends Component
     {
         $this->cities = \App\Models\City::where('province_id', $provinceId)->get();
         $this->city_id = null;
-    }
-
-    public function calculateAmount()
-    {
-        $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id())
-        )->with('product', 'variant')->get();
-
-        $this->sum = $cartItems->sum(function ($item) {
-            $price = $item->product->discounted_price ?? $item->product->price;
-            return $price * $item->quantity;
-        });
-
-        if ($this->sum <= 0) {
-            $this->shipping_price = 0;
-            $this->amount = 0;
-            return;
-        }
-
-        switch ($this->shipping_method) {
-            case 'post_cash':
-                $this->shipping_price = config('shop.post_price');
-                break;
-            case 'tipax_cash':
-                $this->shipping_price = config('shop.tipax_price');
-                break;
-            default:
-                $this->shipping_price = 0;
-                break;
-        }
-
-        $this->amount = $this->sum + $this->shipping_price;
     }
 
     private function getOrderParams(): array
@@ -238,12 +280,12 @@ class Checkout extends Component
             'description' => $this->description,
             'shipping_method' => $this->shipping_method,
             'shipping_price' => $this->shipping_price,
+            'torob_clid' => request()->cookie('torob_clid') ?: null,
         ];
     }
 
     public function render()
     {
-        $this->recipient_mobile = $this->selectedAddress->recipient_mobile ?? $this->user->mobile;
         return view('livewire.payment.checkout');
     }
 }

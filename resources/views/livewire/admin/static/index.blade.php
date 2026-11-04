@@ -53,8 +53,12 @@
         
         {{-- قیمت کل اقلام موجود --}}
         <div class="bg-white shadow rounded p-4 text-center">
-            <h5 class="font-bold text-gray-500">قیمت کل اقلام موجود</h5>
-            <h5 class="mt-2">{{ english_to_persian_num(number_format($total_value)) }} تومان</h5>
+            <h5 class="font-bold text-gray-500">قیمت نقد کل اقلام موجود</h5>
+            <h5 class="mt-2">{{ english_to_persian_num(number_format($total_cash)) }} تومان</h5>
+        </div>
+        <div class="bg-white shadow rounded p-4 text-center">
+            <h5 class="font-bold text-gray-500">قیمت قسطی کل اقلام موجود</h5>
+            <h5 class="mt-2">{{ english_to_persian_num(number_format($total_installment)) }} تومان</h5>
         </div>
     </div>
 

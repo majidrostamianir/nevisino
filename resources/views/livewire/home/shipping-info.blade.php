@@ -46,13 +46,13 @@
                         <div class="border rounded-xl p-4">
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="font-bold text-gray-800">📮 ارسال با پست پیشتاز</h3>
-                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">اقتصادی</span>
+                                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">سریع و مطمعن</span>
                             </div>
                             <p class="text-gray-500 text-sm">زمان
                                 تحویل: {{ english_to_persian_num('۲ تا ۴ روز کاری') }}</p>
                             <p class="text-gray-500 text-sm">قابل پیگیری با کد رهگیری</p>
                         </div>
-                        <div class="border rounded-xl p-4">
+                       {{-- <div class="border rounded-xl p-4">
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="font-bold text-gray-800">🚚 ارسال با تیپاکس</h3>
                                 <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">سریع‌تر</span>
@@ -60,7 +60,7 @@
                             <p class="text-gray-500 text-sm">زمان
                                 تحویل: {{ english_to_persian_num('۱ تا ۲ روز کاری') }}</p>
                             <p class="text-gray-500 text-sm">قابل پیگیری آنلاین</p>
-                        </div>
+                        </div>--}}
 
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                         </div>
                         <div>
                             <p class="font-semibold text-gray-800">❓ آیا ارسال به تمام ایران انجام می‌شود؟</p>
-                            <p class="text-gray-500">بله، ارسال به تمام نقاط ایران از طریق پست و تیپاکس انجام
+                            <p class="text-gray-500">بله، ارسال به تمام نقاط ایران از طریق پست انجام
                                 می‌شود.</p>
                         </div>
                     </div>

@@ -10,28 +10,51 @@ use App\Models\Url;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
-
+use Illuminate\Support\Facades\Session;
 class Save extends Component
 {
     public Product $product;
-    public int|null $categoryId = null, $stock = null, $discounted_price = null;
-    public int $size, $price, $weight;
+    public int $size, $weight;
+    public int|null $categoryId = null, $stock = null, $brandId = null;
+
+    // قیمت‌ها به صورت آرایه
+    public array $prices = [
+        'price' => null,
+        'price_previous' => null,
+        'bulk_price' => null,
+        'bulk_price_previous' => null,
+        'installment_price' => null,
+        'installment_price_previous' => null,
+        'discounted_price' => null,
+        'discounted_price_previous' => null,
+        'discounted_installment_price' => null,
+        'discounted_installment_price_previous' => null,
+    ];
+    public $profitPercent = 20;
+    public $gatewayFeePercent = 13;
+
+    public $price_for_show = 0;
+    public $installment_price_for_show = 0;
+    // تاریخ‌های بروزرسانی به صورت آرایه
+    public array $price_updates = [
+        'price_updated_at' => null,
+        'bulk_price_updated_at' => null,
+        'installment_price_updated_at' => null,
+        'discounted_price_updated_at' => null,
+        'discounted_installment_price_updated_at' => null,
+    ];
+
     public string $title = '', $query = '', $queryAttr = '';
+    public string|null $variant = null, $code = null, $description = null, $torob_url = null;
 
-    public string|null $variant = null, $code = null, $description = null;
-
-    public array $urls = [];
-    public array $attrs = [];
-    public array $selectedUrls = [];
-    public array $selectedAttrs = []; // [attribute_id => attribute_value_id]
-    public bool $isFocused = false;
-    public bool $isFocusedAttr = false;
-    public array $variants = [];
-    public $brandId = null;
-
+    public array $urls = [], $attrs = [], $selectedUrls = [], $selectedAttrs = [], $variants = [];
+    public bool $isFocused = false, $isFocusedAttr = false;
 
     public function mount($product = null): void
     {
+        $this->profitPercent = Session::get('profit_percent', 20);
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 13);
+
         if ($product) {
             $this->brandId = $product->brand_id;
             $this->product = $product;
@@ -39,6 +62,7 @@ class Save extends Component
             $this->code = $product->code;
             $this->description = $product->description;
             $this->variant = $product->variant;
+            $this->torob_url = $product->torob_url ?? null;
             $this->selectedUrls = $product->urls->pluck('title_tag', 'id')->toArray();
 
             // تبدیل ساختار جدید به selectedAttrs
@@ -58,11 +82,12 @@ class Save extends Component
 
             $this->categoryId = $product->category_id;
             $this->size = $product->size;
-            $this->price = $product->price;
-            $this->discounted_price = $product->discounted_price;
             $this->weight = $product->weight;
             $this->stock = $product->stock;
 
+            // پر کردن آرایه قیمت‌ها از مدل
+            $this->fillPricesFromModel();
+            $this->calculatePriceFromBulk();
             $this->variants = $product->variants->map(function ($v) {
                 return [
                     'id' => $v->id,
@@ -78,12 +103,40 @@ class Save extends Component
             $this->urls = [];
             $this->attrs = [];
             $this->size = 0;
+            $this->weight = 0;
+
+            // مقداردهی اولیه آرایه قیمت‌ها
+            $this->prices = array_fill_keys(array_keys($this->prices), null);
+            $this->price_updates = array_fill_keys(array_keys($this->price_updates), null);
+        }
+    }
+
+    private function fillPricesFromModel(): void
+    {
+        $priceFields = [
+            'price', 'price_previous', 'bulk_price', 'bulk_price_previous',
+            'installment_price', 'installment_price_previous',
+            'discounted_price', 'discounted_price_previous',
+            'discounted_installment_price', 'discounted_installment_price_previous'
+        ];
+
+        foreach ($priceFields as $field) {
+            $this->prices[$field] = $this->product->{$field};
+        }
+
+        $updateFields = [
+            'price_updated_at', 'bulk_price_updated_at', 'installment_price_updated_at',
+            'discounted_price_updated_at', 'discounted_installment_price_updated_at'
+        ];
+
+        foreach ($updateFields as $field) {
+            $this->price_updates[$field] = $this->product->{$field};
         }
     }
 
     protected function rules(): array
     {
-        return [
+        $rules = [
             'title' => 'required|string|min:3|max:255|' . Rule::unique('products', 'title')->ignore($this->product->id),
             'variant' => ['nullable', 'string', 'min:2', 'max:255'],
             'variants' => ['nullable', 'array', 'required_with:variant', 'prohibited_if:variant,null|required_with:variant|array'],
@@ -94,15 +147,93 @@ class Save extends Component
             'categoryId' => 'required',
             'size' => 'nullable|integer|min:0',
             'weight' => 'required|integer|min:0',
-            'price' => 'required|integer|min:0',
-            'discounted_price' => 'nullable|integer|min:0',
             'stock' => 'nullable|integer|min:0',
             'code' => 'nullable|string|min:1|max:255',
             'description' => 'nullable|string|min:1|max:1000',
-            'brandId' => 'nullable|exists:brands,id',
+            'brandId' => 'required|exists:brands,id',
+            'torob_url' => 'nullable|url|max:255',
         ];
+
+        // اضافه کردن قوانین اعتبارسنجی برای قیمت‌ها
+        $priceFields = [
+            'prices.price', 'prices.price_previous', 'prices.bulk_price',
+            'prices.bulk_price_previous', 'prices.installment_price',
+            'prices.installment_price_previous', 'prices.discounted_price',
+            'prices.discounted_price_previous', 'prices.discounted_installment_price',
+            'prices.discounted_installment_price_previous'
+        ];
+
+        foreach ($priceFields as $field) {
+            $rules[$field] = 'nullable|integer|min:0';
+        }
+
+        $updateFields = [
+            'price_updates.price_updated_at', 'price_updates.bulk_price_updated_at',
+            'price_updates.installment_price_updated_at', 'price_updates.discounted_price_updated_at',
+            'price_updates.discounted_installment_price_updated_at'
+        ];
+
+        foreach ($updateFields as $field) {
+            $rules[$field] = 'nullable|date';
+        }
+
+        return $rules;
     }
 
+    public function updatedPrices($value, $key): void
+    {
+        if ($key === 'bulk_price') {
+            $this->calculatePriceFromBulk();
+        }
+    }
+
+    public function updatedProfitPercent($value): void
+    {
+        Session::put('profit_percent', (int) $value);
+        $this->profitPercent = Session::get('profit_percent', 20);
+
+        $this->calculatePriceFromBulk();
+    }
+
+    public function updatedGatewayFeePercent($value): void
+    {
+        Session::put('gateway_fee_percent', (float) $value);
+        $this->gatewayFeePercent = Session::get('gateway_fee_percent', 13);
+
+        $this->calculatePriceFromBulk();
+    }
+
+    public function calculatePriceFromBulk(): void
+    {
+        $bulk = $this->prices['bulk_price'] ?? 0;
+
+        // حذف جداکننده‌ها
+        $bulk = (int) str_replace(
+            [',', '،', ' ', '_'],
+            '',
+            $bulk
+        );
+
+        if ($bulk <= 0) {
+            $this->price_for_show = 0;
+            $this->installment_price_for_show = 0;
+            return;
+        }
+
+        // قیمت نقدی
+        $cashPrice = $bulk * (1 + ($this->profitPercent / 100));
+
+        $this->price_for_show = (int) $cashPrice;
+
+        // قیمت اقساطی
+        if ($this->gatewayFeePercent >= 100 || $this->gatewayFeePercent <= 0) {
+            $this->installment_price_for_show = 0;
+        } else {
+            $this->installment_price_for_show = (int) round(
+                $cashPrice / (1 - ($this->gatewayFeePercent / 100))
+            );
+        }
+    }
     public function save()
     {
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
@@ -114,11 +245,15 @@ class Save extends Component
         } else {
             $this->stock = null;
         }
-        if ($this->discounted_price == null || $this->discounted_price == '') {
-            $this->discounted_price = null;
-        }
+
+        // به‌روزرسانی خودکار قیمت‌های قبلی و تاریخ‌ها
+        $this->updatePriceHistory();
 
         $this->validate();
+
+        // پر کردن مدل از آرایه قیمت‌ها
+        $this->fillModelFromPrices();
+
         $this->product->title = $this->title;
         $this->product->dashed_url = $dashed_url;
         $this->product->variant = $this->variant;
@@ -126,11 +261,10 @@ class Save extends Component
         $this->product->brand_id = $this->brandId;
         $this->product->size = $this->size;
         $this->product->weight = $this->weight;
-        $this->product->price = $this->price;
-        $this->product->discounted_price = $this->discounted_price;
         $this->product->stock = $this->stock;
         $this->product->code = $this->code;
         $this->product->description = $this->description;
+        $this->product->torob_url = $this->torob_url;
         $this->product->save();
 
         $this->product->urls()->sync(array_keys($this->selectedUrls));
@@ -150,13 +284,13 @@ class Save extends Component
         // کاهش count برای مقادیری که حذف شده‌اند
         $removedValueIds = array_diff($oldValueIds, $newValueIds);
         foreach ($removedValueIds as $valueId) {
-            \App\Models\AttributeValue::find($valueId)?->decrement('usage_count');
+            AttributeValue::find($valueId)?->decrement('usage_count');
         }
 
         // افزایش count برای مقادیری که اضافه شده‌اند
         $addedValueIds = array_diff($newValueIds, $oldValueIds);
         foreach ($addedValueIds as $valueId) {
-            \App\Models\AttributeValue::find($valueId)?->increment('usage_count');
+            AttributeValue::find($valueId)?->increment('usage_count');
         }
 
         $keptIds = [];
@@ -175,8 +309,52 @@ class Save extends Component
             ->whereNotIn('id', $keptIds)
             ->delete();
 
+        // ⬇️ سینک با باسلام بعد از همه تغییرات
+        app(\App\Services\ProductService::class)->syncToBasalam($this->product->fresh());
+
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
+    private function updatePriceHistory(): void
+    {
+        // لیست قیمت‌ها و تاریخ‌های مربوطه
+        $priceMappings = [
+            'price' => 'price_updated_at',
+            'bulk_price' => 'bulk_price_updated_at',
+            'installment_price' => 'installment_price_updated_at',
+            'discounted_price' => 'discounted_price_updated_at',
+            'discounted_installment_price' => 'discounted_installment_price_updated_at',
+        ];
+
+        foreach ($priceMappings as $priceField => $updateField) {
+            $currentValue = $this->product->{$priceField} ?? null;
+            $newValue = $this->prices[$priceField] ?? null;
+
+            if ($newValue != $currentValue) {
+                // به‌روزرسانی قیمت قبلی
+                $previousField = $priceField . '_previous';
+                if (isset($this->prices[$previousField])) {
+                    $this->prices[$previousField] = $currentValue;
+                }
+
+                // به‌روزرسانی تاریخ
+                $this->price_updates[$updateField] = now();
+            }
+        }
+    }
+
+    private function fillModelFromPrices(): void
+    {
+        // پر کردن فیلدهای قیمت
+        foreach ($this->prices as $field => $value) {
+            $this->product->{$field} = $value;
+        }
+
+        // پر کردن تاریخ‌های بروزرسانی
+        foreach ($this->price_updates as $field => $value) {
+            $this->product->{$field} = $value;
+        }
+    }
+
     public function addVariant(): void
     {
         $this->variants[] = [

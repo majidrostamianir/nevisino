@@ -13,14 +13,14 @@
     @livewireStyles
 
 </head>
-<body>
+<body class="{{ \App\Helpers\Site::isGhesti() ? 'theme-ghesti' : '' }}">
 
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
 
     <livewire:components.header/>
     <livewire:components.toast/>
 
-    <div class="mx-4 lg:mr-20 lg:ml-4 mt-4 lg:mt-20  min-h-[65vh]">
+    <div class="mx-4 lg:mr-20 lg:ml-4 mt-20  min-h-[65vh]">
         {{ $slot }}
     </div>
 

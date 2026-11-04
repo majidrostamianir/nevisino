@@ -1,11 +1,13 @@
 <?php
 
 
-Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker::class , \App\Http\Middleware\getReferrer::class]], function () {
+use App\Livewire\Admin\Basalam\CategoryMapping;
+
+Route::group(['middleware' => ['throttle:60', \App\Http\Middleware\visitTracker::class, \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/', \App\Livewire\Home\Index::class)->name('home');
     Route::get('/shop', \App\Livewire\Home\Shop::class)->name('shop');
     Route::get('/category/{dashed}', \App\Livewire\Home\CategoryPage::class)->name('category-page');
-    Route::get('/product/{npi}/{title}', \App\Livewire\Home\ProductPage::class)->name('product-page');
+    Route::get('/product/{npi}/{title?}', \App\Livewire\Home\ProductPage::class)->name('product-page');
     Route::get('/cart', \App\Livewire\Payment\Cart::class)->name('cart');
     Route::get('/trust', \App\Livewire\Home\Trust::class)->name('trust');
     Route::get('/about', \App\Livewire\Home\About::class)->name('about');
@@ -16,14 +18,14 @@ Route::group(['middleware' => ['throttle:60' , \App\Http\Middleware\visitTracker
 
 });
 
-Route::group(['middleware' => ['throttle:60', 'guest',\App\Http\Middleware\visitTracker::class , \App\Http\Middleware\getReferrer::class]], function () {
+Route::group(['middleware' => ['throttle:60', 'guest', \App\Http\Middleware\visitTracker::class, \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/register', \App\Livewire\Auth\Register::class)->name('register');
-    Route::redirect('/login', '/register' , 301)->name('login');
+    Route::redirect('/login', '/register', 301)->name('login');
     Route::get('/verify-mobile', \App\Livewire\Auth\VerifyMobile::class)->name('verify-mobile');
 
 });
 
-Route::group(['middleware' => ['throttle:60', 'auth' , \App\Http\Middleware\visitTracker::class, \App\Http\Middleware\getReferrer::class]], function () {
+Route::group(['middleware' => ['throttle:60', 'auth', \App\Http\Middleware\visitTracker::class, \App\Http\Middleware\getReferrer::class]], function () {
     Route::get('/dashboard/{page?}', App\Livewire\Dashboard\Index::class)
         ->whereAlpha('page')
         ->name('dashboard');
@@ -33,10 +35,11 @@ Route::group(['middleware' => ['throttle:60', 'auth' , \App\Http\Middleware\visi
 });
 
 
-Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60', 'auth' ]], function () {
+Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60', 'auth']], function () {
     Route::get('/admin/category', \App\Livewire\Admin\Category\Index::class)->name('admin.category.index');
     Route::get('/admin/url', \App\Livewire\Admin\Url\Index::class)->name('admin.url.index');
     Route::get('/admin/url-product/{url}', \App\Livewire\Admin\Url\UrlProduct::class)->name('admin.url.product');
+    Route::get('/admin/url-article/{url}', \App\Livewire\Admin\Url\UrlArticle::class)->name('admin.url.article');
     Route::get('/admin/product', \App\Livewire\Admin\Product\Index::class)->name('admin.product.index');
     Route::get('/admin/product/save/{product?}', \App\Livewire\Admin\Product\Save::class)->name('admin.product.save');
     Route::get('/admin/user', \App\Livewire\Admin\User\Index::class)->name('admin.user.index');
@@ -46,17 +49,24 @@ Route::group(['middleware' => [\App\Http\Middleware\isOwner::class, 'throttle:60
     Route::get('/admin/setting', \App\Livewire\Admin\Setting\Index::class)->name('admin.setting.index');
     Route::get('/admin/static', \App\Livewire\Admin\Static\Index::class)->name('admin.static.index');
     Route::get('/admin/visit', \App\Livewire\Admin\Visit\Index::class)->name('admin.visit.index');
-    Route::get('/admin/attr',\App\Livewire\Admin\Product\AttributeManager::class)->name('admin.product.attr');
-    Route::get('/admin/brand',\App\Livewire\Admin\Brand\BrandManager::class)->name('admin.brand');
+    Route::get('/admin/attr', \App\Livewire\Admin\Product\AttributeManager::class)->name('admin.product.attr');
+    Route::get('/admin/brand', \App\Livewire\Admin\Brand\BrandManager::class)->name('admin.brand');
     Route::get('/admin/contact-messages', \App\Livewire\Admin\Comment\ContactMessages::class)->name('admin.contact-messages');
+    Route::get('/admin/basalam/category', CategoryMapping::class)->name('admin.basalam.category-mapping');
+    Route::get('/admin/basalam/products', \App\Livewire\Admin\Basalam\Products::class)->name('admin.basalam.products');
 });
 
+Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobpayController::class, 'callback'])
+    ->name('torobpay.callback')
+    ->withoutMiddleware('auth')
+    ->middleware('throttle:60');
+Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobpayCallback::class)
+    ->name('torobpay.result')
+    ->middleware(['auth', 'throttle:60', \App\Http\Middleware\visitTracker::class, \App\Http\Middleware\getReferrer::class]);
 
-//torobPay
-//Route::get('/payment/torobpay/result', \App\Livewire\Payment\TorobPayCallback::class)
-//    ->name('torobpay.result')
-//    ->middleware('auth');
-//
-//Route::post('/payment/torobpay/callback', [\App\Http\Controllers\TorobPayController::class, 'callback'])
-//    ->name('torobpay.callback')
-//    ->withoutMiddleware('auth'); // چون ترب‌پی POST می‌زنه، نه کاربر
+/*Route::post('/payment/digipay/callback', [\App\Http\Controllers\DigipayController::class, 'callback'])
+    ->name('digipay.callback')
+    ->withoutMiddleware('auth');
+Route::get('/payment/digipay/result', \App\Livewire\Payment\DigipayCallback::class)
+    ->name('digipay.result')
+    ->middleware('auth');*/

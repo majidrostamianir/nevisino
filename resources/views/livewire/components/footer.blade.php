@@ -38,7 +38,7 @@
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-اتودی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی اتودی</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-جعبه-فلزی']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی جعبه فلزی</a>
                 <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-آریا-آرتیست']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی آریا آرتیست</a>
-                <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-50-رنگ']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی ۵۰ رنگ</a>
+                <a href="{{ route('category-page',['dashed' => 'مداد-رنگی-36-رنگ']) }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">مداد رنگی ۳۶ رنگ</a>
             </div>
             
             <div class="flex flex-col gap-3">
@@ -50,7 +50,7 @@
                 <a href="{{ route('shipping.info') }}" wire:navigate class="text-sm hover:text-pars-600 transition-colors">نحوه بسته‌بندی و
                     ارسال</a>
             </div>
-            
+
             <div class="flex flex-col gap-3">
                 <span class="font-bold text-pars-700 mb-1">مجوزهای ما</span>
                 <div class="flex flex-wrap gap-2">
@@ -64,6 +64,14 @@
                     </a>
                     <a href="{{ route('trust') }}" wire:navigate>
                         <img src="{{ asset('images/zibal.png') }}"
+                             class="h-16 hover:scale-105 transition-all cursor-pointer">
+                    </a>
+                    <a href="{{ route('trust') }}" wire:navigate>
+                        <img src="{{ asset('images/ecunion.png') }}"
+                             class="h-16 hover:scale-105 transition-all cursor-pointer">
+                    </a>
+                    <a target="_blank" href="https://torob.com/shop/279915" rel="nofollow" >
+                        <img alt="" src="https://api.torob.com/third-party/guarantee/v1/hologram/?instance_id=279915"
                              class="h-16 hover:scale-105 transition-all cursor-pointer">
                     </a>
                 </div>

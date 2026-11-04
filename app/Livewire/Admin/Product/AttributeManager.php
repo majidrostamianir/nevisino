@@ -17,7 +17,7 @@ class AttributeManager extends Component
     public $editingAttributeId = null;
     public $editingValueId = null;
     public $selectedAttributeForValue = null;
-
+    public $attributeSearch = '';
     public function saveAttribute()
     {
         $this->validate([
@@ -120,20 +120,36 @@ class AttributeManager extends Component
 
     public function render()
     {
-        $categories = Category::whereNotNull('parent_id')->orderBy('title')->get();
+        $categories = Category::whereNotNull('parent_id')
+            ->orderBy('title')
+            ->get();
 
         $allAttributes = Attribute::with(['category', 'values'])
+            ->when($this->attributeSearch, function ($q) {
+                $q->where(function ($query) {
+                    $query->where('name', 'like', '%' . $this->attributeSearch . '%')
+                        ->orWhereHas('category', function ($categoryQuery) {
+                            $categoryQuery->where('title', 'like', '%' . $this->attributeSearch . '%');
+                        });
+                });
+            })
+            ->orderBy(
+                Category::select('title')
+                    ->whereColumn('categories.id', 'attributes.category_id')
+            )
             ->orderBy('name')
             ->get();
 
         $attributes = Attribute::with(['category', 'values'])
-            ->when($this->filterCategoryId, function($q) {
+            ->when($this->filterCategoryId, function ($q) {
                 $q->where('category_id', $this->filterCategoryId);
             })
             ->orderBy('name')
             ->get();
 
-        return view('livewire.admin.product.attribute-manager', compact('categories', 'attributes', 'allAttributes'))
-            ->layout('components.layouts.admin');
+        return view(
+            'livewire.admin.product.attribute-manager',
+            compact('categories', 'attributes', 'allAttributes')
+        )->layout('components.layouts.admin');
     }
 }

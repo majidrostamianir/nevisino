@@ -3,20 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TorobpayStatusEnum;
+use App\Jobs\SendTelegramTransactionNotification;
 use App\Models\Transaction;
+use App\Services\ProductService;
 use App\Services\TorobpayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class TorobPayController extends Controller
+class TorobpayController extends Controller
 {
-    public function __construct(private TorobpayService $torobpay) {}
+    public function __construct(
+        private TorobpayService $torobpay,
+        private ProductService $productService,
+    ) {}
 
-    // ─────────────────────────────────────────────
-    //  Callback - ترب‌پی کاربر رو اینجا برمیگردونه
-    //  POST /payment/torobpay/callback
-    // ─────────────────────────────────────────────
 
     public function callback(Request $request)
     {
@@ -74,20 +75,13 @@ class TorobPayController extends Controller
 
             // آپدیت سفارش
             $transaction->order->update(['status' => 'paid', 'shipping_status' => 'processing']);
-            foreach ($transaction->order->items as $item) {
-                if ($item->variant_id && $item->variant) {
-                    $item->variant->decrement('stock', $item->quantity);
-                } else {
-                    $item->product->decrement('stock', $item->quantity);
-                }
-            }
+
+            // کم کردن موجودی همه آیتم‌های سفارش از طریق ProductService
+            $this->productService->decrementStockForOrder($transaction->order);
 
             DB::commit();
 
-            Log::info('TorobPay: payment verified and settled', [
-                'transaction_id'          => $transaction->id,
-                'torobpay_transaction_id' => $torobpayTransactionId,
-            ]);
+            SendTelegramTransactionNotification::dispatch($transaction->id);
 
             return $this->successRedirect($transaction);
 

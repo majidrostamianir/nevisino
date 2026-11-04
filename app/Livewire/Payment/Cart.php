@@ -5,11 +5,11 @@ namespace App\Livewire\Payment;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\User;
+use App\Helpers\PriceHelper;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
-
 
 class Cart extends Component
 {
@@ -20,6 +20,7 @@ class Cart extends Component
     protected $listeners = ['cart-updated' => 'updateCart'];
     public ?User $user = null;
     public Collection $orders;
+    public int $free_shipping_threshold = 0;
 
     public function mount()
     {
@@ -49,7 +50,7 @@ class Cart extends Component
                 $this->cart[$key] = [
                     'id' => $item->product_id,
                     'title' => $item->product->title,
-                    'price' => $item->product->discounted_price ?? $item->product->price,
+                    'price' => PriceHelper::getProductPrice($item->product),
                     'code' => $item->product->code,
                     'quantity' => $item->quantity,
                     'variant' => $item->variant_id,
@@ -57,28 +58,46 @@ class Cart extends Component
                 ];
             }
         } else {
-            $this->cart = session('cart');
+            $sessionCart = session('cart', []);
+            $this->cart = [];
+
+            foreach ($sessionCart as $key => $item) {
+                $product = \App\Models\Product::find($item['id']);
+                if (! $product) {
+                    continue; // محصول پاک شده، از نمایش حذف شود
+                }
+
+                $this->cart[$key] = [
+                    'id' => $item['id'],
+                    'title' => $item['title'] ?? $product->title,
+                    'price' => PriceHelper::getProductPrice($product),
+                    'quantity' => $item['quantity'],
+                    'variant' => $item['variant'] ?? null,
+                    'variantName' => $item['variantName'] ?? null,
+                ];
+            }
+            // ← دیگر session()->put نداریم
         }
 
         if ($this->cart) {
             $this->sumPriceProducts();
         }
     }
-
     public function sumPriceProducts()
     {
         if (Auth::check()) {
-            $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) =>
-            $q->where('user_id', Auth::id())
-            )->with('product', 'variant')->get();
+            $cartItems = \App\Models\CartItem::query()
+                ->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
+                ->with('product', 'variant')
+                ->get();
 
             $this->sum = $cartItems->sum(function ($item) {
-                $price = $item->product->discounted_price ?? $item->product->price;
-                return $price * $item->quantity;
+                return PriceHelper::getProductPrice($item->product) * $item->quantity;
             });
         } else {
-            $cart = session()->get('cart', []);
-            $this->sum = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+            $this->sum = collect($this->cart)->sum(
+                fn($item) => $item['price'] * $item['quantity']
+            );
         }
     }
 
@@ -108,22 +127,24 @@ class Cart extends Component
             $productId = Str::before($id, '-');
             $variantId = Str::after($id, '-') === 'default' ? null : Str::after($id, '-');
 
-            $cartItem = \App\Models\CartItem::query()->whereHas('cart', fn($q) =>
-            $q->where('user_id', Auth::id())
-            )->where('product_id', $productId)->where('variant_id', $variantId)->first();
+            $cartItem = \App\Models\CartItem::query()
+                ->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
+                ->where('product_id', $productId)
+                ->where('variant_id', $variantId)
+                ->first();
 
-            if ($cartItem) $cartItem->delete();
-        } else {
-            if (isset($this->cart[$id])) {
-                unset($this->cart[$id]);
-                session()->put('cart', $this->cart);
+            if ($cartItem) {
+                $cartItem->delete();
             }
+        } else {
+            $sessionCart = session('cart', []);
+            unset($sessionCart[$id]);
+            session()->put('cart', $sessionCart);
         }
 
         $this->dispatch('cart-updated');
-        $this->sumPriceProducts();
+        $this->updateCart();
     }
-
     public function render()
     {
         return view('livewire.payment.cart');

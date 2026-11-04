@@ -4,7 +4,7 @@ namespace App\Livewire\Payment;
 
 use Livewire\Component;
 
-class TorobPayCallback extends Component
+class TorobpayCallback extends Component
 {
     public bool $success = false;
     public array $data = [];

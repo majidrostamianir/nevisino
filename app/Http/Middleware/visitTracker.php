@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Visit;
+use App\Helpers\Site; // <-- این خط اضافه شد
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,9 +59,10 @@ class visitTracker
             if (Auth::guest() || (Auth::check() && Auth::user()->id != 1)) {
                 Visit::query()->create([
                     'ip' => $ip ?? null,
+                    'is_ghesti' => Site::isGhesti(), // <-- این خط اضافه شد (True/False)
                     'user_id' => auth()->id() ?? null,
-                    'url' => urldecode($request->path() ?? ''),
-                    'referrer' => $request->headers->get('referer') ? urldecode($request->headers->get('referer')) : null,
+                    'url' => rawurldecode($request->path() ?? ''),
+                    'referrer' => $request->headers->get('referer') ? rawurldecode($request->headers->get('referer')) : null,
                     'is_bot' => $isBot,
                     'user_agent' => $userAgent,
                 ]);

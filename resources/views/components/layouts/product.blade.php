@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, follow">
+    <meta name="robots" content="index, follow">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png">
 
 
@@ -16,7 +16,7 @@
     @stack('variant')
 
 </head>
-<body>
+<body class="{{ \App\Helpers\Site::isGhesti() ? 'theme-ghesti' : '' }}">
 
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
 
@@ -24,7 +24,7 @@
     <livewire:components.toast/>
 
 
-    <div class="mx-4 lg:mr-20 lg:ml-4 mt-4 lg:mt-20  min-h-[65vh]">
+    <div class="mx-4 lg:mr-20 lg:ml-4 mt-20  min-h-[65vh]">
         {{ $slot }}
     </div>
 

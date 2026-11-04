@@ -1,3 +1,6 @@
+@push('meta')
+    <meta name="robots" content="noindex, follow">
+@endpush
 <div class="space-y-6">
     {{-- سفارشات در انتظار پرداخت --}}
     @if($orders->isNotEmpty())
@@ -72,7 +75,7 @@
                                         <div class="flex-1">
                                             <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}"
                                                class="font-bold text-gray-800 text-sm hover:text-pars-600 transition-colors">
-                                                {{ english_to_persian_num($product['title']) }} {{ english_to_persian_num($product['code']) }}
+                                                {{ english_to_persian_num($product['title']) }}
                                             </a>
                                             @if($product['variant'])
                                                 <div class="text-xs text-gray-500 mt-1">
@@ -127,14 +130,23 @@
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
                 <div class="text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
             </div>
+
+
+
+
+<livewire:payment.free-progress :sum="$sum" />
+
+
+
+
             <div class="w-full mb-4 flex justify-between">
-                <div><strong>روش‌های ارسال</strong></div>
+                <div><strong>روش ارسال</strong></div>
                 <span>
                     <livewire:components.tooltip
-                            text="در بخش تکمیل سفارش، شما می‌توانید روش ارسال دلخواه خود را انتخاب کنید. گزینه‌های موجود شامل تیپاکس (ارسال سریع‌تر) و پست پیشتاز (ارسال اقتصادی) می‌باشد." position="left"/>
+                            text="ارسال سریع و مطمعن با سرویس پیشتاز شرکت ملی پست ایران." position="left"/>
                 </span>
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class="text-left">پست پیشتاز یا تیپاکس</div>
+                <div class="text-left">پست پیشتاز</div>
             </div>
             <div class="w-full mb-4 flex justify-between">
                 <div><strong>هزینه ارسال</strong></div>

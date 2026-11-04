@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $query , $ip , $user ,$total_stock, $total_value;
+    public $query , $ip , $user ,$total_stock, $total_cash , $total_installment;
     public $queries;
 
     public function mount()
@@ -32,15 +32,28 @@ class Index extends Component
                 ->whereHas('product', fn($q) => $q->whereNotNull('variant'))
                 ->sum('stock');
 
-        $this->total_value = \App\Models\Product::query()
+        // ===== قیمت کل نقدی =====
+        $this->total_cash = \App\Models\Product::query()
             ->whereNull('variant')
-            ->selectRaw('SUM(stock * COALESCE(discounted_price, price)) as total')
+            ->selectRaw('SUM(stock * price) as total')
             ->value('total') ?? 0;
 
-        $this->total_value += \App\Models\ProductVariant::query()
+        $this->total_cash += \App\Models\ProductVariant::query()
             ->join('products', 'products.id', '=', 'product_variants.product_id')
             ->whereNotNull('products.variant')
-            ->selectRaw('SUM(product_variants.stock * COALESCE(products.discounted_price, products.price)) as total')
+            ->selectRaw('SUM(product_variants.stock * products.price) as total')
+            ->value('total') ?? 0;
+
+// ===== قیمت کل قسطی =====
+        $this->total_installment = \App\Models\Product::query()
+            ->whereNull('variant')
+            ->selectRaw('SUM(stock * installment_price) as total')
+            ->value('total') ?? 0;
+
+        $this->total_installment += \App\Models\ProductVariant::query()
+            ->join('products', 'products.id', '=', 'product_variants.product_id')
+            ->whereNotNull('products.variant')
+            ->selectRaw('SUM(product_variants.stock * products.installment_price) as total')
             ->value('total') ?? 0;
     }
     public function updatedQuery()

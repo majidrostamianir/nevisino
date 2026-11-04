@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\PriceHelper; // <-- اضافه کن
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -32,9 +33,12 @@ class Cart extends Model
             $description = $orderData['description'] ?? null;
             $shipping_method = $orderData['shipping_method'] ?? 'post_cod';
             $shipping_price = $orderData['shipping_price'] ?? 0;
+            $packaging_price = $orderData['packaging_price'] ?? 0;
+            $torob_clid = $orderData['torob_clid'] ?? null;
 
+            // اصلاح شده: استفاده از PriceHelper
             $totalPrice = $this->items->sum(function ($item) {
-                return ($item->product->discounted_price ?? $item->product->price) * $item->quantity;
+                return PriceHelper::getProductPrice($item->product) * $item->quantity;
             });
 
             $lastOrderNumber = \App\Models\Order::max('order_number');
@@ -46,10 +50,12 @@ class Cart extends Model
             $order = $this->user->orders()->create([
                 'order_number' => $newOrderNumber,
                 'status' => 'pending',
+                'torob_clid'       => $torob_clid,
                 'total_price' => $totalPrice,
                 'shipping_method' => $shipping_method,
                 'shipping_price' => $shipping_price,
-                'amount' => $totalPrice + $shipping_price,
+                'packaging_price' => $packaging_price,
+                'amount' => $totalPrice + $shipping_price + $packaging_price,
                 'recipient_name' => $recipient_name,
                 'recipient_mobile' => $recipient_mobile,
                 'postal_address' => $postal_address,
@@ -61,7 +67,8 @@ class Cart extends Model
             ]);
 
             foreach ($this->items as $item) {
-                $priceSnapshot =$item->product->discounted_price ?? $item->product->price;
+                // اصلاح شده: استفاده از PriceHelper
+                $priceSnapshot = PriceHelper::getProductPrice($item->product);
 
                 $order->items()->create([
                     'product_id' => $item->product_id,
@@ -69,7 +76,6 @@ class Cart extends Model
                     'quantity' => $item->quantity,
                     'price_snapshot' => $priceSnapshot,
                 ]);
-
             }
 
             $this->items()->delete();

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()
                 ->constrained('categories')
                 ->onDelete('cascade');
+            $table->unsignedBigInteger('basalam_category_id')->nullable();
+            $table->unsignedBigInteger('basalam_unit_type')->nullable()->after('basalam_category_id');
             $table->string('title');
             $table->string('dashed_url')->unique();
             $table->integer('order')->default(0);

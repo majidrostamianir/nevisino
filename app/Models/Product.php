@@ -9,6 +9,27 @@ class Product extends Model
 {
     use Searchable;
 
+    protected $casts = [
+        'price' => 'integer',
+        'price_previous' => 'integer',
+        'bulk_price' => 'integer',
+        'bulk_price_previous' => 'integer',
+        'installment_price' => 'integer',
+        'installment_price_previous' => 'integer',
+        'discounted_price' => 'integer',
+        'discounted_price_previous' => 'integer',
+        'discounted_installment_price' => 'integer',
+        'discounted_installment_price_previous' => 'integer',
+        'price_updated_at' => 'datetime',
+        'bulk_price_updated_at' => 'datetime',
+        'installment_price_updated_at' => 'datetime',
+        'discounted_price_updated_at' => 'datetime',
+        'discounted_installment_price_updated_at' => 'datetime',
+        'stock' => 'integer',
+        'sold_quantity' => 'integer',
+        'weight' => 'integer',
+    ];
+
     public function urls()
     {
         return $this->belongsToMany(Url::class)->withTimestamps();
@@ -68,7 +89,7 @@ class Product extends Model
 
    public function getStoryImageAttribute()
     {
-        return asset("storage/products/{$this->id}/small/1.webp");
+        return asset("storage/products/{$this->id}/large/1.webp");
     }
     public function hasValidStock(): bool
     {
@@ -80,5 +101,33 @@ class Product extends Model
         // اگر واریانت ندارد
         return $this->stock > 0;
     }
+    public function getFinalPriceAttribute()
+    {
+        return \App\Helpers\PriceHelper::getProductPrice($this);
+    }
+    public function basalamProduct()
+    {
+        return $this->hasOne(BasalamProduct::class)
+            ->whereNull('product_variant_id');
+    }
 
+    public function basalamProducts()
+    {
+        return $this->hasMany(BasalamProduct::class);
+    }
+    /**
+     * آیا این محصول در باسلام ساخته شده؟
+     */
+    public function isSyncedToBasalam(): bool
+    {
+        return $this->basalamProduct?->status === 'synced';
+    }
+
+    /**
+     * شناسه محصول در باسلام
+     */
+    public function getBasalamIdAttribute(): ?string
+    {
+        return $this->basalamProduct?->basalam_product_id;
+    }
 }
