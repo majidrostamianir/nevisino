@@ -1,5 +1,6 @@
 import './bootstrap';
 import './faNumber.js';
+import './product-page';
 import carousel from './carousel.js';
 import productCarousel from './productCarousel'
 import horizontalSlider from './horizontalSlider'
