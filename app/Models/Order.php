@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    public const PAYMENT_TYPE_CASH        = 'cash';
+    public const PAYMENT_TYPE_INSTALLMENT = 'installment';
+
     protected $fillable = ['order_number', 'user_id', 'status','shipping_status','tracking_code','packaging_price','packaging_size',
         'total_price', 'shipping_price','shipping_method', 'amount',
         'recipient_name', 'recipient_mobile', 'postal_address', 'zipcode',
-        'province', 'city' , 'description', 'expires_at' ,'torob_clid',
+        'province', 'city' , 'description', 'expires_at' ,'torob_clid','payment_type',
         ];
     protected $casts = [
         'shipping_method' => ShippingMethodEnum::class,
+        'payment_type' => 'string',
     ];
     protected $dates = ['expires_at'];
 

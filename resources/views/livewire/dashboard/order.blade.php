@@ -354,7 +354,7 @@
                                               :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-300'">
                                             <span class="w-2.5 h-2.5 rounded-full bg-pars-500" x-show="payment_method === 'gateway'"></span>
                                         </span>
-                                        <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم</span>
+                                        <span class="text-sm">پرداخت از طریق درگاه بانکی با رمز دوم پویا</span>
                                     </label>
 
                                     {{-- ۳. کارت به کارت (فقط در سایت نقدی) --}}

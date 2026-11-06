@@ -15,7 +15,7 @@
     @livewireStyles
 
 </head>
-<body class="{{ \App\Helpers\Site::isGhesti() ? 'theme-ghesti' : '' }}">
+<body>
 <div x-data="{ sidebarOpen: false, activeDropdown: null }">
 
     <livewire:components.header/>

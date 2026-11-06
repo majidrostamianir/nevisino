@@ -46,16 +46,18 @@ class Cart extends Component
 
             $this->cart = [];
             foreach ($cartItems as $item) {
+                if (! $item->product) {
+                    continue; // محصول پاک شده
+                }
+
                 $key = $item->product_id . '-' . ($item->variant_id ?? 'default');
-                $this->cart[$key] = [
-                    'id' => $item->product_id,
-                    'title' => $item->product->title,
-                    'price' => PriceHelper::getProductPrice($item->product),
-                    'code' => $item->product->code,
-                    'quantity' => $item->quantity,
-                    'variant' => $item->variant_id,
-                    'variantName' => $item->variant?->name,
-                ];
+                $this->cart[$key] = $this->buildCartRow(
+                    product:     $item->product,
+                    quantity:    $item->quantity,
+                    variantId:   $item->variant_id,
+                    variantName: $item->variant?->name,
+                    title:       $item->product->title,
+                );
             }
         } else {
             $sessionCart = session('cart', []);
@@ -67,22 +69,63 @@ class Cart extends Component
                     continue; // محصول پاک شده، از نمایش حذف شود
                 }
 
-                $this->cart[$key] = [
-                    'id' => $item['id'],
-                    'title' => $item['title'] ?? $product->title,
-                    'price' => PriceHelper::getProductPrice($product),
-                    'quantity' => $item['quantity'],
-                    'variant' => $item['variant'] ?? null,
-                    'variantName' => $item['variantName'] ?? null,
-                ];
+                $this->cart[$key] = $this->buildCartRow(
+                    product:     $product,
+                    quantity:    $item['quantity'],
+                    variantId:   $item['variant'] ?? null,
+                    variantName: $item['variantName'] ?? null,
+                    title:       $item['title'] ?? $product->title,
+                );
             }
-            // ← دیگر session()->put نداریم
         }
 
         if ($this->cart) {
             $this->sumPriceProducts();
+        } else {
+            $this->sum = 0;
         }
     }
+
+    /**
+     * ساخت یک ردیف آماده‌ی نمایش برای سبد خرید.
+     * تمام محاسبات، ساخت لینک و مسیر تصویر همین‌جا انجام می‌شود.
+     */
+    protected function buildCartRow(
+        Product $product,
+        int $quantity,
+        int|string|null $variantId,
+        ?string $variantName,
+        string $title,
+    ): array {
+        $price = PriceHelper::getProductPrice($product);
+
+        // لینک محصول: همیشه npi، در صورت وجود واریانت nvi
+        $routeParams = [
+            'title' => $product->dashed_url,
+            'npi'   => $product->id,
+        ];
+        if (! empty($variantId)) {
+            $routeParams['nvi'] = $variantId;
+        }
+
+        // مسیر تصویر: در صورت وجود واریانت از تصویر همان واریانت استفاده کن
+        $imageFile = ! empty($variantId) ? $variantId : '1';
+        $imagePath = 'storage/products/' . $product->id . '/small/' . $imageFile . '.webp';
+
+        return [
+            'id'           => $product->id,
+            'title'        => $title,
+            'price'        => $price,
+            'quantity'     => $quantity,
+            'variant'      => $variantId,
+            'variantName'  => $variantName,
+            'variantLabel' => ! empty($variantId) ? $product->variant : null,
+            'url'          => route('product-page', $routeParams),
+            'image'        => asset($imagePath),
+            'lineTotal'    => $price * $quantity,
+        ];
+    }
+
     public function sumPriceProducts()
     {
         if (Auth::check()) {
@@ -92,6 +135,9 @@ class Cart extends Component
                 ->get();
 
             $this->sum = $cartItems->sum(function ($item) {
+                if (! $item->product) {
+                    return 0;
+                }
                 return PriceHelper::getProductPrice($item->product) * $item->quantity;
             });
         } else {
@@ -145,6 +191,7 @@ class Cart extends Component
         $this->dispatch('cart-updated');
         $this->updateCart();
     }
+
     public function render()
     {
         return view('livewire.payment.cart');

@@ -54,38 +54,34 @@
             @if($cart)
                 <div class="space-y-3">
                     @foreach ($cart as $key => $product)
-                        <div wire:key="{{$key}}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+                        <div wire:key="{{ $key }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
                             <div class="flex gap-4">
                                 {{-- تصویر --}}
                                 <div class="flex-shrink-0">
-                                    @if($product['variant'])
-                                        <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}">
-                                            <img class="w-24 h-24 object-cover rounded-xl shadow-sm" src="{{ asset('storage/products/' . $product['id'] . '/small/' . $product['variant'] . '.webp') }}" alt="">
-                                        </a>
-                                    @else
-                                        <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}">
-                                            <img class="w-24 h-24 object-cover rounded-xl shadow-sm" src="{{ asset('storage/products/' . $product['id'] . '/small/1.webp') }}" alt="">
-                                        </a>
-                                    @endif
+                                    <a wire:navigate href="{{ $product['url'] }}">
+                                        <img class="w-24 h-24 object-cover rounded-xl shadow-sm"
+                                             src="{{ $product['image'] }}" alt="">
+                                    </a>
                                 </div>
 
                                 {{-- اطلاعات محصول --}}
                                 <div class="flex-1">
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
-                                            <a wire:navigate href="{{ route('product-page', ['title' => \App\Models\Product::query()->find($product['id'])->dashed_url, 'npi' => $product['id']]) }}"
+                                            <a wire:navigate href="{{ $product['url'] }}"
                                                class="font-bold text-gray-800 text-sm hover:text-pars-600 transition-colors">
                                                 {{ english_to_persian_num($product['title']) }}
                                             </a>
                                             @if($product['variant'])
                                                 <div class="text-xs text-gray-500 mt-1">
-                                                    {{ \App\Models\Product::query()->find($product['id'])->variant }}: {{ $product['variantName'] }}
+                                                    {{ $product['variantLabel'] }}: {{ $product['variantName'] }}
                                                 </div>
                                             @endif
                                         </div>
 
                                         {{-- دکمه حذف --}}
-                                        <button wire:click.prevent="removeFromCart('{{ $key }}')" class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex-shrink-0 mr-2">
+                                        <button wire:click.prevent="removeFromCart('{{ $key }}')"
+                                                class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex-shrink-0 mr-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
@@ -98,7 +94,9 @@
                                             تعداد: <span class="font-medium">{{ english_to_persian_num($product['quantity']) }}</span>
                                         </div>
                                         <div class="text-left">
-                                            <span class="text-pars-700 font-bold text-lg">{{ english_to_persian_num(number_format($product['quantity'] * $product['price'])) }}</span>
+                                            <span class="text-pars-700 font-bold text-lg">
+                                                {{ english_to_persian_num(number_format($product['lineTotal'])) }}
+                                            </span>
                                             <span class="text-xs text-gray-400 mr-1">تومان</span>
                                             @if($product['quantity'] > 1)
                                                 <div class="text-xs text-gray-400 text-left">
@@ -123,21 +121,15 @@
             @endif
         </div>
 
-        {{-- سایدبار سمت راست --}}
-        <div class="w-full lg:w-1/3 bg-white border border-gray-100 p-5 shadow rounded-2xl sticky top-20">
+        {{-- سایدبار سمت راست: استیکی و به اندازه محتوای خودش --}}
+        <div class="w-full lg:w-1/3 lg:self-start bg-white border border-gray-100 p-5 shadow rounded-2xl sticky top-20">
             <div class="w-full mb-4 flex justify-between">
                 <div><strong>جمع مبلغ سبد خرید</strong></div>
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
                 <div class="text-left"><span>{{ english_to_persian_num(number_format($sum)) }} تومان</span></div>
             </div>
 
-
-
-
-<livewire:payment.free-progress :sum="$sum" />
-
-
-
+            <livewire:payment.free-progress :sum="$sum" />
 
             <div class="w-full mb-4 flex justify-between">
                 <div><strong>روش ارسال</strong></div>
