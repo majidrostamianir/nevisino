@@ -38,6 +38,11 @@ class Checkout extends Component
     public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
     public string $torobpayDescription = '';
 
+    public bool $isInstallmentPrice = false;
+    public ?string $pendingInstallmentGateway = null;
+    public bool $showInstallmentDialog = false;
+    public bool $installmentConfirmed = false;
+
     public function mount()
     {
         $this->user = Auth::user();
@@ -90,8 +95,12 @@ class Checkout extends Component
         $cartItems = \App\Models\CartItem::query()->whereHas('cart', fn($q) => $q->where('user_id', Auth::id()))
             ->with('product', 'variant')->get();
 
-        $this->sum = $cartItems->sum(function ($item) {
-            $price = PriceHelper::getProductPrice($item->product);
+        $useInstallment = $this->isInstallmentPrice && Site::isMain();
+
+        $this->sum = $cartItems->sum(function ($item) use ($useInstallment) {
+            $price = $useInstallment
+                ? PriceHelper::getGhestiPrice($item->product)
+                : PriceHelper::getProductPrice($item->product);
             return $price * $item->quantity;
         });
     }
@@ -131,6 +140,67 @@ class Checkout extends Component
         $this->calculateAmount();
 
         $this->checkTorobpayEligibility();
+    }
+
+    /**
+     * هنگام کلیک روی درگاه اقساطی در سایت نقدی
+     * رادیو تیک نمی‌خورد (با @click.prevent در Blade)، فقط دیالوگ باز می‌شود
+     */
+    public function openInstallmentDialog($gateway)
+    {
+        if (Site::isGhesti()) {
+            $this->payment_method = $gateway;
+            $this->isInstallmentPrice = false;
+            $this->updateShippingMethod($this->shipping_method);
+            return;
+        }
+
+        if ($this->installmentConfirmed) {
+            $this->payment_method = $gateway;
+            $this->isInstallmentPrice = true;
+            $this->pendingInstallmentGateway = null;
+            $this->showInstallmentDialog = false;   // ← خط جدید (احتیاط)
+            $this->updateShippingMethod($this->shipping_method);
+            return;
+        }
+
+        // بار اول: دیالوگ
+        $this->pendingInstallmentGateway = $gateway;
+        $this->showInstallmentDialog = true;   // ← خط جدید
+        $this->isInstallmentPrice = false;
+        $this->payment_method = 'gateway';
+        $this->updateShippingMethod($this->shipping_method);
+    }
+    public function updatedPaymentMethod($value)
+    {
+        if (Site::isGhesti()) {
+            return;
+        }
+
+        // انتخاب درگاه نقدی (gateway/card) → قیمت‌ها نقدی
+        $this->isInstallmentPrice = false;
+        $this->pendingInstallmentGateway = null;
+        $this->updateShippingMethod($this->shipping_method);
+    }
+
+    public function confirmInstallment()
+    {
+        if (!$this->pendingInstallmentGateway) {
+            return;
+        }
+
+        $this->installmentConfirmed = true;
+        $this->payment_method = $this->pendingInstallmentGateway;
+        $this->isInstallmentPrice = true;
+        $this->pendingInstallmentGateway = null;
+        $this->showInstallmentDialog = false;   // ← خط جدید
+        $this->updateShippingMethod($this->shipping_method);
+    }
+    public function cancelInstallment()
+    {
+        $this->pendingInstallmentGateway = null;
+        $this->showInstallmentDialog = false;   // ← خط جدید
+        $this->updateShippingMethod($this->shipping_method);
     }
 
     public function selectAddress($value)
@@ -236,7 +306,7 @@ class Checkout extends Component
 
                 $transaction = Transaction::query()->create([
                     'order_id' => $order->id,
-                    'amount' => $finalAmount, // اصلاح شد
+                    'amount' => $finalAmount,
                     'status' => 'pending',
                     'payment_gateway' => 'torobpay',
                     'authority' => '',
@@ -274,6 +344,9 @@ class Checkout extends Component
             'description' => $this->description,
             'shipping_method' => $this->shipping_method,
             'shipping_price' => $this->shipping_price,
+            'payment_type' => in_array($this->payment_method, ['torobpay', 'digipay', 'snappay'])
+                ? 'installment'
+                : 'cash',
             'torob_clid' => request()->cookie('torob_clid') ?: null,
         ];
     }

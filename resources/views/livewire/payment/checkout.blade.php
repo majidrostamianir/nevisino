@@ -456,7 +456,11 @@
                             <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                    :class="payment_method === 'torobpay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
                                 <div class="flex items-center">
-                                    <input type="radio" value="torobpay" x-model="payment_method" class="hidden">
+                                    {{-- رادیو بدون x-model: با @click.prevent، payment_method دست‌نخورده می‌ماند و رادیو فلیکر نمی‌کند --}}
+                                    <input type="radio"
+                                           :checked="payment_method === 'torobpay'"
+                                           @click.prevent="$wire.openInstallmentDialog('torobpay')"
+                                           class="hidden">
                                     <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
                                           :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">
                                         <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
@@ -540,6 +544,43 @@
                             </ul>
                         </div>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- دیالوگ تأیید خرید اعتباری (فقط سایت نقدی) --}}
+    <div x-data="{ show: @entangle('showInstallmentDialog').live }" x-cloak>
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+             x-show="show"
+             x-transition.opacity.duration.200ms
+             @click="$wire.cancelInstallment()">
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4" @click.stop>
+                <div class="p-6">
+                    <div class="flex items-start gap-3 mb-5">
+                        <div class="w-10 h-10 bg-pars-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-pars-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong class="text-gray-800 block mb-2 text-base">تغییر به خرید اعتباری</strong>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                کاربر گرامی، خرید اعتباری فقط از میان فروشندگان طرف قرارداد اعتباری میسر میباشد.
+                                برای خرید اعتباری، به صورت خودکار فروشندگان اعتباری با ارزان‌ترین قیمت جایگزین می‌شوند.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button wire:click="cancelInstallment"
+                                class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 cursor-pointer text-sm font-medium transition-colors">
+                            انصراف
+                        </button>
+                        <button wire:click="confirmInstallment"
+                                class="flex-1 px-4 py-2.5 rounded-xl bg-pars-500 hover:bg-pars-600 text-white cursor-pointer text-sm font-medium transition-colors">
+                            تایید و ادامه
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

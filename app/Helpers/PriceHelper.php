@@ -58,7 +58,7 @@ class PriceHelper
     /**
      * قیمت نقدی محصول (با تخفیف در صورت وجود)
      */
-    public static function getCachPrice($product)
+    public static function getCashPrice($product)
     {
         return $product->discounted_price ?? $product->price;
     }
