@@ -67,11 +67,6 @@ class Checkout extends Component
     {
         $this->torobpayEligible = false;
 
-        // در سایت اصلی اصلاً ترب‌پی وجود ندارد
-        if (Site::isMain()) {
-            return;
-        }
-
         if ($this->amount <= 0) {
             return;
         }
@@ -217,7 +212,10 @@ class Checkout extends Component
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
-                // کارت به کارت در هر دو سایت مجاز است
+                // لایه امنیتی: کارت به کارت فقط در سایت نقدی مجاز است
+                if (Site::isGhesti()) {
+                    abort(403, 'پرداخت کارت به کارت فقط در سایت نقدی در دسترس است.');
+                }
                 $order = $cart->convertToOrder($orderParams);
                 Transaction::query()->create([
                     'order_id' => $order->id,
@@ -229,10 +227,6 @@ class Checkout extends Component
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
             case 'torobpay':
-                // لایه امنیتی: ترب‌پی فقط در سایت قسطی مجاز است
-                if (!Site::isGhesti()) {
-                    abort(403, 'پرداخت اقساطی فقط در سایت قسطی در دسترس است.');
-                }
 
                 if (!$this->torobpayEligible) {
                     abort(403, 'پرداخت اقساطی ترب پی در حال حاضر در دسترس نیست.');
