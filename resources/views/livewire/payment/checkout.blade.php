@@ -382,10 +382,43 @@
                                     class="text-xs text-gray-400">تومان</span></span>
                     </div>
                 </div>
-                <div class="p-5 flex flex-col gap-3">
+                <div class="p-5 space-y-3">
 
-                    {{-- ۱. درگاه بانکی با رمز دوم --}}
-                    <label class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200 {{ \App\Helpers\Site::isGhesti() ? 'order-4' : 'order-1' }}"
+                    {{-- ۱. گزینه پرداخت اقساطی (اولین گزینه در سایت قسطی) --}}
+                    @if(\App\Helpers\Site::isGhesti())
+                        @if($torobpayEligible)
+                            <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                                   :class="payment_method === 'torobpay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
+                                <div class="flex items-center">
+                                    <input type="radio" value="torobpay" x-model="payment_method" class="hidden">
+                                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
+                                          :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">
+                                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
+                                              x-show="payment_method === 'torobpay'"></span>
+                                    </span>
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-800">{{ $torobpayTitle }}</span>
+                                        <div class="text-xs text-gray-500">{{ $torobpayDescription }}</div>
+                                    </div>
+                                </div>
+                                <img class="w-12 rounded-full shadow-sm" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                            </label>
+                        @else
+                            <label class="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
+                                <div class="flex items-center">
+                                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>
+                                    <div>
+                                        <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با ترب پی</span>
+                                        <div class="text-xs text-red-500">در حال حاضر برای این مبلغ قابل استفاده نیست.</div>
+                                    </div>
+                                </div>
+                                <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
+                            </label>
+                        @endif
+                    @endif
+
+                    {{-- ۲. درگاه بانکی (در هر دو سایت) --}}
+                    <label class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
                            :class="payment_method === 'gateway' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
                         <input type="radio" value="gateway" x-model="payment_method" class="hidden">
                         <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
@@ -396,9 +429,9 @@
                         <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
                     </label>
 
-                    {{-- ۲. کارت به کارت (فقط در سایت نقدی) --}}
+                    {{-- ۳. کارت به کارت (فقط در سایت نقدی) --}}
                     @if(\App\Helpers\Site::isMain())
-                        <div class="bg-white rounded-xl border-2 transition-all duration-200 overflow-hidden order-2"
+                        <div class="bg-white rounded-xl border-2 transition-all duration-200 overflow-hidden"
                              :class="payment_method === 'card' ? 'border-pars-500' : 'border-gray-200'">
                             <label class="flex items-center px-4 py-3 cursor-pointer">
                                 <input type="radio" value="card" x-model="payment_method" class="hidden">
@@ -447,67 +480,7 @@
                                 </div>
                             </div>
                         </div>
-                        <hr class="border-t my-3 border-gray-100 order-3">
                     @endif
-
-                    {{-- ۳. ترب پی --}}
-                    <div class="{{ \App\Helpers\Site::isGhesti() ? 'order-1' : 'order-4' }}">
-                        @if($torobpayEligible)
-                            <label class="flex items-center justify-between bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
-                                   :class="payment_method === 'torobpay' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
-                                <div class="flex items-center">
-                                    {{-- رادیو بدون x-model: با @click.prevent، payment_method دست‌نخورده می‌ماند و رادیو فلیکر نمی‌کند --}}
-                                    <input type="radio"
-                                           :checked="payment_method === 'torobpay'"
-                                           @click.prevent="$wire.openInstallmentDialog('torobpay')"
-                                           class="hidden">
-                                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                                          :class="payment_method === 'torobpay' ? 'border-pars-500' : 'border-gray-400'">
-                                        <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
-                                              x-show="payment_method === 'torobpay'"></span>
-                                    </span>
-                                    <div>
-                                        <span class="text-sm font-medium text-gray-800">{{ $torobpayTitle }}</span>
-                                        <div class="text-xs text-gray-500">{{ $torobpayDescription }}</div>
-                                    </div>
-                                </div>
-                                <img class="w-12 rounded-full shadow-sm" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
-                            </label>
-                        @else
-                            <label class="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
-                                <div class="flex items-center">
-                                    <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>
-                                    <div>
-                                        <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با ترب پی</span>
-                                        <div class="text-xs text-red-500">در حال حاضر برای این مبلغ قابل استفاده نیست.</div>
-                                    </div>
-                                </div>
-                                <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
-                            </label>
-                        @endif
-                    </div>
-
-                    {{-- ۴. دیجی پی (به زودی) --}}
-                    <div class="{{ \App\Helpers\Site::isGhesti() ? 'order-2' : 'order-5' }}">
-                        <div class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-xl border-2 border-dashed border-gray-200 cursor-not-allowed">
-                            <div class="flex items-center">
-                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-300"></span>
-                                <span class="text-sm text-gray-500">پرداخت اقساطی با دیجی پی</span>
-                            </div>
-                            <span class="text-xs font-bold text-pars-500 bg-pars-50 px-2 py-1 rounded-md">به زودی</span>
-                        </div>
-                    </div>
-
-                    {{-- ۵. اسنپ پی (به زودی) --}}
-                    <div class="{{ \App\Helpers\Site::isGhesti() ? 'order-3' : 'order-6' }}">
-                        <div class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-xl border-2 border-dashed border-gray-200 cursor-not-allowed">
-                            <div class="flex items-center">
-                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-300"></span>
-                                <span class="text-sm text-gray-500">پرداخت اقساطی با اسنپ پی</span>
-                            </div>
-                            <span class="text-xs font-bold text-pars-500 bg-pars-50 px-2 py-1 rounded-md">به زودی</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="w-full p-2"
                      x-data="{ payment_method: @entangle('payment_method').live }">
@@ -544,43 +517,6 @@
                             </ul>
                         </div>
                     @endif
-                </div>
-            </div>
-        </div>
-    </div>
-    {{-- دیالوگ تأیید خرید اعتباری (فقط سایت نقدی) --}}
-    <div x-data="{ show: @entangle('showInstallmentDialog').live }" x-cloak>
-        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-             x-show="show"
-             x-transition.opacity.duration.200ms
-             @click="$wire.cancelInstallment()">
-            <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4" @click.stop>
-                <div class="p-6">
-                    <div class="flex items-start gap-3 mb-5">
-                        <div class="w-10 h-10 bg-pars-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-pars-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <strong class="text-gray-800 block mb-2 text-base">تغییر به خرید اعتباری</strong>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                کاربر گرامی، خرید اعتباری فقط از میان فروشندگان طرف قرارداد اعتباری میسر میباشد.
-                                برای خرید اعتباری، به صورت خودکار فروشندگان اعتباری با ارزان‌ترین قیمت جایگزین می‌شوند.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button wire:click="cancelInstallment"
-                                class="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 cursor-pointer text-sm font-medium transition-colors">
-                            انصراف
-                        </button>
-                        <button wire:click="confirmInstallment"
-                                class="flex-1 px-4 py-2.5 rounded-xl bg-pars-500 hover:bg-pars-600 text-white cursor-pointer text-sm font-medium transition-colors">
-                            تایید و ادامه
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
