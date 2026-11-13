@@ -3,6 +3,7 @@
 namespace App\Livewire\Payment;
 
 use App\Models\Address;
+use App\Models\Order;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
@@ -27,10 +28,8 @@ class Checkout extends Component
     public string $shipping_method = 'post_cod';
     public string $payment_method = 'gateway';
 
-    public int  $shipping_price = 0;
-
-    public int  $free_shipping_threshold = 0;
-
+    public int $shipping_price = 0;
+    public int $free_shipping_threshold = 0;
     public int $sum = 0, $amount = 0;
 
     // ترب‌پی
@@ -55,11 +54,11 @@ class Checkout extends Component
         // بررسی شرایط ترب‌پی
         $this->checkTorobpayEligibility();
 
-        // تعیین روش پرداخت پیش‌فرض
-        if (Site::isGhesti() && $this->torobpayEligible) {
-            $this->payment_method = 'torobpay'; // پیش‌فرض در سایت قسطی
+        if (Site::isGhesti()) {
+            // در سایت قسطی فقط ترب‌پی مجاز است
+            $this->payment_method = 'torobpay';
         } else {
-            $this->payment_method = 'gateway';  // پیش‌فرض در سایت نقدی یا وقتی ترب‌پی مجاز نیست
+            $this->payment_method = 'gateway';
         }
     }
 
@@ -125,7 +124,7 @@ class Checkout extends Component
 
     public function calculateAmount()
     {
-        $this->amount = $this->sum + $this->shipping_price ;
+        $this->amount = $this->sum + $this->shipping_price;
     }
 
     public function updateShippingMethod($method)
@@ -162,7 +161,29 @@ class Checkout extends Component
         'zipcode' => 'required|digits:10',
         'description' => 'nullable|string|max:200',
     ];
+    private function getOutOfStockItems($cart): array
+    {
+        $items = [];
 
+        foreach ($cart->items as $item) {
+            if (! $item->product) {
+                continue; // محصول حذف‌شده — convertToOrder هم نادیده می‌گیرد
+            }
+
+            $stock = $item->variant_id
+                ? $item->variant?->stock
+                : $item->product->stock;
+
+            // variant_id ست است ولی رکورد variant وجود ندارد → ناموجود در نظر بگیر
+            if ($stock === null || $stock < $item->quantity) {
+                $items[] = $item->product->title
+                    . ($item->variant ? ' (' . $item->variant->name . ')' : '')
+                    . ' — موجودی: ' . english_to_persian_num(($stock ?? 0));
+            }
+        }
+
+        return $items;
+    }
     public function pay()
     {
         $this->description = str_replace(["\r\n", "\r", "\n"], ' ', $this->description);
@@ -185,10 +206,29 @@ class Checkout extends Component
             }
         }
 
+
+        // ─── چک موجودی: قبل از هر عملیاتی ───
+        $cart = $this->user->cart()
+            ->with('items.product', 'items.variant')
+            ->first();
+        if (! $cart) {
+            return redirect()->route('cart');
+        }
+        $outOfStock = $this->getOutOfStockItems($cart);
+
+        if (! empty($outOfStock)) {
+            $this->dispatch(
+                'showNotification',
+                message: 'موجودی این محصولات کافی نیست: ' . implode('، ', $outOfStock),
+                type: 'error'
+            );
+            return;
+        }
+
+
         $this->calculateSum();
         $this->calculateShipping();
         $this->calculateAmount();
-        $finalAmount = $this->amount; // snapshot بگیر
 
         $cart = $this->user->cart()
             ->with('items.product', 'items.variant')
@@ -200,37 +240,54 @@ class Checkout extends Component
         Auth::user()->orders()->where('user_id', Auth::id())->where('status', 'pending')->update(['status' => 'canceled']);
         $orderParams = $this->getOrderParams();
 
+
+        $allowedMethods = Site::isGhesti()
+            ? ['torobpay']
+            : ['gateway', 'card'];
+
+        if (! in_array($this->payment_method, $allowedMethods, true)) {
+            abort(403, 'روش پرداخت انتخاب‌شده در این سایت مجاز نیست.');
+        }
+
+
         switch ($this->payment_method) {
             case 'gateway':
-                // پرداخت نقدی در هر دو سایت مجاز است
+                // لایه امنیتی: پرداخت با رمز دوم فقط در سایت اصلی مجاز است
+                if (Site::isGhesti()) {
+                    abort(403, 'پرداخت با رمز دوم در سایت قسطی غیرفعال است.');
+                }
+
                 $order = $cart->convertToOrder($orderParams);
-                $invoice = (new Invoice)->amount($finalAmount);
-                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($finalAmount, $order) {
+                $invoice = (new Invoice)->amount($order->amount);
+                $payment = Payment::purchase($invoice, function ($driver, $transactionId) use ($order) {
                     Transaction::query()->create([
-                        'order_id' => $order->id,
-                        'amount' => $finalAmount,
-                        'status' => 'pending',
+                        'order_id'        => $order->id,
+                        'amount'          => $order->amount,
+                        'status'          => 'pending',
                         'payment_gateway' => 'zibal',
-                        'authority' => (string)$transactionId,
+                        'authority'       => (string) $transactionId,
                     ]);
                 });
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
-                // کارت به کارت در هر دو سایت مجاز است
+                // کارت به کارت فقط در سایت نقدی مجاز است
+                if (Site::isGhesti()) {
+                    abort(403, 'پرداخت کارت به کارت فقط در سایت نقدی در دسترس است.');
+                }
+
                 $order = $cart->convertToOrder($orderParams);
                 Transaction::query()->create([
-                    'order_id' => $order->id,
-                    'amount' => $finalAmount,
-                    'status' => 'pending',
+                    'order_id'        => $order->id,
+                    'amount'          => $order->amount,
+                    'status'          => 'pending',
                     'payment_gateway' => 'card',
-                    'authority' => '5022291533610273',
+                    'authority'       => '5022291533610273',
                 ]);
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
-
             case 'torobpay':
                 // لایه امنیتی: ترب‌پی فقط در سایت قسطی مجاز است
-                if (!Site::isGhesti()) {
+                if (Site::isMain()) {
                     abort(403, 'پرداخت اقساطی فقط در سایت قسطی در دسترس است.');
                 }
 
@@ -241,11 +298,11 @@ class Checkout extends Component
                 $order = $cart->convertToOrder($orderParams);
 
                 $transaction = Transaction::query()->create([
-                    'order_id' => $order->id,
-                    'amount' => $finalAmount, // اصلاح شد
-                    'status' => 'pending',
+                    'order_id'        => $order->id,
+                    'amount'          => $order->amount,
+                    'status'          => 'pending',
                     'payment_gateway' => 'torobpay',
-                    'authority' => '',
+                    'authority'       => '',
                 ]);
 
                 try {
@@ -271,16 +328,19 @@ class Checkout extends Component
     private function getOrderParams(): array
     {
         return [
-            'province_id' => $this->selectedAddress->province->id,
-            'city_id' => $this->selectedAddress->city->id,
-            'recipient_name' => $this->selectedAddress->recipient_name,
+            'province_id'      => $this->selectedAddress->province->id,
+            'city_id'          => $this->selectedAddress->city->id,
+            'recipient_name'   => $this->selectedAddress->recipient_name,
             'recipient_mobile' => $this->selectedAddress->recipient_mobile,
-            'postal_address' => $this->selectedAddress->postal_address,
-            'zipcode' => $this->selectedAddress->zipcode,
-            'description' => $this->description,
-            'shipping_method' => $this->shipping_method,
-            'shipping_price' => $this->shipping_price,
-            'torob_clid' => request()->cookie('torob_clid') ?: null,
+            'postal_address'   => $this->selectedAddress->postal_address,
+            'zipcode'          => $this->selectedAddress->zipcode,
+            'description'      => $this->description,
+            'shipping_method'  => $this->shipping_method,
+            'shipping_price'   => $this->shipping_price,
+            'torob_clid'       => request()->cookie('torob_clid') ?: null,
+            'payment_type'     => in_array($this->payment_method, ['torobpay', 'digipay', 'snappay'], true)
+                ? Order::PAYMENT_TYPE_INSTALLMENT
+                : Order::PAYMENT_TYPE_CASH,
         ];
     }
 

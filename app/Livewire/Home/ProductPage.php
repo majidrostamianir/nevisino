@@ -3,6 +3,7 @@
 namespace App\Livewire\Home;
 
 use App\Helpers\PriceHelper;
+use App\Helpers\Site;
 use App\Models\AttributeValue;
 use App\Models\Category;
 use App\Models\Product;
@@ -53,7 +54,7 @@ class ProductPage extends Component
     }
 
     /** اگر nvi نامعتبر یا title اشتباه باشد، ریدایرکت دائمی به آدرس درست */
-    protected function canonicalRedirect(?int $nvi): ?RedirectResponse
+    protected function canonicalRedirect(?int $nvi)
     {
         if ($nvi !== null && !$this->product->variants->contains('id', $nvi)) {
             return redirect()->to($this->productUrl(), 301);
@@ -273,6 +274,39 @@ class ProductPage extends Component
         ], fn($value) => $value !== null));
     }
 
+    // app/Models/Product.php
+    public function getHasDescriptionAttribute(): bool
+    {
+        $plain = trim(
+            str_replace(
+                ['&nbsp;', "\xC2\xA0"],
+                '',
+                strip_tags(html_entity_decode($this->description ?? '', ENT_QUOTES, 'UTF-8'))
+            )
+        );
+
+        return $plain !== '';
+    }
+
+
+    #[Computed]
+    public function purchaseSwitch(): array
+    {
+        $isGhesti = Site::isGhesti();
+
+        $nvi  = $this->selectedVariant > 1 ? $this->selectedVariant : null;
+        $path = parse_url($this->productUrl($nvi), PHP_URL_PATH) ?: '/';
+        $url  = $path . ($nvi ? '?nvi=' . $nvi : '');
+
+        return [
+            'url'   => Site::otherUrl($url),
+            'color' => $isGhesti ? 'naghdi' : 'ghesti',
+            'title' => $isGhesti ? 'این محصول را نقدی بخرید' : 'این محصول را در ۴ قسط ' . english_to_persian_num(number_format(PriceHelper::getGhestiPrice($this->product) /4)) . ' تومانی بخرید',
+            'description'=> $isGhesti ? 'پرداخت از طریق درگاه امن زیبال' : 'طرف قرارداد با ترب‌پی',
+            'btn'   => $isGhesti ? 'خرید نقدی' : 'خرید قسطی',
+            'icon'  => $isGhesti ? 'cash' : 'installment',
+        ];
+    }
     public function render()
     {
         return view('livewire.home.product-page')

@@ -167,38 +167,43 @@
 
                     {{-- ═══ ستون جدید: روش پرداخت ═══ --}}
                     <td class="px-4 py-3 text-sm">
-                        @php
-                            // آخرین تراکنش بدون توجه به status
-                            $lastTx = $order->transactions->first();
-                        @endphp
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            {{-- نوع پرداخت --}}
+                            @php
+                                $typeBadge = match($order->payment_type) {
+                                    'cash'        => ['label' => 'نقدی', 'class' => 'bg-green-100 text-green-700'],
+                                    'installment' => ['label' => 'قسطی', 'class' => 'bg-purple-100 text-purple-700'],
+                                    default       => null,
+                                };
+                            @endphp
 
-                        @if($lastTx)
-                            @switch($lastTx->payment_gateway)
-                                @case('torobpay')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium ">
-                                        ترب پی
-                                    </span>
-                                    @break
-
-                                @case('card')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium">
-                                         کارت به کارت
-                                    </span>
-                                    @break
-
-                                @case('zibal')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium">
-                                    زیبال
+                            @if($typeBadge)
+                                <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium {{ $typeBadge['class'] }}">
+                                    {{ $typeBadge['label'] }}
                                 </span>
-                                    @break
-                                @default
-                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700">
-                                        {{ $lastTx->payment_gateway ?: 'نامشخص' }}
-                                    </span>
-                            @endswitch
-                        @else
-                            <span class="text-xs text-gray-400">—</span>
-                        @endif
+                            @endif
+
+                            {{-- درگاه (آخرین تراکنش) --}}
+                            @php
+                                $lastTx = $order->transactions->sortByDesc('id')->first();
+
+                                $gatewayBadge = match($lastTx?->payment_gateway) {
+                                    'torobpay' => ['label' => 'ترب پی', 'class' => 'bg-blue-100 text-blue-700'],
+                                    'card'     => ['label' => 'کارت به کارت', 'class' => 'bg-orange-100 text-orange-700'],
+                                    'zibal'    => ['label' => 'زیبال', 'class' => 'bg-cyan-100 text-cyan-700'],
+                                    'digipay'  => ['label' => 'دیجی‌پی', 'class' => 'bg-indigo-100 text-indigo-700'],
+                                    default    => $lastTx ? ['label' => $lastTx->payment_gateway ?: 'نامشخص', 'class' => 'bg-gray-100 text-gray-700'] : null,
+                                };
+                            @endphp
+
+                            @if($gatewayBadge)
+                                <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium {{ $gatewayBadge['class'] }}">
+                                    {{ $gatewayBadge['label'] }}
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400">—</span>
+                            @endif
+                        </div>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-600">{{ english_to_persian_num(verta($order->created_at)) }}</td>
                 </tr>

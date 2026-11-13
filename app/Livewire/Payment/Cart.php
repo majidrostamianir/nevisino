@@ -86,17 +86,7 @@ class Cart extends Component
         }
     }
 
-    /**
-     * ساخت یک ردیف آماده‌ی نمایش برای سبد خرید.
-     * تمام محاسبات، ساخت لینک و مسیر تصویر همین‌جا انجام می‌شود.
-     */
-    protected function buildCartRow(
-        Product $product,
-        int $quantity,
-        int|string|null $variantId,
-        ?string $variantName,
-        string $title,
-    ): array {
+    protected function buildCartRow(Product $product, int $quantity, int|string|null $variantId, ?string $variantName, string $title,): array {
         $price = PriceHelper::getProductPrice($product);
 
         // لینک محصول: همیشه npi، در صورت وجود واریانت nvi

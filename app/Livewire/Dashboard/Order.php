@@ -5,7 +5,7 @@ namespace App\Livewire\Dashboard;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\TorobpayService;
-use App\Helpers\Site; // <-- اضافه شد
+use App\Helpers\Site;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Shetabit\Multipay\Invoice;
@@ -19,7 +19,7 @@ class Order extends Component
     public string $payment_method = 'gateway';
 
     public bool $torobpayEligible = false;
-    public string $torobpayTitle = 'پرداخت اقساطی با ترب پی';
+    public string $torobpayTitle = 'پرداخت اقساطی با ترب‌پی';
     public string $torobpayDescription = '';
 
     public function mount()
@@ -30,17 +30,16 @@ class Order extends Component
             ->orderByDesc('created_at')
             ->get();
 
-        $pendingOrder = $this->orders->firstWhere('status', 'pending');
-        if ($pendingOrder) {
-            $this->checkTorobpayEligibility($pendingOrder->amount);
+        // بررسی صلاحیت ترب‌پی برای اولین سفارش اقساطی در حال انتظار (فقط در سایت قسطی)
+        $pendingInstallment = $this->orders
+            ->first(fn ($o) => $o->status === 'pending' && $o->payment_type === 'installment');
+
+        if ($pendingInstallment && Site::isGhesti()) {
+            $this->checkTorobpayEligibility($pendingInstallment->amount);
         }
 
-        // تعیین روش پرداخت پیش‌فرض بر اساس دامنه
-        if (Site::isGhesti() && $this->torobpayEligible) {
-            $this->payment_method = 'torobpay'; // در سایت قسطی
-        } else {
-            $this->payment_method = 'gateway';  // در سایت نقدی
-        }
+        // پیش‌فرض روش پرداخت بر اساس دامنه
+        $this->payment_method = Site::isGhesti() ? 'torobpay' : 'gateway';
     }
 
     public function toggleOrder($orderId)
@@ -52,7 +51,6 @@ class Order extends Component
     {
         $this->torobpayEligible = false;
 
-        // اگر در سایت نقدی هستیم، کلاً ترب‌پی را بررسی نکن
         if (Site::isMain()) {
             return;
         }
@@ -83,6 +81,18 @@ class Order extends Component
             ->where('status', 'pending')
             ->firstOrFail();
 
+        // ── لایه امنیتی: سفارش نقدی → فقط سایت نقدی / سفارش قسطی → فقط سایت قسطی ──
+        $allowedMethods = match ($order->payment_type) {
+            'installment' => Site::isGhesti() ? ['torobpay']          : [],
+            default       => Site::isMain()   ? ['gateway', 'card']   : [],
+        };
+
+        abort_unless(
+            in_array($this->payment_method, $allowedMethods, true),
+            403,
+            'روش پرداخت برای این سفارش در این سایت مجاز نیست.'
+        );
+
         switch ($this->payment_method) {
             case 'gateway':
                 $invoice = (new Invoice)->amount($order->amount);
@@ -98,7 +108,6 @@ class Order extends Component
                 return redirect()->away($payment->pay()->getAction());
 
             case 'card':
-                // لایه امنیتی: کارت به کارت فقط در سایت نقدی مجاز است
                 if (!Site::isMain()) {
                     abort(403, 'پرداخت کارت به کارت فقط در سایت اصلی در دسترس است.');
                 }
@@ -113,11 +122,6 @@ class Order extends Component
                 return $this->redirect('/dashboard/order?open=' . $order->order_number, navigate: true);
 
             case 'torobpay':
-                // لایه امنیتی: ترب‌پی فقط در سایت قسطی مجاز است
-                if (!Site::isGhesti()) {
-                    abort(403, 'پرداخت اقساطی فقط در سایت قسطی در دسترس است.');
-                }
-
                 if (!$this->torobpayEligible) {
                     abort(403, 'پرداخت اقساطی در حال حاضر در دسترس نیست.');
                 }

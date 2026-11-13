@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class SMS
 {
-    public function successPaid(string $orderNumber, string $mobile): void
+    public function successPaidZibal(string $orderNumber, string $mobile): void
     {
         $link = 'https://nevisino.ir/dashboard/order?open=' . $orderNumber;
 

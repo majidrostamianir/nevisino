@@ -2,12 +2,11 @@
     <meta name="robots" content="noindex, follow">
 @endpush
 <div class="space-y-6">
-    {{-- سفارشات در انتظار پرداخت --}}
     @if($orders->isNotEmpty())
-        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 overflow-hidden">
-            <div class="px-5 py-4 border-b border-amber-200 bg-amber-100/50">
-                <strong class="text-amber-800 flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-warn-50 rounded-2xl border border-warn-200/60 overflow-hidden">
+            <div class="px-5 py-3 border-b border-warn-200/60 bg-warn-100/40">
+                <strong class="text-warn-800 text-sm font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4 text-warn-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     شما یک سفارش در انتظار پرداخت دارید
@@ -24,9 +23,9 @@
                             <span class="font-bold text-pars-700">{{ english_to_persian_num(number_format($order->amount)) }}</span>
                             <span class="text-xs text-gray-400">تومان</span>
                         </div>
-                        <div class="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full">
-                            <svg width="16" height="16" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="32" cy="32" r="30" fill="#FF9800"/>
+                        <div class="flex items-center gap-2 text-xs text-warn-700 bg-warn-100/50 px-3 py-1.5 rounded-full">
+                            <svg class="w-4 h-4 text-warn-500" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="30" fill="currentColor"/>
                                 <path d="M32 18C30.9 18 30 18.9 30 20V36C30 37.1 30.9 38 32 38C33.1 38 34 37.1 34 36V20C34 18.9 33.1 18 32 18Z" fill="white"/>
                                 <circle cx="32" cy="45" r="2.5" fill="white"/>
                             </svg>
@@ -45,26 +44,19 @@
             </div>
         </div>
     @endif
-
-    {{-- محتوای اصلی سبد خرید --}}
     <div class="flex flex-col lg:flex-row gap-6">
-
-        {{-- لیست محصولات --}}
         <div class="w-full lg:w-2/3">
             @if($cart)
                 <div class="space-y-3">
                     @foreach ($cart as $key => $product)
                         <div wire:key="{{ $key }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
                             <div class="flex gap-4">
-                                {{-- تصویر --}}
                                 <div class="flex-shrink-0">
                                     <a wire:navigate href="{{ $product['url'] }}">
                                         <img class="w-24 h-24 object-cover rounded-xl shadow-sm"
                                              src="{{ $product['image'] }}" alt="">
                                     </a>
                                 </div>
-
-                                {{-- اطلاعات محصول --}}
                                 <div class="flex-1">
                                     <div class="flex justify-between items-start">
                                         <div class="flex-1">
@@ -78,8 +70,6 @@
                                                 </div>
                                             @endif
                                         </div>
-
-                                        {{-- دکمه حذف --}}
                                         <button wire:click.prevent="removeFromCart('{{ $key }}')"
                                                 class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer flex-shrink-0 mr-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,8 +77,6 @@
                                             </svg>
                                         </button>
                                     </div>
-
-                                    {{-- قیمت و تعداد --}}
                                     <div class="flex justify-between items-end mt-4">
                                         <div class="text-xs text-gray-500">
                                             تعداد: <span class="font-medium">{{ english_to_persian_num($product['quantity']) }}</span>
@@ -120,8 +108,6 @@
                 </div>
             @endif
         </div>
-
-        {{-- سایدبار سمت راست: استیکی و به اندازه محتوای خودش --}}
         <div class="w-full lg:w-1/3 lg:self-start bg-white border border-gray-100 p-5 shadow rounded-2xl sticky top-20">
             <div class="w-full mb-4 flex justify-between">
                 <div><strong>جمع مبلغ سبد خرید</strong></div>
@@ -170,7 +156,7 @@
             <div class="w-full mb-6 flex justify-between">
                 <div><strong>زمان رسیدن به مقصد</strong></div>
                 <span class="flex-1 border-b h-4 border-dotted border-gray-400 mx-2"></span>
-                <div class="text-left">{{ english_to_persian_num('بین 1 تا 3 روز') }}</div>
+                <div class="text-left">{{ english_to_persian_num('بین 2 تا 5 روز') }}</div>
             </div>
 
             <button wire:click.prevent="checkout"

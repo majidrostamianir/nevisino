@@ -415,19 +415,45 @@
                                 <img class="w-12 rounded-full shadow-sm opacity-50" src="{{ asset('images/torobpay.png') }}" alt="ترب پی">
                             </label>
                         @endif
+
+                        {{-- دیجی‌پی (به‌زودی - غیرفعال) --}}
+                        <label class="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
+                            <div class="flex items-center">
+                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با دیجی‌پی</span>
+                                    <div class="text-[11px] text-red-500 font-bold">به زودی</div>
+                                </div>
+                            </div>
+                            <span class="w-12 h-8 rounded-full bg-[#ef4056] text-white text-[11px] font-bold flex items-center justify-center shadow-sm">دیجی‌پی</span>
+                        </label>
+
+                        {{-- اسنپ پی (به‌زودی - غیرفعال) --}}
+                        <label class="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-xl border-2 border-gray-200 cursor-not-allowed opacity-60">
+                            <div class="flex items-center">
+                                <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 border-gray-400"></span>
+                                <div>
+                                    <span class="text-sm font-medium text-gray-500">پرداخت اقساطی با اسنپ پی</span>
+                                    <div class="text-[11px] text-red-500 font-bold">به زودی</div>
+                                </div>
+                            </div>
+                            <span class="w-12 h-8 rounded-full bg-[#00d170] text-white text-[11px] font-bold flex items-center justify-center shadow-sm">اسنپ پی</span>
+                        </label>
                     @endif
 
-                    {{-- ۲. درگاه بانکی (در هر دو سایت) --}}
-                    <label class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
-                           :class="payment_method === 'gateway' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
-                        <input type="radio" value="gateway" x-model="payment_method" class="hidden">
-                        <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
-                              :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
+                    {{-- ۲. درگاه بانکی (فقط در سایت اصلی) --}}
+                    @if(!\App\Helpers\Site::isGhesti())
+                        <label class="flex items-center bg-white px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                               :class="payment_method === 'gateway' ? 'border-pars-500 bg-pars-50' : 'border-gray-200 hover:border-pars-300'">
+                            <input type="radio" value="gateway" x-model="payment_method" class="hidden">
+                            <span class="w-5 h-5 flex items-center justify-center rounded-full border-2 ml-3 transition-all duration-200"
+                                  :class="payment_method === 'gateway' ? 'border-pars-500' : 'border-gray-400'">
                                 <span class="w-2.5 h-2.5 rounded-full bg-pars-500 transition-all duration-200"
                                       x-show="payment_method === 'gateway'"></span>
                             </span>
-                        <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
-                    </label>
+                            <span class="text-sm text-gray-700">پرداخت از طریق درگاه بانکی با رمز دوم</span>
+                        </label>
+                    @endif
 
                     {{-- ۳. کارت به کارت (فقط در سایت نقدی) --}}
                     @if(\App\Helpers\Site::isMain())
@@ -487,7 +513,8 @@
                     <button
                             wire:click.prevent="pay"
                             wire:target="pay"
-                            class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-2 flex items-center justify-center relative transition-all duration-300">
+                            @if(\App\Helpers\Site::isGhesti() && !$torobpayEligible) disabled @endif
+                            class="w-full min-w-[120px] cursor-pointer text-center bg-pars-500 hover:bg-pars-600 text-white rounded-2xl py-2 flex items-center justify-center relative transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
 
                             <span wire:loading.remove wire:target="pay">
                                 @if(\App\Helpers\Site::isGhesti())
@@ -507,6 +534,12 @@
                                 </svg>
                             </span>
                     </button>
+
+                    @if(\App\Helpers\Site::isGhesti() && !$torobpayEligible)
+                        <div class="mt-3 text-sm text-red-600">
+                            در حال حاضر پرداخت اقساطی ترب‌پی برای این مبلغ فعال نیست.
+                        </div>
+                    @endif
 
                     @if ($errors->any())
                         <div class="mt-4 bg-red-50 text-red-600 rounded-xl p-3 text-sm">

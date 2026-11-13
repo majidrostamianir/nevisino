@@ -35,7 +35,7 @@
             @if($product->code)
                 <x-product.info-row path="M7 20l4-16m2 16l4-16M6 9h14M4 15h14">
                     <span class="font-bold">کد محصول:</span>
-                    <span>{{ english_to_persian_num($product->code) }}</span>
+                    <span>{{ $product->code }}</span>
                 </x-product.info-row>
             @endif
 
@@ -97,7 +97,7 @@
                     <x-product.quantity-stepper :quantity="$quantity" :notice="$this->stockNotice" />
 
                     <button wire:click="addToCart()" wire:loading.attr="disabled"
-                            class="relative flex items-center cursor-pointer justify-center bg-pars-500 text-sm text-white px-6 h-10 rounded-xl shadow-sm hover:bg-pars-600 hover:shadow-md transition-all duration-200 font-medium">
+                            class="relative flex items-center cursor-pointer justify-center bg-pars-500 text-sm text-white px-2 h-10 rounded-xl shadow-sm hover:bg-pars-600 hover:shadow-md transition-all duration-200 font-medium">
                         افزودن به سبد خرید
                         <x-spinner wire:loading wire:target="addToCart" class="w-5 h-5 absolute left-2 text-white" />
                     </button>
@@ -110,9 +110,13 @@
         </div>
     </div>
 
+    @if($this->inStock)
+        <x-product.purchase-switch :switch="$this->purchaseSwitch" />
+    @endif
+
     {{-- توضیحات محصول --}}
-    @if($product->description)
-        <x-product.section title="معرفی محصول" path="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+    @if($product->has_description)
+        <x-product.section title="معرفی محصول" path="...">
             <div class="text-justify text-gray-600 leading-relaxed">
                 {!! english_to_persian_num($product->description) !!}
             </div>
