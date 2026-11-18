@@ -67,14 +67,20 @@ class TorobOrderController extends Controller
             ], 400);
         }
 
-        // 4. دریافت سفارش‌های جدیدتر از timestamp درخواست
+// 4. دریافت سفارش‌های جدیدتر از timestamp درخواست
         $sinceForDatabase = $since
             ->setTimezone(config('app.timezone'))
             ->format('Y-m-d H:i:s.u');
 
+        $shopDomain = preg_replace('/^www\./', '', $request->getHost());
+
         $orders = Order::query()
             ->whereNotNull('torob_clid')
             ->whereIn('status', ['paid', 'canceled'])
+            ->where(function ($q) use ($shopDomain) {
+                $q->where('torob_shop_domain', $shopDomain)
+                    ->orWhereNull('torob_shop_domain'); // سفارش‌های قدیمی (قبل از این تغییر)
+            })
             ->where('created_at', '>', $sinceForDatabase)
             ->orderBy('created_at', 'asc')
             ->limit($limit)

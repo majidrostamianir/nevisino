@@ -337,8 +337,9 @@ class Checkout extends Component
             'description'      => $this->description,
             'shipping_method'  => $this->shipping_method,
             'shipping_price'   => $this->shipping_price,
-            'torob_clid'       => request()->cookie('torob_clid') ?: null,
-            'payment_type'     => in_array($this->payment_method, ['torobpay', 'digipay', 'snappay'], true)
+            'torob_clid'        => request()->cookie('torob_clid') ?: null,
+            'torob_shop_domain' => request()->cookie('torob_shop_domain') ?: null,
+            'payment_type'      => in_array($this->payment_method, ['torobpay', 'digipay', 'snappay'], true)
                 ? Order::PAYMENT_TYPE_INSTALLMENT
                 : Order::PAYMENT_TYPE_CASH,
         ];

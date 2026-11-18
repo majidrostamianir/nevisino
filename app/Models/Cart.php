@@ -35,7 +35,7 @@ class Cart extends Model
             $shipping_price   = $orderData['shipping_price'] ?? 0;
             $torob_clid       = $orderData['torob_clid'] ?? null;
             $payment_type     = $orderData['payment_type'] ?? 'cash';
-
+            $torob_shop_domain = $orderData['torob_shop_domain'] ?? null;
             $totalPrice = $this->items->sum(function ($item) {
                 return PriceHelper::getProductPrice($item->product) * $item->quantity;
             });
@@ -49,8 +49,9 @@ class Cart extends Model
             $order = $this->user->orders()->create([
                 'order_number'     => $newOrderNumber,
                 'status'           => 'pending',
-                'payment_type'     => $payment_type,   // ← جدید
+                'payment_type'     => $payment_type,
                 'torob_clid'       => $torob_clid,
+                'torob_shop_domain'=> $torob_shop_domain,
                 'total_price'      => $totalPrice,
                 'shipping_method'  => $shipping_method,
                 'shipping_price'   => $shipping_price,
