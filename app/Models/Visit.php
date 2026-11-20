@@ -6,22 +6,51 @@ use Illuminate\Database\Eloquent\Model;
 
 class Visit extends Model
 {
-    protected $fillable = ['url' , 'url_id' , 'ip' , 'user_id','referrer','is_bot','user_agent','is_ghesti'];
+    protected $fillable = [
+        'url',
+        'url_id',
+        'ip',
+        'user_id',
+        'referrer',
+        'is_bot',
+        'bot_name',       // ← اضافه شد
+        'bot_category',   // ← اضافه شد
+        'user_agent',
+        'is_ghesti',
+    ];
+
+    protected $casts = [
+        'is_bot'    => 'boolean',
+        'is_ghesti' => 'boolean',
+    ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    // فقط بازدید انسان‌ها
+    public function scopeHuman($query)
+    {
+        return $query->where('is_bot', false);
+    }
+
+    // فقط بازدید ربات‌ها
+    public function scopeBots($query)
+    {
+        return $query->where('is_bot', true);
+    }
+
     public static function search($q, $limit = 2000)
     {
         $q = self::normalize($q);
 
         return Visit::query()
-            ->where(function($query) use ($q) {
+            ->where(function ($query) use ($q) {
                 // جستجو در IP
                 $query->where('ip', 'LIKE', '%' . $q . '%')
                     // یا جستجو در کاربر
-                    ->orWhereHas('user', function($userQuery) use ($q) {
+                    ->orWhereHas('user', function ($userQuery) use ($q) {
                         $userQuery->where('name', 'LIKE', '%' . $q . '%')
                             ->orWhere('mobile', 'LIKE', '%' . $q . '%');
                     });
@@ -30,6 +59,7 @@ class Visit extends Model
             ->limit($limit)
             ->get();
     }
+
     public static function normalize($query)
     {
         $query = trim($query);

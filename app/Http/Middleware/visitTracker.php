@@ -3,7 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Visit;
-use App\Helpers\Site; // <-- این خط اضافه شد
+use App\Helpers\Site;
+use App\Helpers\BotDetector;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,56 +15,45 @@ class visitTracker
     public function handle(Request $request, Closure $next): Response
     {
         try {
-
             $userAgent = $request->userAgent();
             $ip = $request->ip();
 
             // تشخیص ربات
-            $isBot = false;
-            if ($userAgent) {
-                $botKeywords = ['bot', 'crawl', 'slurp', 'spider', 'mediapartners'];
-                foreach ($botKeywords as $keyword) {
-                    if (stripos($userAgent, $keyword) !== false) {
-                        $isBot = true;
-                        break;
-                    }
-                }
-            }
+            $bot = BotDetector::detect($userAgent);
 
-            // رنج آی‌پی‌هایی که نمیخوایم ذخیره بشن
             $blockedIpRanges = [
-                '81.12.31.*', // همه آی‌پی‌های 81.12.31.0 تا 81.12.31.255
+                '81.12.31.*',
             ];
 
-            // یوزر ایجنت‌های بلاک
             $blockedUserAgents = [
                 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36',
-                'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)'
+                'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36 (compatible; Google-Read-Aloud; +https://support.google.com/webmasters/answer/1061943)',
             ];
 
-            // چک کردن رنج آی‌پی
             foreach ($blockedIpRanges as $range) {
-                if (fnmatch($range, $ip)) {
-                    return $next($request); // ذخیره نکن
+                if ($ip && fnmatch($range, $ip)) {
+                    return $next($request);
                 }
             }
 
-            // چک کردن یوزر ایجنت
             foreach ($blockedUserAgents as $blockedUA) {
-                if (stripos($userAgent, $blockedUA) !== false) {
-                    return $next($request); // ذخیره نکن
+                if ($userAgent && stripos($userAgent, $blockedUA) !== false) {
+                    return $next($request);
                 }
             }
 
-            // ذخیره بازدید برای کاربران عادی
-            if (Auth::guest() || (Auth::check() && Auth::user()->id != 1)) {
+            if (Auth::guest() || (Auth::check() && Auth::id() !== 1)) {
                 Visit::query()->create([
-                    'ip' => $ip ?? null,
-                    'is_ghesti' => Site::isGhesti(), // <-- این خط اضافه شد (True/False)
-                    'user_id' => auth()->id() ?? null,
+                    'ip' => $ip,
+                    'is_ghesti' => Site::isGhesti(),
+                    'user_id' => Auth::id(),
                     'url' => rawurldecode($request->path() ?? ''),
-                    'referrer' => $request->headers->get('referer') ? rawurldecode($request->headers->get('referer')) : null,
-                    'is_bot' => $isBot,
+                    'referrer' => $request->headers->get('referer')
+                        ? rawurldecode($request->headers->get('referer'))
+                        : null,
+                    'is_bot' => $bot['is_bot'],
+                    'bot_name' => $bot['name'],
+                    'bot_category' => $bot['category'],
                     'user_agent' => $userAgent,
                 ]);
             }
@@ -73,5 +63,4 @@ class visitTracker
 
         return $next($request);
     }
-
 }

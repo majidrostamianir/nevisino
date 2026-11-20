@@ -19,7 +19,6 @@ use Livewire\Component;
 class ProductPage extends Component
 {
     public ?string $title = null;
-    public int $npi;
 
     #[Locked]
     public Product $product;
@@ -31,9 +30,24 @@ class ProductPage extends Component
     public string $src;
     public int $selectedVariant = 1;
 
-    public function mount()
+    public function mount(string $npi)
     {
-        $this->product = Product::query()->findOrFail($this->npi);
+        // اگر جای {npi} اسلاگ فارسی گذاشته شده باشد (لینک قدیمی/خارجی)،
+        // به آدرس درست ریدایرکت می‌کنیم تا خطای TypeError رخ ندهد.
+        if (! ctype_digit($npi)) {
+            $product = Product::query()->where('dashed_url', $npi)->first();
+
+            if (! $product) {
+                abort(404);
+            }
+
+            return redirect()->to(route('product-page', [
+                'npi'   => $product->id,
+                'title' => $product->dashed_url,
+            ]), 301);
+        }
+
+        $this->product = Product::query()->findOrFail((int) $npi);
 
         $nvi = request()->has('nvi') ? (int) request()->query('nvi') : null;
 
@@ -287,7 +301,6 @@ class ProductPage extends Component
 
         return $plain !== '';
     }
-
 
     #[Computed]
     public function purchaseSwitch(): array
