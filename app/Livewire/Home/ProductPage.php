@@ -9,7 +9,6 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Services\Cart\AddToCartAction;
 use App\Services\Cart\VariantSelection;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;

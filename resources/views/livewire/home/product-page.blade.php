@@ -1,5 +1,5 @@
 @push('variant')
-    <link rel="canonical" href="https://nevisino.ir/product/{{ $npi }}/{{ $title }}" />
+    <link rel="canonical" href="https://nevisino.ir/product/{{ $product->id }}/{{ $title }}" />
 @endpush
 <div class="w-full"
      x-data="{

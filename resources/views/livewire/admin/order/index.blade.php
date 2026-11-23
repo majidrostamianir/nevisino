@@ -3,6 +3,22 @@
         isMobile: window.innerWidth < 768
      }"
      @resize.window.debounce.100ms="isMobile = window.innerWidth < 768">
+
+    {{-- ═══ بنر پیام تاپین ═══ --}}
+    @if($tapinMessage)
+        <div class="mb-4 rounded-lg shadow p-4 flex items-start justify-between gap-3
+                    {{ $tapinSuccess ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200' }}">
+            <div class="flex items-start gap-2">
+                <span class="text-lg">{{ $tapinSuccess ? '✅' : '❌' }}</span>
+                <p class="text-sm font-medium {{ $tapinSuccess ? 'text-green-800' : 'text-red-800' }}">
+                    {{ $tapinMessage }}
+                </p>
+            </div>
+            <button wire:click="dismissTapinMessage"
+                    class="text-gray-500 hover:text-gray-700 shrink-0 text-lg leading-none">✕</button>
+        </div>
+    @endif
+
     {{-- ═══ فیلتر وضعیت ═══ --}}
     <div class="mb-4 bg-white rounded-lg shadow">
         {{-- دکمه موبایل برای باز/بسته کردن فیلترها --}}
@@ -116,9 +132,36 @@
                                             @break
 
                                         @case('processing')
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-700">در حال پردازش</span>
-                                            @break
+                                            <div class="flex flex-col gap-1">
+                                                <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-700">در حال پردازش</span>
 
+                                                @if(!blank($order->tracking_code))
+                                                    {{-- کاربر کد رهگیری را دستی وارد کرده --}}
+                                                    <a href="https://tracking.post.ir/?id={{ $order->tracking_code }}"
+                                                       target="_blank"
+                                                       class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-cyan-100 text-cyan-700 hover:bg-cyan-200 transition-colors">
+                                                        🔍 رهگیری {{ $order->tracking_code }}
+                                                    </a>
+                                                @elseif(in_array($order->id, $sentTapinIds))
+                                                    {{-- به تاپین ارسال شده، منتظر کد رهگیری دستی --}}
+                                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                        ✅ به تاپین ارسال شد
+                                                    </span>
+                                                    <span class="text-[11px] text-gray-500 leading-tight">کد رهگیری را دستی وارد کنید</span>
+                                                @else
+                                                    {{-- هنوز ارسال نشده --}}
+                                                    <button
+                                                            wire:click="sendToTapin({{ $order->id }})"
+                                                            wire:loading.attr="disabled"
+                                                            wire:target="sendToTapin({{ $order->id }})"
+                                                            wire:confirm="ارسال سفارش {{ $order->order_number }} به تاپین؟"
+                                                            class="inline-flex items-center cursor-pointer justify-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-wait transition-colors">
+                                                        <span wire:loading.remove wire:target="sendToTapin({{ $order->id }})">📤 ارسال به تاپین</span>
+                                                        <span wire:loading wire:target="sendToTapin({{ $order->id }})">در حال ارسال...</span>
+                                                    </button>
+                                                @endif
+                                            </div>
+                                            @break
                                         @case('preparing')
                                             <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-indigo-100 text-indigo-700">در حال بسته‌بندی</span>
                                             @break
@@ -165,7 +208,7 @@
                         @endswitch
                     </td>
 
-                    {{-- ═══ ستون جدید: روش پرداخت ═══ --}}
+                    {{-- ═══ ستون: روش پرداخت ═══ --}}
                     <td class="px-4 py-3 text-sm">
                         <div class="flex items-center gap-1.5 flex-wrap">
                             {{-- نوع پرداخت --}}
@@ -202,6 +245,24 @@
                                 </span>
                             @else
                                 <span class="text-xs text-gray-400">—</span>
+                            @endif
+
+                            {{-- پیش‌کرایه / پس‌کرایه --}}
+                            @php
+                                $postBadge = match($order->shipping_method?->value) {
+                                    'post_cod'               => ['label' => 'پس‌کرایه', 'class' => 'bg-amber-100 text-amber-700'],
+                                    'post_cash', 'post_free' => ['label' => 'پیش‌کرایه', 'class' => 'bg-sky-100 text-sky-700'],
+                                    'tipax_cod'              => ['label' => 'تیپاکس پس‌کرایه', 'class' => 'bg-rose-100 text-rose-700'],
+                                    'tipax_cash'             => ['label' => 'تیپاکس پیش‌کرایه', 'class' => 'bg-rose-100 text-rose-700'],
+                                    'tipax_free'             => ['label' => 'تیپاکس رایگان', 'class' => 'bg-rose-100 text-rose-700'],
+                                    default                  => null,
+                                };
+                            @endphp
+
+                            @if($postBadge)
+                                <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium {{ $postBadge['class'] }}">
+                                    {{ $postBadge['label'] }}
+                                </span>
                             @endif
                         </div>
                     </td>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('province_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->unsignedInteger('tapin_code')->nullable()->index();
             $table->timestamps();
         });
     }

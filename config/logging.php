@@ -126,6 +126,12 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        'tapin' => [
+            'driver' => 'daily',
+            'path'   => storage_path('logs/tapin.log'),
+            'level'  => 'info',
+            'days'   => 14,
+        ],
 
     ],
 

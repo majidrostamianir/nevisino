@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Order;
 
 use App\Models\Order;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 class Index extends Component
@@ -14,8 +15,11 @@ class Index extends Component
         'shipped'   => true,
         'delivered' => true,
         'returned'  => true,
-        'canceled'  => false, // ← پیش‌فرض true تا در ابتدا همه سفارش‌ها دیده بشن
+        'canceled'  => false,
     ];
+
+    public ?string $tapinMessage = null;
+    public bool $tapinSuccess = false;
 
     public function toggleAllStatuses(): void
     {
@@ -24,6 +28,27 @@ class Index extends Component
         foreach ($this->statusFilter as $key => $value) {
             $this->statusFilter[$key] = !$allChecked;
         }
+    }
+
+    public function sendToTapin(int $orderId): void
+    {
+        $order = Order::with(['items.product', 'items.variant.product'])->find($orderId);
+
+        if (!$order) {
+            $this->tapinMessage = 'سفارش پیدا نشد.';
+            $this->tapinSuccess = false;
+            return;
+        }
+
+        $result = app(\App\Services\Tapin\SendOrderToTapinAction::class)->execute($order);
+
+        $this->tapinMessage = $result['message'];
+        $this->tapinSuccess = (bool) $result['success'];
+    }
+
+    public function dismissTapinMessage(): void
+    {
+        $this->tapinMessage = null;
     }
 
     public function render()
@@ -38,20 +63,18 @@ class Index extends Component
         if (empty($activeStatuses)) {
             $orders = collect();
         }
-        // حالت ۲: همه فیلترها فعال هستن → همه سفارش‌ها بدون هیچ شرطی
+        // حالت ۲: همه فیلترها فعال هستن → همه سفارش‌ها
         elseif (count($activeStatuses) === count($this->statusFilter)) {
             $orders = $query->get();
         }
         // حالت ۳: فیلتر جزئی
         else {
             $query->where(function ($q) use ($activeStatuses) {
-                // فیلترهای ستون status
                 $statusFilters = array_intersect($activeStatuses, ['pending', 'paid', 'canceled']);
                 if (!empty($statusFilters)) {
                     $q->orWhereIn('status', $statusFilters);
                 }
 
-                // فیلترهای ستون shipping_status
                 $shippingFilters = array_intersect($activeStatuses, ['shipped', 'delivered', 'returned']);
                 if (!empty($shippingFilters)) {
                     $q->orWhereIn('shipping_status', $shippingFilters);
@@ -61,7 +84,13 @@ class Index extends Component
             $orders = $query->get();
         }
 
-        return view('livewire.admin.order.index', compact('orders'))
+        // شناسهٔ سفارش‌هایی که قبلاً به تاپین ارسال شده‌اند (از Cache)
+        $sentTapinIds = $orders
+            ->filter(fn ($o) => Cache::has("tapin_sent:{$o->id}"))
+            ->pluck('id')
+            ->toArray();
+
+        return view('livewire.admin.order.index', compact('orders', 'sentTapinIds'))
             ->layout('components.layouts.admin');
     }
 }
