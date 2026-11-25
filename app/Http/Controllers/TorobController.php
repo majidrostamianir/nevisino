@@ -374,6 +374,13 @@ class TorobController extends Controller
                     'stock'   => (int)($product->stock ?? 0),
                 ]);
             } else {
+                // ✅ محصول پایه هم اضافه شود (مثل handleByUniques)
+                $items->push([
+                    'product' => $product,
+                    'variant' => null,
+                    'stock'   => (int)$product->variants->sum('stock'),
+                ]);
+
                 foreach ($product->variants as $variant) {
                     $items->push([
                         'product' => $product,
@@ -385,7 +392,6 @@ class TorobController extends Controller
         }
         return $items;
     }
-
     /** پاسخ استاندارد page-based. */
     private function pageResponse($items, int $page, int $total)
     {

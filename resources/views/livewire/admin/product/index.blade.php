@@ -188,11 +188,24 @@
         </span>
     </div>
 
+    {{-- محاسبه شماره ردیف نزولی (قبل از رندر) --}}
+    @php
+        $totalRows = 0;
+        foreach ($products as $p) {
+            $totalRows++;
+            if ($p->variant && $p->variants->isNotEmpty()) {
+                $totalRows += $p->variants->count();
+            }
+        }
+        $currentRow = $totalRows; // از بیشترین عدد شروع می‌شود (نزولی)
+    @endphp
+
     {{-- جدول محصولات --}}
     <div class="overflow-x-scroll rounded-lg shadow">
         <table class="min-w-full text-right bg-pars-100">
             <thead>
             <tr class="bg-gradient-to-r from-pars-500 to-pars-800 text-white shadow-md">
+                <th class="px-3 py-3 text-sm font-semibold whitespace-nowrap">#</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">شناسه</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">محصول</th>
                 <th class="px-4 py-3 text-sm font-semibold whitespace-nowrap">قیمت عمده</th>
@@ -208,10 +221,8 @@
             <tbody>
             @foreach ($products as $index => $product)
                 @php
-                    // تشخیص واریانت
                     $hasVariant = !is_null($product->variant);
 
-                    // محاسبه موجودی محصول
                     if ($product->variant && $product->selectedVariant < 1000) {
                         $stock = $product->variants()->sum('stock');
                     } elseif ($product->variant && $product->selectedVariant >= 1000) {
@@ -219,8 +230,17 @@
                     } else {
                         $stock = $product->stock;
                     }
+
+                    // رنگ گروه: یکی در میان بر اساس ایندکس محصول (محصول + همه واریانت‌ها = یک گروه)
+                    $isEvenGroup = ($loop->iteration % 2 === 0);
+                    $groupBg     = $isEvenGroup ? 'bg-gray-50/50' : 'bg-white';
                 @endphp
-                <tr class="border-b border-gray-200 transition-colors hover:bg-gray-50 {{ $loop->even ? 'bg-gray-50/50' : 'bg-white' }}">
+
+                {{-- سطر اصلی محصول --}}
+                <tr class="border-b border-gray-200 transition-colors hover:bg-gray-50 {{ $groupBg }}">
+                    <td class="px-3 py-3 text-xs font-bold text-pars-700 whitespace-nowrap bg-pars-50">
+                        {{ english_to_persian_num($currentRow--) }}
+                    </td>
                     <td class="px-4 py-3 text-sm text-gray-800 whitespace-nowrap">
                         {{ english_to_persian_num($product['id']) }}
                     </td>
@@ -241,7 +261,7 @@
                                 </svg>
                             </a>
 
-                            {{-- لینک ترب با آیکون جدید --}}
+                            {{-- لینک ترب --}}
                             @if($product->torob_url)
                                 <a href="{{ $product->torob_url }}"
                                    target="_blank"
@@ -249,14 +269,10 @@
                                    title="مشاهده در ترب">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 88 88">
                                         <g fill="none">
-                                            <path fill="#FF6B00"
-                                                  d="M79.245 20.322l-.627.726c-2.474 2.656-5.814 4.2-9.462 4.313-.16.023-.342.023-.502.023-.456 0-.878-.023-1.31-.068 8.595 10.1 9.895 24.968 2.222 36.579-7.638 11.542-21.774 16.252-34.428 12.484h-.08c-5.13-1.34-10.944.68-14.022 5.414 3.192-4.847 2.736-11.055-.798-15.322v-.045c-8.333-10.079-9.473-24.72-1.87-36.16C26.692 15.67 42.766 11.22 56.195 17.031c-.57-1.476-.935-3.065-1.026-4.688-.114-2.95.741-5.788 2.371-8.171-18.012-5.902-38.532.567-49.476 17.137C-5.104 41.171.425 67.842 20.261 80.893c19.882 13.064 46.592 7.502 59.702-12.246 10.032-15.174 9.177-34.331-.707-48.348l-.011.023z"></path>
-                                            <path fill="#FF8C00"
-                                                  d="M31.969 10.22c-10.91 1.08-20.463 5.721-24.054 11.191C-5.195 41.216.3 67.853 20.193 80.905l.73-1.112c3.191-4.847 2.735-11.055-.799-15.322v-.045c-8.22-10.079-9.36-24.72-1.835-36.16C26.61 15.67 42.685 11.22 56.114 17.031c0 0-11.4-8.059-24.122-6.81h-.023z"></path>
-                                            <path fill="#FFA500"
-                                                  d="M62.544 22.32s-.342-4.086 1.482-7.037c1.824-2.951 5.7-5.845 10.602-5.539 4.925.307 5.723 1.442 5.723 1.442s.114 3.972-1.254 6.242-4.218 5.606-8.322 6.446c-4.104.829-8.231-1.555-8.231-1.555z"></path>
-                                            <path fill="#FFB347"
-                                                  d="M61.062 21.173s-.456-3.972 2.28-7.944c2.736-3.973 5.7-4.563 5.7-4.563S68.7 3.218 66.078.608c.228-.057-3.124.08-6.042 3.291-2.577 2.815-4.104 7.264-2.964 11.577 1.14 4.312 3.99 5.697 3.99 5.697z"></path>
+                                            <path fill="#FF6B00" d="M79.245 20.322l-.627.726c-2.474 2.656-5.814 4.2-9.462 4.313-.16.023-.342.023-.502.023-.456 0-.878-.023-1.31-.068 8.595 10.1 9.895 24.968 2.222 36.579-7.638 11.542-21.774 16.252-34.428 12.484h-.08c-5.13-1.34-10.944.68-14.022 5.414 3.192-4.847 2.736-11.055-.798-15.322v-.045c-8.333-10.079-9.473-24.72-1.87-36.16C26.692 15.67 42.766 11.22 56.195 17.031c-.57-1.476-.935-3.065-1.026-4.688-.114-2.95.741-5.788 2.371-8.171-18.012-5.902-38.532.567-49.476 17.137C-5.104 41.171.425 67.842 20.261 80.893c19.882 13.064 46.592 7.502 59.702-12.246 10.032-15.174 9.177-34.331-.707-48.348l-.011.023z"></path>
+                                            <path fill="#FF8C00" d="M31.969 10.22c-10.91 1.08-20.463 5.721-24.054 11.191C-5.195 41.216.3 67.853 20.193 80.905l.73-1.112c3.191-4.847 2.735-11.055-.799-15.322v-.045c-8.22-10.079-9.36-24.72-1.835-36.16C26.61 15.67 42.685 11.22 56.114 17.031c0 0-11.4-8.059-24.122-6.81h-.023z"></path>
+                                            <path fill="#FFA500" d="M62.544 22.32s-.342-4.086 1.482-7.037c1.824-2.951 5.7-5.845 10.602-5.539 4.925.307 5.723 1.442 5.723 1.442s.114 3.972-1.254 6.242-4.218 5.606-8.322 6.446c-4.104.829-8.231-1.555-8.231-1.555z"></path>
+                                            <path fill="#FFB347" d="M61.062 21.173s-.456-3.972 2.28-7.944c2.736-3.973 5.7-4.563 5.7-4.563S68.7 3.218 66.078.608c.228-.057-3.124.08-6.042 3.291-2.577 2.815-4.104 7.264-2.964 11.577 1.14 4.312 3.99 5.697 3.99 5.697z"></path>
                                         </g>
                                     </svg>
                                 </a>
@@ -301,7 +317,6 @@
                                    wire:key="price-{{ $product->id }}"
                                    class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                    placeholder="قیمت اصلی">
-                            {{-- نمایش قیمت قبلی --}}
                             <div class="text-xs text-gray-500 flex flex-col">
                                 <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['price_previous'])) }} تومان</span>
                                 <span class="text-[10px] text-gray-400">
@@ -319,7 +334,6 @@
                                    wire:key="installment-{{ $product->id }}"
                                    class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                    placeholder="اقساطی">
-                            {{-- نمایش قیمت قبلی --}}
                             <div class="text-xs text-gray-500 flex flex-col">
                                 <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['installment_price_previous'])) }} تومان</span>
                                 <span class="text-[10px] text-gray-400">
@@ -338,7 +352,6 @@
                                    wire:key="discount-{{ $product->id }}"
                                    class="w-28 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                                    placeholder="تخفیف">
-                            {{-- نمایش قیمت قبلی --}}
                             <div class="text-xs text-gray-500 flex flex-col">
                                 <span>قبلی: {{ english_to_persian_num(number_format($previousPrices[$product->id]['discounted_price_previous'])) }} تومان</span>
                                 <span class="text-[10px] text-gray-400">
@@ -408,6 +421,56 @@
                         @endif
                     </td>
                 </tr>
+
+                {{-- ========== سطرهای واریانت (هم‌رنگ گروه والد) ========== --}}
+                @if($hasVariant && $product->variants->isNotEmpty())
+                    @foreach($product->variants as $variant)
+                        <tr class="border-b border-gray-200 transition-colors hover:bg-gray-50 {{ $groupBg }}">
+                            {{-- شماره ردیف نزولی (بنفش برای تفکیک) --}}
+                            <td class="px-3 py-2 text-xs font-bold text-purple-600 whitespace-nowrap bg-purple-100/70">
+                                {{ english_to_persian_num($currentRow--) }}
+                            </td>
+
+                            {{-- شناسه واریانت --}}
+                            <td class="px-4 py-2 text-xs text-purple-500 whitespace-nowrap">
+                                ↳ {{ english_to_persian_num($variant->id) }}
+                            </td>
+
+                            {{-- نام واریانت --}}
+                            <td class="px-4 py-2 text-sm">
+                                <div class="flex items-center gap-2 pr-6">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+                                    <span class="text-gray-700">{{ $variant->name }}</span>
+                                </div>
+                            </td>
+
+                            {{-- ستون‌های قیمت + عملیات (colspan=6) --}}
+                            <td colspan="6" class="px-4 py-2 text-center text-xs text-gray-300 select-none">
+                                ——— واریانت ———
+                            </td>
+
+                            {{-- موجودی واریانت --}}
+                            <td class="px-4 py-2 text-sm whitespace-nowrap">
+                                @if($variant->stock > 0)
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700">
+                                        ✓ {{ english_to_persian_num(number_format($variant->stock)) }} عدد
+                                    </span>
+                                @elseif($variant->stock == 0)
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-700">
+                                        ✗ ناموجود
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-orange-100 text-orange-700">
+                                        ⚠ نامشخص
+                                    </span>
+                                @endif
+                            </td>
+
+                            {{-- تصویر (خالی) --}}
+                            <td class="px-4 py-2"></td>
+                        </tr>
+                    @endforeach
+                @endif
             @endforeach
             </tbody>
         </table>
