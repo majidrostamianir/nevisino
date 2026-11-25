@@ -11,13 +11,13 @@ use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Illuminate\Support\Facades\Session;
+
 class Save extends Component
 {
     public Product $product;
     public int $size, $weight;
     public int|null $categoryId = null, $stock = null, $brandId = null;
 
-    // قیمت‌ها به صورت آرایه
     public array $prices = [
         'price' => null,
         'price_previous' => null,
@@ -35,7 +35,7 @@ class Save extends Component
 
     public $price_for_show = 0;
     public $installment_price_for_show = 0;
-    // تاریخ‌های بروزرسانی به صورت آرایه
+
     public array $price_updates = [
         'price_updated_at' => null,
         'bulk_price_updated_at' => null,
@@ -65,7 +65,6 @@ class Save extends Component
             $this->torob_url = $product->torob_url ?? null;
             $this->selectedUrls = $product->urls->pluck('title_tag', 'id')->toArray();
 
-            // تبدیل ساختار جدید به selectedAttrs
             $this->selectedAttrs = $product->attributes()
                 ->withPivot('attribute_value_id')
                 ->get()
@@ -85,7 +84,6 @@ class Save extends Component
             $this->weight = $product->weight;
             $this->stock = $product->stock;
 
-            // پر کردن آرایه قیمت‌ها از مدل
             $this->fillPricesFromModel();
             $this->calculatePriceFromBulk();
             $this->variants = $product->variants->map(function ($v) {
@@ -93,6 +91,7 @@ class Save extends Component
                     'id' => $v->id,
                     'name' => $v->name,
                     'stock' => $v->stock,
+                    'torob_url' => $v->torob_url,
                 ];
             })->toArray();
 
@@ -105,7 +104,6 @@ class Save extends Component
             $this->size = 0;
             $this->weight = 0;
 
-            // مقداردهی اولیه آرایه قیمت‌ها
             $this->prices = array_fill_keys(array_keys($this->prices), null);
             $this->price_updates = array_fill_keys(array_keys($this->price_updates), null);
         }
@@ -142,6 +140,7 @@ class Save extends Component
             'variants' => ['nullable', 'array', 'required_with:variant', 'prohibited_if:variant,null|required_with:variant|array'],
             'variants.*.name' => ['required_with:variant', 'string', 'min:2', 'max:255'],
             'variants.*.stock' => ['required_with:variant', 'int', 'min:0'],
+            'variants.*.torob_url' => ['nullable', 'url', 'max:2000'],
             'selectedUrls' => 'required|array|min:1',
             'selectedAttrs' => 'array',
             'categoryId' => 'required',
@@ -149,12 +148,11 @@ class Save extends Component
             'weight' => 'required|integer|min:0',
             'stock' => 'nullable|integer|min:0',
             'code' => 'nullable|string|min:1|max:255',
-            'description' => 'nullable|string|min:1|max:1000',
+            'description' => 'nullable|string|min:1|max:5000',
             'brandId' => 'required|exists:brands,id',
             'torob_url' => 'nullable|url|max:255',
         ];
 
-        // اضافه کردن قوانین اعتبارسنجی برای قیمت‌ها
         $priceFields = [
             'prices.price', 'prices.price_previous', 'prices.bulk_price',
             'prices.bulk_price_previous', 'prices.installment_price',
@@ -207,7 +205,6 @@ class Save extends Component
     {
         $bulk = $this->prices['bulk_price'] ?? 0;
 
-        // حذف جداکننده‌ها
         $bulk = (int) str_replace(
             [',', '،', ' ', '_'],
             '',
@@ -220,12 +217,10 @@ class Save extends Component
             return;
         }
 
-        // قیمت نقدی
         $cashPrice = $bulk * (1 + ($this->profitPercent / 100));
 
         $this->price_for_show = (int) $cashPrice;
 
-        // قیمت اقساطی
         if ($this->gatewayFeePercent >= 100 || $this->gatewayFeePercent <= 0) {
             $this->installment_price_for_show = 0;
         } else {
@@ -234,6 +229,7 @@ class Save extends Component
             );
         }
     }
+
     public function save()
     {
         $this->title = trim(preg_replace('/\s+/', ' ', $this->title));
@@ -246,12 +242,10 @@ class Save extends Component
             $this->stock = null;
         }
 
-        // به‌روزرسانی خودکار قیمت‌های قبلی و تاریخ‌ها
         $this->updatePriceHistory();
 
         $this->validate();
 
-        // پر کردن مدل از آرایه قیمت‌ها
         $this->fillModelFromPrices();
 
         $this->product->title = $this->title;
@@ -269,10 +263,8 @@ class Save extends Component
 
         $this->product->urls()->sync(array_keys($this->selectedUrls));
 
-        // دریافت attribute_value_ids قبلی قبل از همگام سازی
         $oldValueIds = $this->product->attributeValues()->pluck('attribute_value_id')->toArray();
 
-        // همگام سازی ویژگی‌های جدید
         $syncData = [];
         $newValueIds = [];
         foreach ($this->selectedAttrs as $attributeId => $data) {
@@ -281,13 +273,11 @@ class Save extends Component
         }
         $this->product->attributes()->sync($syncData);
 
-        // کاهش count برای مقادیری که حذف شده‌اند
         $removedValueIds = array_diff($oldValueIds, $newValueIds);
         foreach ($removedValueIds as $valueId) {
             AttributeValue::find($valueId)?->decrement('usage_count');
         }
 
-        // افزایش count برای مقادیری که اضافه شده‌اند
         $addedValueIds = array_diff($newValueIds, $oldValueIds);
         foreach ($addedValueIds as $valueId) {
             AttributeValue::find($valueId)?->increment('usage_count');
@@ -295,11 +285,13 @@ class Save extends Component
 
         $keptIds = [];
         foreach ($this->variants as $variant) {
+            // ⬇️ تغییر: اضافه شد torob_url
             $v = $this->product->variants()->updateOrCreate(
                 ['id' => $variant['id'] ?? null],
                 [
                     'name' => $variant['name'],
                     'stock' => $variant['stock'] ?? 0,
+                    'torob_url' => $variant['torob_url'] ?? null,
                 ]
             );
             $keptIds[] = $v->id;
@@ -309,14 +301,13 @@ class Save extends Component
             ->whereNotIn('id', $keptIds)
             ->delete();
 
-        // ⬇️ سینک با باسلام بعد از همه تغییرات
         app(\App\Services\ProductService::class)->syncToBasalam($this->product->fresh());
 
         return $this->redirect(route('admin.product.save', $this->product->id), navigate: true);
     }
+
     private function updatePriceHistory(): void
     {
-        // لیست قیمت‌ها و تاریخ‌های مربوطه
         $priceMappings = [
             'price' => 'price_updated_at',
             'bulk_price' => 'bulk_price_updated_at',
@@ -330,13 +321,11 @@ class Save extends Component
             $newValue = $this->prices[$priceField] ?? null;
 
             if ($newValue != $currentValue) {
-                // به‌روزرسانی قیمت قبلی
                 $previousField = $priceField . '_previous';
                 if (isset($this->prices[$previousField])) {
                     $this->prices[$previousField] = $currentValue;
                 }
 
-                // به‌روزرسانی تاریخ
                 $this->price_updates[$updateField] = now();
             }
         }
@@ -344,12 +333,10 @@ class Save extends Component
 
     private function fillModelFromPrices(): void
     {
-        // پر کردن فیلدهای قیمت
         foreach ($this->prices as $field => $value) {
             $this->product->{$field} = $value;
         }
 
-        // پر کردن تاریخ‌های بروزرسانی
         foreach ($this->price_updates as $field => $value) {
             $this->product->{$field} = $value;
         }
@@ -357,10 +344,12 @@ class Save extends Component
 
     public function addVariant(): void
     {
+        // ⬇️ تغییر: اضافه شد torob_url
         $this->variants[] = [
             'id' => null,
             'name' => null,
             'stock' => 0,
+            'torob_url' => null,
         ];
     }
 
@@ -499,9 +488,7 @@ class Save extends Component
         $availableAttrs = [];
         foreach ($allAttributes as $attribute) {
             foreach ($attribute->values as $value) {
-                // بررسی نشدن در selectedAttrs
                 if (!isset($this->selectedAttrs[$attribute->id])) {
-                    // جستجو در نام ویژگی یا مقدار
                     $searchText = $this->queryAttr;
                     if (empty($searchText) ||
                         strpos(mb_strtolower($attribute->name), mb_strtolower($searchText)) !== false ||

@@ -8,6 +8,8 @@
             text-decoration: none;
             color: white;
             transition: all 0.3s ease;
+            min-width: 0;
+            width: 100%;
         }
 
         .nav-btn:hover:not(.disabled) {
@@ -20,9 +22,17 @@
             cursor: not-allowed;
         }
 
+        .nav-btn .label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+
         .icon {
             font-size: 18px;
             line-height: 1;
+            flex-shrink: 0;
         }
 
         /* استایل برای کامبوباکس جستجو */
@@ -185,7 +195,7 @@
 
 <div>
     {{-- دکمه‌های قبلی و بعدی --}}
-    <div class="flex justify-between w-full mb-4">
+    <div class="flex justify-between items-center gap-2 w-full mb-4">
         @php
             $prevId = $product->id - 1;
             $nextId = $product->id + 1;
@@ -193,7 +203,7 @@
             $nextProduct = \App\Models\Product::find($nextId);
         @endphp
 
-        <div class="bg-gray-400 rounded-2xl px-2 py-1 text-white">
+        <div class="bg-gray-400 rounded-2xl px-2 py-1 text-white min-w-0 max-w-[45%]">
             <a href="{{ $prevProduct ? route('admin.product.save', $prevProduct->id) : '#' }}"
                class="nav-btn prev {{ !$prevProduct ? 'disabled' : '' }}"
                title="محصول قبلی">
@@ -202,7 +212,7 @@
             </a>
         </div>
 
-        <div class="bg-gray-400 rounded-2xl px-2 py-1 text-white">
+        <div class="bg-gray-400 rounded-2xl px-2 py-1 text-white min-w-0 max-w-[45%]">
             <a href="{{ $nextProduct ? route('admin.product.save', $nextProduct->id) : '#' }}"
                class="nav-btn next {{ !$nextProduct ? 'disabled' : '' }}"
                title="محصول بعدی">
@@ -418,13 +428,13 @@
     </div>
 
     {{-- بخش قیمت‌ها --}}
-    <div class="flex gap-4 mt-4">
-        <h3 class=" text-lg font-bold text-gray-700 pr-2">💰 قیمت‌ها</h3>
-        <div class="flex items-center gap-2 ">
+    <div class="flex flex-wrap items-center gap-3 sm:gap-4 mt-4 w-full">
+        <h3 class="text-lg font-bold text-gray-700 pr-2">💰 قیمت‌ها</h3>
+        <div class="flex items-center gap-2">
             <label class="text-sm font-medium text-gray-700 whitespace-nowrap">درصد سود:</label>
             <input type="number"
                    wire:model.live.debounce.1000ms="profitPercent"
-                   class="w-16 rounded-lg border border-gray-300 px-2  text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
+                   class="w-16 rounded-lg border border-gray-300 px-2 text-sm focus:border-pars-500 focus:ring-1 focus:ring-pars-500"
                    min="0" max="1000">
             <span class="text-xs text-gray-500">%</span>
         </div>
@@ -435,12 +445,13 @@
             <input
                     type="number"
                     wire:model.live.debounce.1000ms="gatewayFeePercent"
-                    class="w-16 rounded-lg border border-gray-300 px-2  text-sm"
+                    class="w-16 rounded-lg border border-gray-300 px-2 text-sm"
                     min="0"
                     max="100">
             <span class="text-xs text-gray-500">%</span>
         </div>
     </div>
+
     <div class="sm:flex sm:flex-wrap justify-between mt-4 border-t border-gray-200 pt-4">
 
         {{-- قیمت عمده --}}
@@ -705,36 +716,75 @@
 
     {{-- ویژگی‌های تنوع --}}
     @if($variant)
-        <div class="w-full rounded-2xl p-2 mt-4 border border-gray-200">
-            <h3 class="font-bold text-gray-700 mb-2">🔹 ویژگی‌های تنوع</h3>
+        <div class="w-full rounded-2xl p-2 sm:p-3 mt-4 border border-gray-200">
+            <h3 class="font-bold text-gray-700 mb-3">🔹 ویژگی‌های تنوع</h3>
+
             @foreach($variants as $i => $variantItem)
-                <div class="flex flex-wrap gap-2 items-center mb-2">
-                    <span class="w-8 text-gray-500">{{ $i+1 }} .</span>
-                    <input type="text" class="rounded-2xl flex-1 min-w-[150px] pr-2 border border-gray-300"
-                           placeholder="نام ویژگی (مثلاً قرمز، بتمن)" wire:model="variants.{{ $i }}.name">
-                    @error('variants.' . $i . '.name')
-                    <span class="text-xs text-red-500 font-semibold w-full">{{ $message }}</span>
-                    @enderror
-                    <input type="number" x-on:wheel.prevent class="rounded-2xl w-32 pr-2 border border-gray-300"
-                           placeholder="موجودی" wire:model="variants.{{ $i }}.stock">
-                    @error('variants.' . $i . '.stock')
-                    <span class="text-xs text-red-500 font-semibold w-full">{{ $message }}</span>
-                    @enderror
-                    <button type="button" class="text-red-500 font-bold px-2 cursor-pointer hover:text-red-700"
-                            wire:click="removeVariant({{ $i }})">🗑️ حذف
-                    </button>
+                <div class="mb-4 pb-4 border-b border-gray-100 last:border-b-0 last:mb-0 last:pb-0">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start">
+
+                        {{-- نام ویژگی --}}
+                        <div class="flex items-start gap-2 w-full sm:flex-1 sm:min-w-[200px]">
+                            <span class="w-6 flex-shrink-0 text-gray-500 text-sm pt-2 sm:pt-1">{{ $i+1 }}.</span>
+                            <div class="flex-1 min-w-0">
+                                <small class="pr-2 text-gray-500 sm:hidden">نام ویژگی</small>
+                                <input type="text"
+                                       class="w-full rounded-2xl pr-2 border border-gray-300"
+                                       placeholder="نام ویژگی (مثلاً قرمز، بتمن)"
+                                       wire:model="variants.{{ $i }}.name">
+                                @error('variants.' . $i . '.name')
+                                <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- موجودی --}}
+                        <div class="w-full sm:w-32 sm:flex-shrink-0">
+                            <small class="pr-2 text-gray-500 sm:hidden">موجودی</small>
+                            <input type="number" x-on:wheel.prevent
+                                   class="w-full rounded-2xl pr-2 border border-gray-300"
+                                   placeholder="موجودی"
+                                   wire:model="variants.{{ $i }}.stock">
+                            @error('variants.' . $i . '.stock')
+                            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- لینک ترب --}}
+                        <div class="w-full sm:flex-1 sm:min-w-[220px]">
+                            <small class="pr-2 text-gray-500 sm:hidden">لینک ترب</small>
+                            <input type="url"
+                                   class="w-full rounded-2xl pr-2 border border-gray-300"
+                                   placeholder="لینک ترب (https://torob.com/...)"
+                                   wire:model="variants.{{ $i }}.torob_url">
+                            @error('variants.' . $i . '.torob_url')
+                            <span class="text-xs text-red-500 font-semibold">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- دکمه حذف --}}
+                        <div class="w-full sm:w-auto">
+                            <button type="button"
+                                    class="w-full sm:w-auto text-red-500 font-bold px-3 py-2 cursor-pointer hover:text-red-700 rounded-2xl border border-red-200 hover:bg-red-50 text-sm"
+                                    wire:click="removeVariant({{ $i }})">
+                                🗑️ حذف
+                            </button>
+                        </div>
+                    </div>
                 </div>
             @endforeach
+
             <button type="button"
-                    class="bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white text-sm px-4 py-1.5 rounded-2xl cursor-pointer"
-                    wire:click="addVariant">+ افزودن ویژگی
+                    class="w-full sm:w-auto mt-2 bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white text-sm px-4 py-2 rounded-2xl cursor-pointer"
+                    wire:click="addVariant">
+                + افزودن ویژگی
             </button>
         </div>
     @endif
 
     {{-- دکمه ذخیره --}}
     <div class="w-full text-center my-4">
-        <button class="w-1/2 rounded-2xl p-2 cursor-pointer bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white transition-all font-bold shadow-lg"
+        <button class="w-full sm:w-1/2 rounded-2xl p-2 cursor-pointer bg-gradient-to-r from-pars-500 to-pars-800 hover:from-pars-600 hover:to-pars-900 text-white transition-all font-bold shadow-lg"
                 wire:click="save()">
             💾 ذخیره و آپلود عکس ها
         </button>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->startingValue(1000);
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->string('name');
+            $table->string('torob_url')->nullable();
             $table->unsignedInteger('stock')->default(0);
             $table->timestamps();
         });
